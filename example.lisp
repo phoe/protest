@@ -10,7 +10,7 @@
   (:function make-wiggler ((type (or class symbol))) (wiggler wiggler))
   "A constructor function that makes a wiggler of given type."
   (:generic wiggle ((wiggler wiggler) (object fist)) (values))
-  "Wiggles inside targets object.")
+  "Wiggles inside target object.")
 
 (define-protocol killable ()
   (:class killable () ())
