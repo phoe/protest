@@ -21,6 +21,14 @@
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (defvar *protocols* '())
   (defvar *test-cases* '())
+  (defparameter *class-mismatch-format*
+    "Mismatched class forms for protocol class ~S.
+Old documentation: ~S
+New documentation: ~S
+Old superclasses: ~S
+New superclasses: ~S
+Old slot names: ~S
+New slot names: ~S")
 
   (defun keywordize (symbol)
     (intern (symbol-name symbol) :keyword))
@@ -114,6 +122,25 @@
 
   (defun parse-class (form docstring)
     `(progn ;;unless (find-class ',(first form) nil)
+       (if-let ((class (find-class ',(first form) nil)))
+         (let* ((superclasses (class-direct-superclasses class))
+                (names-1 (cons 'standard-object ',(second form)))
+                (names-2 (mapcar #'class-name superclasses))
+                (slots (class-direct-slots class))
+                (snames-1 ',(third form))
+                (snames-2 (mapcar #'slot-definition-name slots))
+                (diff1 (set-difference names-1 names-2))
+                (diff2 (set-difference names-2 names-1))
+                (sdiff1 (set-difference snames-1 snames-2))
+                (sdiff2 (set-difference snames-2 snames-1))
+                (docstring ,docstring)
+                (docstring2 (documentation ',(first form) 'type)))
+           (unless (and (string= docstring docstring2)
+                        (null diff1) (null diff2)
+                        (null sdiff1) (null sdiff2))
+             (error ,*class-mismatch-format*
+                    ',(first form) docstring docstring2
+                    names-1 names-2 snames-1 snames-2))))
        (define-protocol-class ,@form)
        (setf (documentation ',(first form) 'type)
              ,(format nil docstring))))
