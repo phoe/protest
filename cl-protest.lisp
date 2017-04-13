@@ -3,13 +3,16 @@
 (in-package #:cl-protest)
 
 (defmacro define-protocol-class (name superclasses slots &rest options)
-  `(progn
-     (defclass ,name ,superclasses ,slots ,@options)
-     (defmethod initialize-instance :before ((object ,name) &key)
-       (when (eq (class-of object) (find-class ',name))
-         (error "~S is a protocol class and thus cannot be instantiated."
-                ',name)))
-     ',name))
+  (let ((superclasses (if (member 'standard-object superclasses)
+                          superclasses
+                          (append superclasses '(standard-object)))))
+    `(progn
+       (defclass ,name ,superclasses ,slots ,@options)
+       (defmethod initialize-instance :before ((object ,name) &key)
+         (when (eq (class-of object) (find-class ',name))
+           (error "~S is a protocol class and thus cannot be instantiated."
+                  ',name)))
+       ',name)))
 
 (defmacro defgeneric? (fun-name lambda-list &body options)
   `(when (or (not (fboundp ',fun-name))
@@ -31,7 +34,8 @@
            (sdiff1 (set-difference snames-1 snames-2))
            (sdiff2 (set-difference snames-2 snames-1))
            (docstring2 (documentation class-name 'type)))
-      (unless (and (string= docstring docstring2)
+      (unless (and (or (null docstring)
+                       (string= docstring docstring2))
                    (null diff1) (null diff2)
                    (null sdiff1) (null sdiff2))
         (error *class-mismatch-format*
@@ -40,6 +44,9 @@
 
 (defun keywordize (symbol)
   (intern (symbol-name symbol) :keyword))
+
+(defun remove-strings (list)
+  (remove-if #'stringp list))
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (defvar *protocols* '())
@@ -63,7 +70,9 @@ New slot names: ~S")
 
   (defun parse-form (original-form docstring)
     (destructuring-bind (keyword . form) original-form
-      (let ((function (choose-function keyword)))
+      (let ((function (choose-function keyword))
+            (docstring (when (stringp docstring)
+                         (format nil docstring))))
         (funcall function form docstring))))
 
   (defun parse-fn-args (args)
@@ -145,12 +154,15 @@ New slot names: ~S")
        (verify-class ',(first form) ',(second form)
                      ',(third form) ,docstring)
        (define-protocol-class ,@form)
-       (setf (documentation ',(first form) 'type)
-             ,(format nil docstring))))
+       ,@(when docstring
+           `((setf (documentation ',(first form) 'type)
+                   ,(format nil docstring))))))
 
   (defun parse-variable (form docstring)
     `(progn
-       (setf (documentation ',(first form) 'variable) ,(format nil docstring))
+       ,@(when docstring
+           `((setf (documentation ',(first form) 'variable)
+                   ,(format nil docstring))))
        ,@(when (>= (length form) 2)
            `((declaim (type ,(second form) ,(first form)))))
        (defvar ,(first form)
@@ -158,11 +170,14 @@ New slot names: ~S")
 
   (defun parse-macro (form docstring)
     `(progn
-       (setf (documentation ',(first form) 'variable) ,(format nil docstring))))
+       ,@(when docstring
+           `((setf (documentation ',(first form) 'variable) ,(format nil docstring))))))
 
   (defun parse-function (form docstring)
     `(progn
-       (setf (documentation ',(first form) 'function) ,(format nil docstring))
+       ,@(when docstring
+           `((setf (documentation ',(first form) 'function)
+                   ,(format nil docstring))))
        ,@(when (>= (length form) 2)
            `((declaim (ftype (function
                               ,(parse-fn-args (second form))
@@ -173,7 +188,8 @@ New slot names: ~S")
 
   (defun parse-generic (form docstring)
     `(progn
-       (setf (documentation ',(first form) 'function) ,(format nil docstring))
+       ,@(when docstring
+           `((setf (documentation ',(first form) 'function) ,(format nil docstring))))
        (defgeneric? ,(first form) ,(parse-gfn-args (second form)))
        ,@(when (>= (length form) 3)
            `((declaim (ftype (function *
@@ -185,10 +201,15 @@ New slot names: ~S")
        protocol-name options &body forms)
   (declare (ignore options))
   `(progn
-     ;; TODO make docstrings optional, modify the loop to achieve this
-     ,@(loop for (form docstring) on forms by #'cddr
-             collect (parse-form form docstring))
-     (let ((data (cdr ',whole))
+     ,@(loop for (form docstring) on forms
+             if (and (listp form)
+                     (keywordp (car form))
+                     (stringp docstring))
+               collect (parse-form form docstring)
+             else if (and (listp form)
+                          (keywordp (car form)))
+                    collect (parse-form form nil))
+     (let ((data (remove-strings (cdr ',whole)))
            (value (find ',protocol-name *protocols* :key #'car)))
        (unless (equal data value)
          (when value
