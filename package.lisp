@@ -1,6 +1,6 @@
 ;;;; package.lisp
 
-(defpackage #:cltms
+(defpackage #:cl-protest
   (:shadowing-import-from #:closer-mop
                           #:standard-generic-function
                           #:defmethod

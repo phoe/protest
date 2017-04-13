@@ -1,6 +1,6 @@
 ;;;; cltms.lisp
 
-(in-package #:cltms)
+(in-package #:cl-protest)
 
 (defmacro define-protocol-class (name superclasses slots &rest options)
   `(progn
