@@ -1,5 +1,5 @@
-# CL-PROTEST
-## Common Lisp PROtocol and TESTcase Manager
+![CL-PROTEST](/logo.png)
+# Common Lisp PROtocol and TESTcase manager
 
 This is heavily WIP.
 
