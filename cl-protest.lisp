@@ -221,8 +221,8 @@ New slot names: ~S")
                          *protocols*)))))))
 
 (defmacro define-test-case
-    (&whole whole test-case-name options description &body steps)
-  (declare (ignore options description steps))
+    (&whole whole test-case-name options &body steps)
+  (declare (ignore options steps))
   `(let ((data (cdr ',whole))
          (value (find ',test-case-name *test-cases* :key #'car)))
      ;; update *test-cases*

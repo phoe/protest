@@ -6,7 +6,8 @@
   (:variable *wiggler* t nil)
   "A dynamic variable denoting the current active wiggler."
   (:macro with-wiggler)
-  "A wrapper macro that binds *WIGGLER* to the value of WIGGLER."
+  "(with-wiggler wiggler ...)
+A wrapper macro that binds *WIGGLER* to the value of WIGGLER."
   (:function make-wiggler ((type (or class symbol))) (wiggler wiggler))
   "A constructor function that makes a wiggler of given type."
   (:generic wiggle ((wiggler wiggler) (object fist)) (values))
@@ -20,7 +21,10 @@
   (:generic kill ((object killable)) (values))
   "Kills the object.")
 
-(define-protocol fist ()
+(define-protocol fist (:description "This is a sample description."
+                       :tags (tag1 tag2 foo bar baz)
+                       :attachments (("fist.png")
+                                     ("fist2.png" "Alternate fist")))
   (:class fist (killable) ())
   "A fist is something that can squeeze around objects and hold them ~
 despite any wiggling. If a fist dies, then it is possible to wiggle ~
@@ -37,7 +41,7 @@ Returns true if the first was previously squeezed and false otherwise."
 (define-test-case fist-wiggle
     (:description "This is a sample test case."
      :tags (fist wiggle)
-     :attachments ("fist-wiggle.png"))
+     :attachments (("fist-wiggle.png")))
   1 "Enter the fist and let it close."
   2 "Wiggle inside."
   3 "Assert that the fist is still closed.")
@@ -45,7 +49,7 @@ Returns true if the first was previously squeezed and false otherwise."
 (define-test-case fist-wiggle-death
     (:description "This is another sample test case."
      :tags (fist wiggle killable)
-     :attachments ("fist-wiggle-death.png"))
+     :attachments (("fist-wiggle-death.png")))
   1 "Enter the fist and let it close."
   2 "Kill the fist."
   3 "Wiggle inside."
