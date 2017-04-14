@@ -1,4 +1,4 @@
-;;;; cltms.lisp
+;;;; cl-protest.lisp
 
 (in-package #:cl-protest)
 

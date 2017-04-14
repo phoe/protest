@@ -1,4 +1,4 @@
-;;;; cltms.asd
+;;;; cl-protest.asd
 
 (asdf:defsystem #:cl-protest
   :description "Common Lisp PROtocol and TESTcase Manager"
@@ -7,6 +7,10 @@
   :serial t
   :depends-on (#:alexandria
                #:closer-mop
+               #:cl-who
+               #:ningle
+               #:clack
                #:uiop)
   :components ((:file "package")
-               (:file "cl-protest")))
+               (:file "cl-protest")
+               (:file "cl-protest-web")))

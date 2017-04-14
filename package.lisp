@@ -12,3 +12,10 @@
            #:define-test-case
            #:*protocols*
            #:*test-cases*))
+
+(defpackage #:cl-protest-web
+  (:use #:cl
+        #:alexandria
+        #:cl-who
+        #:ningle
+        #:cl-protest))
