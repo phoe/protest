@@ -3,6 +3,12 @@
 
 This is heavily WIP.
 
+### TODO
+  * Fix and document DEFINE-TEST-CASE
+  * Integrate DEFINE-TEST-CASE with some testing framework
+  * Unit tests for macros and functions
+
+### Usage
 The code below:
 
 ```lisp
@@ -41,22 +47,6 @@ Returns true if the first was not previously squeezed and false otherwise."
 Returns true if the first was previously squeezed and false otherwise."
   (:generic wigglep ((object fist)) :generalized-boolean)
   "Checks if anything wiggled inside the fist since its last squeeze.")
-
-(define-test-case fist-wiggle (:tags (fist wiggle)
-                               :attachments ("fist-wiggle.png"))
-    "This is a sample test case."
-  "Enter the fist and let it close."
-  "Wiggle inside."
-  "Assert that the fist is still closed.")
-
-(define-test-case fist-wiggle-death (:tags (fist wiggle killable)
-                                     :attachments ("fist-wiggle-death.png"))
-    "This is another sample test case."
-  "Enter the fist and let it close."
-  "Wiggle inside."
-  "Kill the fist."
-  "Wiggle inside."
-  "Assert that you can wiggle out of the fist.")
 ```
 
 Produces the following effects:
