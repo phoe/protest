@@ -53,6 +53,7 @@ Produces the following effects:
 
   * All DEFINE-PROTOCOL forms (sans documentation strings) are stored in the variable `*PROTOCOLS*`.
   * All documentation strings are stored in proper parts of the `CL:DOCUMENTATION` system.
+  * Checks are made to make sure that protocol classes and generic functions are defined, but never _re_defined.
   * A code equivalent to the following is executed:
 
 ```lisp
