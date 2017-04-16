@@ -52,7 +52,7 @@ Returns true if the first was previously squeezed and false otherwise."
 Produces the following effects:
 
 ### Doc Generation
-The package `CL-PROTEST-WEB` contains the functions to produce HTML documentation of the protocols - see https://fiddle.jshell.net/mocc4s71/show/ .
+The package `CL-PROTEST-WEB` contains the functions to produce HTML documentation of the protocols - see https://rawgit.com/phoe/cl-protest/master/example.html .
 
 ### Code Generation
   * All DEFINE-PROTOCOL forms (sans documentation strings) are stored in the variable `*PROTOCOLS*`.
