@@ -3,12 +3,12 @@
 
 This is heavily WIP.
 
-### TODO
+## TODO
   * Fix and document DEFINE-TEST-CASE
   * Integrate DEFINE-TEST-CASE with some testing framework
   * Unit tests for macros and functions
 
-### Usage
+## Usage
 The code below:
 
 ```lisp
@@ -51,6 +51,10 @@ Returns true if the first was previously squeezed and false otherwise."
 
 Produces the following effects:
 
+### Doc Generation
+The package `CL-PROTEST-WEB` contains the functions to produce HTML documentation of the protocols - see https://fiddle.jshell.net/mocc4s71/show/ .
+
+### Code Generation
   * All DEFINE-PROTOCOL forms (sans documentation strings) are stored in the variable `*PROTOCOLS*`.
   * All documentation strings are stored in proper parts of the `CL:DOCUMENTATION` system.
   * Checks are made to make sure that protocol classes and generic functions are defined, but never _re_defined.
