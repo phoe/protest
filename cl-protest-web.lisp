@@ -25,13 +25,13 @@
               (protocol-attachments attachments stream)
               (protocol-entries entries stream))))))
 
-(defun protocol-description (description &optional (stream *standard-output*))
-  (when description
+(defun protocol-description (desc &optional (stream *standard-output*))
+  (when desc
     (with-html-output (stream nil :indent t)
       (:div :class "protocol-description"
             (:p :class "protocol-description-list"
                 (:strong "Description: ")
-                (:span (str description)))))))
+                (:span (str desc)))))))
 
 (defun protocol-tags (tags &optional (stream *standard-output*))
   (when tags
@@ -41,13 +41,13 @@
                 (:strong "Tags: ")
                 (:span (fmt "~{~A ~}" tags)))))))
 
-(defun protocol-attachments (attachments &optional (stream *standard-output*))
-  (when attachments
+(defun protocol-attachments (atts &optional (stream *standard-output*))
+  (when atts
     (with-html-output (stream nil :indent t)
       (:div :class "protocol-attachments"
             (:p :class "protocol-attachments-list"
                 (:strong "Attachments: ")
-                (:ul (loop for elt in attachments
+                (:ul (loop for elt in atts
                            for link = (first elt)
                            for name = (or (second elt) link)
                            do (htm (:li (:a :href link
@@ -113,49 +113,6 @@
                      (:span (str (br (documentation (first entry)
                                                     'function))))))))))
 
-(defun fn-arg-rets (entry stream)
-  (with-html-output (stream nil :indent t)
-    (:ul
-     (let ((*print-case* :downcase))
-       (loop for elt in (second entry)
-             if (listp elt)
-               do (htm (:li (:strong (str (first elt)))
-                            " - object of type "
-                            (str (second elt))
-                            "."))
-             else if (member elt lambda-list-keywords)
-                    do (progn)
-             else
-               do (htm (:li (:strong (str elt))
-                            " - any object.")))
-       (cond ((eq (third entry) :generalized-boolean)
-              (htm (:li (:strong
-                         (str 'generalized-boolean))
-                        " - a generalized boolean.")))
-             ((equal (third entry) '(values))
-              nil)
-             (t
-              (htm (:li (:strong (str (first (third entry))))
-                        " - object of type "
-                        (str (second (third entry)))
-                        "."))))))))
-
-(defun function-lambda-list (entry)
-  (with-output-to-string (s)
-    (let ((*print-case* :downcase)
-          (lambda-list (loop for elt in (second entry)
-                             if (listp elt) collect (first elt)
-                               else collect elt)))
-      (format s "~{~A ~}"
-              (append (cons (first entry) lambda-list)
-                      (list "→"
-                            (cond ((equal (third entry) '(values))
-                                   "(no value)")
-                                  ((listp (third entry))
-                                   (first (third entry)))
-                                  (t
-                                   (third entry)))))))))
-
 (defun process-macro (entry &optional (stream *standard-output*))
   (with-html-output (stream nil :indent t)
     (:div :class "protocol-macro-wrapper"
@@ -181,6 +138,51 @@
                      (:span (str (br (documentation (first entry)
                                                     'type))))))))))
 
+(defun fn-arg-rets (entry stream)
+  (with-html-output (stream nil :indent t)
+    (flet ((typed-object (elt)
+             (htm (:li (:strong (str (first elt)))
+                       " - object of type "
+                       (:b (let ((*print-case* :upcase))
+                             (str (second elt))
+                             (str "."))))))
+           (untyped-object (elt)
+             (htm (:li (:strong (str elt))
+                       " - any object.")))
+           (generalized-boolean ()
+             (htm (:li (:strong
+                        (str 'generalized-boolean))
+                       " - a generalized boolean."))))
+      (htm (:ul
+            (let ((*print-case* :downcase))
+              (dolist (elt (second entry))
+                (cond ((listp elt)
+                       (typed-object elt))
+                      ((member elt lambda-list-keywords))
+                      (t
+                       (untyped-object elt))))
+              (cond ((eq (third entry) :generalized-boolean)
+                     (generalized-boolean))
+                    ((equal (third entry) '(values)))
+                    (t
+                     (typed-object (third entry))))))))))
+
+(defun function-lambda-list (entry)
+  (with-output-to-string (s)
+    (let ((*print-case* :downcase)
+          (lambda-list (loop for elt in (second entry)
+                             if (listp elt) collect (first elt)
+                               else collect elt))
+          (retval (cond ((equal (third entry) '(values))
+                         "(no value)")
+                        ((listp (third entry))
+                         (first (third entry)))
+                        (t
+                         (third entry)))))
+      (format s "~{~A ~}"
+              (append (cons (first entry) lambda-list)
+                      (list "→" retval))))))
+
 (defun br (string)
   (replace-all string (format nil "~%") "<br />"))
 
@@ -198,9 +200,6 @@ is replaced with replacement."
                            :end (or pos (length string)))
           when pos do (write-string replacement out)
             while pos)))
-
-(defun tidy (string)
-  (cl-tidy:clean-up-and-indent-html-part string))
 
 (defun begin-protest ()
   (clack:clackup *app*))
