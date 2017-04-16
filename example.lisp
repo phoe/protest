@@ -38,19 +38,19 @@ Returns true if the first was previously squeezed and false otherwise."
   (:generic wigglep ((object fist)) :generalized-boolean)
   "Checks if anything wiggled inside the fist since its last squeeze.")
 
-(define-test-case fist-wiggle
-    (:description "This is a sample test case."
-     :tags (fist wiggle)
-     :attachments (("fist-wiggle.png")))
-  1 "Enter the fist and let it close."
-  2 "Wiggle inside."
-  3 "Assert that the fist is still closed.")
+;; (define-test-case fist-wiggle
+;;     (:description "This is a sample test case."
+;;      :tags (fist wiggle)
+;;      :attachments (("fist-wiggle.png")))
+;;   1 "Enter the fist and let it close."
+;;   2 "Wiggle inside."
+;;   3 "Assert that the fist is still closed.")
 
-(define-test-case fist-wiggle-death
-    (:description "This is another sample test case."
-     :tags (fist wiggle killable)
-     :attachments (("fist-wiggle-death.png")))
-  1 "Enter the fist and let it close."
-  2 "Kill the fist."
-  3 "Wiggle inside."
-  4 "Assert that you can wiggle out of the fist.")
+;; (define-test-case fist-wiggle-death
+;;     (:description "This is another sample test case."
+;;      :tags (fist wiggle killable)
+;;      :attachments (("fist-wiggle-death.png")))
+;;   1 "Enter the fist and let it close."
+;;   2 "Kill the fist."
+;;   3 "Wiggle inside."
+;;   4 "Assert that you can wiggle out of the fist.")

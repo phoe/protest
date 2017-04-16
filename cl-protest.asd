@@ -10,7 +10,9 @@
                #:cl-who
                #:ningle
                #:clack
-               #:uiop)
+               #:uiop
+               #:weblocks-utils
+               #:cl-tidy)
   :components ((:file "package")
                (:file "cl-protest")
                (:file "cl-protest-web")))

@@ -171,7 +171,8 @@ New slot names: ~S")
   (defun parse-macro (form docstring)
     `(progn
        ,@(when docstring
-           `((setf (documentation ',(first form) 'variable) ,(format nil docstring))))))
+           `((setf (documentation ',(first form) 'function)
+                   ,(format nil docstring))))))
 
   (defun parse-function (form docstring)
     `(progn
@@ -189,7 +190,8 @@ New slot names: ~S")
   (defun parse-generic (form docstring)
     `(progn
        ,@(when docstring
-           `((setf (documentation ',(first form) 'function) ,(format nil docstring))))
+           `((setf (documentation ',(first form) 'function)
+                   ,(format nil docstring))))
        (defgeneric? ,(first form) ,(parse-gfn-args (second form)))
        ,@(when (>= (length form) 3)
            `((declaim (ftype (function *
