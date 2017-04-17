@@ -206,3 +206,7 @@ is replaced with replacement."
 
 (defun stop-protest ()
   (clack:stop *app*))
+
+;; (with-output-to-file (s "/tmp/foo.html" :if-exists :overwrite)
+;;   (mapc (lambda (x) (print-protocol x s)) (reverse *protocols*))
+;;   nil)

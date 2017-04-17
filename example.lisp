@@ -31,10 +31,10 @@ despite any wiggling. If a fist dies, then it is possible to wiggle ~
 out of it."
   (:generic squeeze ((object fist)) :generalized-boolean)
   "Squeezes the fist.
-Returns true if the first was not previously squeezed and false otherwise."
+Returns true if the fist was not previously squeezed and false otherwise."
   (:generic unsqueeze ((object fist)) :generalized-boolean)
   "Unsqueezes the fist.
-Returns true if the first was previously squeezed and false otherwise."
+Returns true if the fist was previously squeezed and false otherwise."
   (:generic wigglep ((object fist)) :generalized-boolean)
   "Checks if anything wiggled inside the fist since its last squeeze.")
 
