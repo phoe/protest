@@ -184,7 +184,7 @@
                       (list "→" retval))))))
 
 (defun br (string)
-  (replace-all string (format nil "~%") "<br />"))
+  (replace-all string #.(format nil "~%") "<br />"))
 
 (defun replace-all (string part replacement &key (test #'char=))
   "Returns a new string in which all the occurences of the part
@@ -207,6 +207,7 @@ is replaced with replacement."
 (defun stop-protest ()
   (clack:stop *app*))
 
-;; (with-output-to-file (s "/tmp/foo.html" :if-exists :overwrite)
-;;   (mapc (lambda (x) (print-protocol x s)) (reverse *protocols*))
-;;   nil)
+(with-output-to-file (s "/tmp/foo.html" :if-exists :overwrite
+                                        :if-does-not-exist :create)
+  (mapc (lambda (x) (print-protocol x s)) (reverse *protocols*))
+  nil)

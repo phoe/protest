@@ -4,6 +4,8 @@
 This is heavily WIP.
 
 ## TODO
+  * Ordinary functions are no longer creatable here - :GENERIC is removed and
+  instead, :FUNCTION creates a generic function.
   * Fix and document DEFINE-TEST-CASE
   * Integrate DEFINE-TEST-CASE with some testing framework
   * Unit tests for macros and functions
