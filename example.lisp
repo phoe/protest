@@ -21,7 +21,8 @@ A wrapper macro that binds *WIGGLER* to the value of WIGGLER."
   (:function kill ((object killable)) (values))
   "Kills the object.")
 
-(define-protocol fist (:description "This is a sample description."
+(define-protocol fist (:export t
+                       :description "This is a sample description."
                        :tags (tag1 tag2 foo bar baz)
                        :attachments (("fist.png")
                                      ("fist2.png" "Alternate fist")))
