@@ -27,7 +27,9 @@
                   else if (eq elt2 '&allow-other-keys)
                          do (push '&allow-other-keys acc)
                             (return)
-                  else do (push (first elt2) acc)))
+                  else if (listp elt2)
+                         do (push (first elt2) acc)
+                  else do (push elt2 acc)))
            (otherwise
             (push elt acc))))))))
 
@@ -43,7 +45,7 @@
      ,@(when docstring
          `((setf (documentation ',(first form) 'function)
                  ,(format nil docstring))))
-     (defgeneric? ,(first form) ,(parse-gfn-args (second form)))
      ,@(when (>= (length form) 3)
          `((declaim (ftype (function * ,(parse-gfn-result (third form)))
-                           ,(first form)))))))
+                           ,(first form)))))
+     (defgeneric? ,(first form) ,(parse-gfn-args (second form)))))

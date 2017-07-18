@@ -17,9 +17,6 @@
                else if (and (listp form)
                             (keywordp (car form)))
                       collect (parse-form form nil exportp))
-       ;; TODO: export all symbols
-       ,@(when (nth-value 1 (get-properties options '(:export)))
-           `((export ',protocol-name)))
        (let ((data (remove-strings (cdr ',whole)))
              (value (find ',protocol-name *protocols* :key #'car)))
          (unless (equal data value)
