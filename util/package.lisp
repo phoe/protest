@@ -3,6 +3,7 @@
 (defpackage #:cl-protest
   (:use #:cl
         #:alexandria
+        #:named-readtables
         #:closer-mop)
   (:shadowing-import-from #:closer-mop
                           #:standard-generic-function

@@ -10,14 +10,24 @@
                #:cl-who
                #:ningle
                #:clack
+               #:named-readtables
                #:uiop)
-  :components ((:file "package")
-               (:file "utils")
-               (:file "variables")
-               (:file "parse-function")
-               (:file "parse-macro")
-               (:file "parse-variable")
-               (:file "parse-class")
-               (:file "choose")
-               (:file "macros")
-               (:file "web")))
+  :components (;; General data
+               (:file "util/package")
+               (:file "util/util")
+               ;; Protocol management
+               (:file "pro/vars")
+               (:file "pro/parse/function")
+               (:file "pro/parse/macro")
+               (:file "pro/parse/variable")
+               (:file "pro/parse/class")
+               (:file "pro/parse/form")
+               (:file "pro/macros")
+               ;; Test case management
+               (:file "test/vars")
+               (:file "test/failures")
+               (:file "test/readtable")
+               (:file "test/functions")
+               (:file "test/macros")
+               ;; HTML generation
+               (:file "web/web")))

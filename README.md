@@ -1,4 +1,4 @@
-![CL-PROTEST](/logo.png)
+![CL-PROTEST](/doc/logo.png)
 # Common Lisp PROtocol and TESTcase manager
 
 This is heavily WIP.
@@ -55,7 +55,7 @@ Returns true if the first was previously squeezed and false otherwise."
 Produces the following effects:
 
 ### Doc Generation
-The package `CL-PROTEST-WEB` contains the functions to produce HTML documentation of the protocols - see https://rawgit.com/phoe/cl-protest/master/example.html .
+The package `CL-PROTEST-WEB` contains the functions to produce HTML documentation of the protocols - see https://rawgit.com/phoe/cl-protest/master/doc/example.html .
 
 ### Code Generation
   * All DEFINE-PROTOCOL forms (sans documentation strings) are stored in the variable `*PROTOCOLS*`.

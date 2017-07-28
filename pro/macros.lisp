@@ -1,4 +1,4 @@
-;;;; cl-protest-macros.lisp
+;;;; macros.lisp
 
 (in-package #:cl-protest)
 
@@ -27,18 +27,3 @@
                        (if value
                            (remove ',protocol-name *protocols* :key #'car)
                            *protocols*))))))))
-
-(defmacro define-test-case
-    (&whole whole test-case-name options &body steps)
-  (declare (ignore options steps))
-  `(let ((data (cdr ',whole))
-         (value (find ',test-case-name *test-cases* :key #'car)))
-     ;; update *test-cases*
-     (unless (equal data value)
-       (when value
-         (warn "Redefining ~S in DEFINE-TEST-CASE" ',test-case-name))
-       (setf *test-cases*
-             (cons data
-                   (if value
-                       (remove ',test-case-name *test-cases* :key #'car)
-                       *test-cases*))))))

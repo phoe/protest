@@ -45,7 +45,7 @@
      ,@(when docstring
          `((setf (documentation ',(first form) 'function)
                  ,(format nil docstring))))
-     ,@(when (>= (length form) 3)
-         `((declaim (ftype (function * ,(parse-gfn-result (third form)))
-                           ,(first form)))))
+     ;; ,@(when (>= (length form) 3)
+     ;;     `((declaim (ftype (function * ,(parse-gfn-result (third form)))
+     ;;                       ,(first form)))))
      (defgeneric? ,(first form) ,(parse-gfn-args (second form)))))
