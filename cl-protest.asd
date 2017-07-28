@@ -17,6 +17,7 @@
                (:file "util/util")
                ;; Protocol management
                (:file "pro/vars")
+               (:file "pro/verify-class")
                (:file "pro/parse/function")
                (:file "pro/parse/macro")
                (:file "pro/parse/variable")
