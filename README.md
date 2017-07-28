@@ -1,4 +1,6 @@
+<p align="center">
 ![CL-PROTEST](/doc/logo.png)
+</p>
 # Common Lisp PROtocol and TESTcase manager
 
 This is heavily WIP.
