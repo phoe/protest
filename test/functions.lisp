@@ -19,22 +19,22 @@
              (error "The description for step ~D is not a string." elt))
            (push (list elt description phase) result)))))))
 
-(defun make-test-function (test-case test-body)
-  (compile
-   nil
-   `(lambda ()
-      (let ((step-data ',(analyze-test-steps (cddr test-case)))
-            (*current-step* 0)
-            (test-name ',(car test-case)))
-        (handler-case
-            (progn ,@test-body)
-          (error (e)
-            (cond
-              ((= *current-step* 0)
-               (failure-before test-name e))
-              ((= 1/2 (nth-value 1 (truncate *current-step*)))
-               (failure-after *current-step* step-data test-name e))
-              ((typep *current-step* 'unsigned-byte)
-               (failure-during *current-step* step-data test-name e))
-              (t
-               (failure-internal *current-step*)))))))))
+(defun make-test-function (test-name test-body)
+  `(let* ((test-case (find ',test-name *test-cases* :key #'car))
+          (*current-step-data* (analyze-test-steps (cddr test-case)))
+          (*current-step* 0)
+          (*current-test* ',test-name))
+     (handler-case
+         (progn ,@test-body)
+       (error (e)
+         (cond
+           ((= *current-step* 0)
+            (failure-before *current-test* e))
+           ((= 1/2 (nth-value 1 (truncate *current-step*)))
+            (failure-after *current-step* *current-step-data*
+                           *current-test* e))
+           ((typep *current-step* 'unsigned-byte)
+            (failure-during *current-step* *current-step-data*
+                            *current-test* e))
+           (t
+            (failure-internal *current-step*)))))))

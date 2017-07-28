@@ -10,6 +10,7 @@
                #:cl-who
                #:ningle
                #:clack
+               #:1am
                #:named-readtables
                #:uiop)
   :components (;; General data

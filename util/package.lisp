@@ -4,6 +4,7 @@
   (:use #:cl
         #:alexandria
         #:named-readtables
+        #:1am
         #:closer-mop)
   (:shadowing-import-from #:closer-mop
                           #:standard-generic-function
@@ -11,6 +12,7 @@
                           #:defgeneric)
   (:export #:define-protocol
            #:define-test-case
+           #:define-test
            #:*protocols*
            #:*test-cases*))
 
@@ -20,3 +22,6 @@
         #:cl-who
         #:ningle
         #:cl-protest))
+
+(uiop:define-package #:cl-protest-tests
+    (:use))
