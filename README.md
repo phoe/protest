@@ -1,6 +1,7 @@
 <p align="center">
   <img src="doc/logo.png">
 </p>
+
 # Common Lisp PROtocol and TESTcase manager
 
 This is heavily WIP.
