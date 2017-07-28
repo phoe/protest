@@ -1,6 +1,6 @@
 ;;;; package.lisp
 
-(defpackage #:cl-protest
+(defpackage #:protest
   (:use #:cl
         #:alexandria
         #:named-readtables
@@ -17,12 +17,12 @@
            #:*protocols*
            #:*test-cases*))
 
-(defpackage #:cl-protest-web
+(defpackage #:protest-web
   (:use #:cl
         #:alexandria
         #:cl-who
         #:ningle
-        #:cl-protest))
+        #:protest))
 
-(uiop:define-package #:cl-protest-tests
+(uiop:define-package #:protest-tests
     (:use))

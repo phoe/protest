@@ -1,6 +1,6 @@
 ;;;; parse-form.lisp
 
-(in-package #:cl-protest)
+(in-package #:protest)
 
 (defun choose-function (keyword)
   (ecase keyword

@@ -1,6 +1,6 @@
 ;;;; util/util.lisp
 
-(in-package #:cl-protest)
+(in-package #:protest)
 
 (defmacro define-protocol-class (name superclasses slots &rest options)
   (let ((superclasses (if (member 'standard-object superclasses)

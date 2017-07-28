@@ -1,6 +1,6 @@
 ;;;; test/failures.lisp
 
-(in-package #:cl-protest)
+(in-package #:protest)
 
 (defun failure-before (test-name error)
   (error *failure-before* test-name error))

@@ -1,6 +1,6 @@
 ;;;; test/vars.lisp
 
-(in-package #:cl-protest)
+(in-package #:protest)
 
 (defvar *test-packages* (make-hash-table))
 

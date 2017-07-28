@@ -1,6 +1,6 @@
 ;;;; parse-macro.lisp
 
-(in-package #:cl-protest)
+(in-package #:protest)
 
 (defun parse-macro (form docstring)
   `(progn

@@ -1,6 +1,6 @@
 ;;;; macros.lisp
 
-(in-package #:cl-protest)
+(in-package #:protest)
 
 (defmacro define-protocol
     (&whole whole protocol-name options &body forms)

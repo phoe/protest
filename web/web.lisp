@@ -1,6 +1,6 @@
-;;;; cl-protest-web.lisp
+;;;; protest-web.lisp
 
-(in-package #:cl-protest-web)
+(in-package #:protest-web)
 
 (defvar *app* (make-instance 'ningle:<app>))
 

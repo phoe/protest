@@ -1,6 +1,6 @@
 ;;;; pro/verify-class.lisp
 
-(in-package #:cl-protest)
+(in-package #:protest)
 
 (defun verify-class (class-name superclass-names slot-names docstring)
   (if-let ((class (find-class class-name nil)))

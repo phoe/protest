@@ -1,6 +1,6 @@
 ;;;; parse-variable.lisp
 
-(in-package #:cl-protest)
+(in-package #:protest)
 
 (defun parse-variable (form docstring)
   `(progn

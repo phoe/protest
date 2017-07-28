@@ -1,6 +1,6 @@
 ;;;; pro/vars.lisp
 
-(in-package #:cl-protest)
+(in-package #:protest)
 
 (defvar *protocols* ())
 

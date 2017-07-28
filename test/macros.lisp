@@ -1,6 +1,6 @@
 ;;;; test/macros.lisp
 
-(in-package #:cl-protest)
+(in-package #:protest)
 
 (defmacro define-test-case
     (&whole whole test-case-name options &body steps)

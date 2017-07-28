@@ -1,6 +1,6 @@
-;;;; cl-protest.asd
+;;;; protest.asd
 
-(asdf:defsystem #:cl-protest
+(asdf:defsystem #:protest
   :description "Common Lisp PROtocol and TESTcase Manager"
   :author "Michał \"phoe\" Herda <phoe@openmailbox.org>"
   :license "MIT 2-Clause"

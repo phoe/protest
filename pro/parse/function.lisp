@@ -1,6 +1,6 @@
-;;;; cl-protest-function.lisp
+;;;; protest-function.lisp
 
-(in-package #:cl-protest)
+(in-package #:protest)
 
 (defun parse-gfn-args (args)
   (let ((acc ())

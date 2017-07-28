@@ -1,6 +1,6 @@
 ;;;; test/readtable.lisp
 
-(in-package #:cl-protest)
+(in-package #:protest)
 
 (defun test-step-macro-reader (stream subchar arg)
   (declare (ignore subchar))
@@ -14,6 +14,6 @@
        ,form
        (setf *current-step* ,(+ arg 1/2)))))
 
-(defreadtable cl-protest
+(defreadtable protest
   (:merge :standard)
   (:dispatch-macro-char #\# #\? 'test-step-macro-reader))

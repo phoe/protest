@@ -1,6 +1,6 @@
 ;;;; parse-class.lisp
 
-(in-package #:cl-protest)
+(in-package #:protest)
 
 (defun parse-class (form docstring)
   `(progn

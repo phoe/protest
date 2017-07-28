@@ -1,6 +1,6 @@
 ;;;; test/functions.lisp
 
-(in-package #:cl-protest)
+(in-package #:protest)
 
 (defun analyze-test-steps (steps)
   (let ((result ())
