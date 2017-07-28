@@ -12,6 +12,7 @@
                           #:defgeneric)
   (:export #:define-protocol
            #:define-test-case
+           #:define-test-package
            #:define-test
            #:*protocols*
            #:*test-cases*))
