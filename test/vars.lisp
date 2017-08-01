@@ -22,10 +22,10 @@ Use DEFINE-TEST-PACKAGE first.")
   "Test failure in test ~A, before step 1:~%~A")
 
 (defparameter *failure-after*
-  "Test failure in test ~A, phase ~A, after step ~D: ~S~%~A")
+  "Test failure in test ~A, phase ~A, after step ~D:~%~A~%~A")
 
 (defparameter *failure-during*
-  "Test failure in test ~A, phase ~A, step ~D: ~S~%~A")
+  "Test failure in test ~A, phase ~A, step ~D:~%~A~%~A")
 
 (defparameter *failure-internal*
   "*CURRENT-TEST-STEP* has an illegal value: ~S

@@ -7,6 +7,7 @@
 This is heavily WIP.
 
 ## TODO
+  * Implement :DEPENDENCIES in DEFINE-PROTOCOL.
   * Take care of STYLE-WARNINGs when defining :FUNCTIONs.
   * Ordinary functions are no longer creatable here - :GENERIC is removed and
   instead, :FUNCTION creates a generic function.

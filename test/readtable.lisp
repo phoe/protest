@@ -10,9 +10,9 @@
                "The #? macro must be used inside DEFINE-TEST.")
        (assert (find ,arg *current-step-data* :key #'car) ()
                "Step ~D is not defined in the step data." ,arg)
-       (setf *current-step* ,arg)
-       ,form
-       (setf *current-step* ,(+ arg 1/2)))))
+       (prog2 (setf *current-step* ,arg)
+           ,form
+         (setf *current-step* ,(+ arg 1/2))))))
 
 (defreadtable protest
   (:merge :standard)
