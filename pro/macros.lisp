@@ -8,7 +8,8 @@
     `(progn
        ,@(loop for (form docstring) on forms
                for exportp = (or (eq export t)
-                                 (and (listp export)
+                                 (and export
+                                      (listp export)
                                       (member (second form) export)))
                if (and (listp form)
                        (keywordp (car form))

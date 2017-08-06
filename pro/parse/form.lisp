@@ -4,6 +4,8 @@
 
 (defun choose-function (keyword)
   (ecase keyword
+    (:category #'parse-category)
+    (:option #'parse-option)
     (:class #'parse-class)
     (:variable #'parse-variable)
     (:macro #'parse-macro)

@@ -23,6 +23,7 @@
                (:file "pro/parse/macro")
                (:file "pro/parse/variable")
                (:file "pro/parse/class")
+               (:file "pro/parse/option")
                (:file "pro/parse/form")
                (:file "pro/macros")
                ;; Test case management
