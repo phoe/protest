@@ -10,6 +10,7 @@
                for exportp = (or (eq export t)
                                  (and export
                                       (listp export)
+                                      (listp form)
                                       (member (second form) export)))
                if (and (listp form)
                        (keywordp (car form))
