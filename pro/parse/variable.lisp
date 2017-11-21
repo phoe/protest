@@ -11,3 +11,5 @@
          `((declaim (type ,(second form) ,(first form)))))
      (defvar ,(first form)
        ,@(when (>= (length form) 3) `(,(third form))))))
+
+(pushnew '(:variable #'parse-variable) *categories* :test #'equal)

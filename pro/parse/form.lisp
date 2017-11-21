@@ -2,14 +2,13 @@
 
 (in-package #:protest)
 
+(defvar *categories* '()
+  "Protocol categories parseable by PROTEST.")
+
 (defun choose-function (keyword)
-  (ecase keyword
-    (:category #'parse-category)
-    (:option #'parse-option)
-    (:class #'parse-class)
-    (:variable #'parse-variable)
-    (:macro #'parse-macro)
-    (:function #'parse-function)))
+  (let ((match (find keyword *categories* :key #'first)))
+    (unless match (error "Wrong category: ~S" keyword))
+    (second match)))
 
 (defun validate-name (function-name)
   (cond ((symbolp function-name)

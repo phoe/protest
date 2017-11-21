@@ -49,3 +49,5 @@
      ;;     `((declaim (ftype (function * ,(parse-gfn-result (third form)))
      ;;                       ,(first form)))))
      (defgeneric? ,(first form) ,(parse-gfn-args (second form)))))
+
+(pushnew '(:function #'parse-function) *categories* :test #'equal)

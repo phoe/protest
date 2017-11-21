@@ -10,3 +10,5 @@
      ,@(when docstring
          `((setf (documentation ',(first form) 'type)
                  ,(format nil docstring))))))
+
+(pushnew '(:class #'parse-class) *categories* :test #'equal)
