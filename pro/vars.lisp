@@ -16,3 +16,6 @@ Old slot names: ~S
 New slot names: ~S
 
 If you are sure, (SETF FIND-CLASS) this class to NIL.")
+
+(defvar *categories* '()
+  "Protocol categories parseable by PROTEST.")

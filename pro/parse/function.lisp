@@ -50,4 +50,4 @@
      ;;                       ,(first form)))))
      (defgeneric? ,(first form) ,(parse-gfn-args (second form)))))
 
-(pushnew '(:function #'parse-function) *categories* :test #'equal)
+(pushnew `(:function ,#'parse-function) *categories* :test #'equal)

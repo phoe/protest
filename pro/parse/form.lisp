@@ -2,9 +2,6 @@
 
 (in-package #:protest)
 
-(defvar *categories* '()
-  "Protocol categories parseable by PROTEST.")
-
 (defun choose-function (keyword)
   (let ((match (find keyword *categories* :key #'first)))
     (unless match (error "Wrong category: ~S" keyword))

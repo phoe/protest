@@ -8,4 +8,4 @@
          `((setf (documentation ',(first form) 'function)
                  ,(format nil docstring))))))
 
-(pushnew '(:macro #'parse-macro) *categories* :test #'equal)
+(pushnew `(:macro ,#'parse-macro) *categories* :test #'equal)
