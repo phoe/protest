@@ -7,11 +7,13 @@
   (let ((export (nth-value 1 (get-properties options '(:export)))))
     `(progn
        ,@(loop for (form docstring) on forms
-               for exportp = (or (eq export t)
-                                 (and export
-                                      (listp export)
-                                      (listp form)
-                                      (member (second form) export)))
+               for exportp = (and (listp form)
+                                  (not (eq (first form) :config))
+                                  (or (eq export t)
+                                      (and export
+                                           (listp export)
+                                           (listp form)
+                                           (member (second form) export))))
                if (and (listp form)
                        (keywordp (car form))
                        (stringp docstring))
