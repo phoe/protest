@@ -11,6 +11,7 @@
                           #:defmethod
                           #:defgeneric)
   (:export #:define-protocol
+           #:define-protocol-class
            #:define-test-case
            #:define-test-package
            #:define-test
