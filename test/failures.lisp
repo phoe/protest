@@ -17,5 +17,5 @@
         (or test-step (list step "No description provided for this step." nil))
       (error *failure-during* test-name phase step description error))))
 
-(defun failure-internal (step)
-  (error *failure-internal* step))
+(defun failure-internal (step e)
+  (error *failure-internal* step e))

@@ -24,17 +24,17 @@
           (*current-step-data* (analyze-test-steps (cddr test-case)))
           (*current-step* 0)
           (*current-test* ',test-name))
-     (handler-case
-         (progn ,@test-body)
-       (error (e)
-         (cond
-           ((= *current-step* 0)
-            (failure-before *current-test* e))
-           ((= 1/2 (nth-value 1 (truncate *current-step*)))
-            (failure-after *current-step* *current-step-data*
-                           *current-test* e))
-           ((typep *current-step* 'unsigned-byte)
-            (failure-during *current-step* *current-step-data*
-                            *current-test* e))
-           (t
-            (failure-internal *current-step*)))))))
+     (handler-bind
+         ((error (lambda (e)
+                   (cond
+                     ((= *current-step* 0)
+                      (failure-before *current-test* e))
+                     ((= 1/2 (nth-value 1 (truncate *current-step*)))
+                      (failure-after *current-step* *current-step-data*
+                                     *current-test* e))
+                     ((typep *current-step* 'unsigned-byte)
+                      (failure-during *current-step* *current-step-data*
+                                      *current-test* e))
+                     (t
+                      (failure-internal *current-step* e))))))
+       (progn ,@test-body))))

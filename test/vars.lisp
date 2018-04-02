@@ -29,4 +29,4 @@ Use DEFINE-TEST-PACKAGE first.")
 
 (defparameter *failure-internal*
   "*CURRENT-TEST-STEP* has an illegal value: ~S
-This is an internal CL-PROTEST error.")
+This is an internal CL-PROTEST error.~%~A")
