@@ -85,18 +85,6 @@ operations on these types."))
          (setf (elements ,protocol) ,elements))
        ',name)))
 
-(defun check-duplicate-element-forms (forms)
-  (loop with hash-table = (make-hash-table :test #'equal)
-        for form in forms
-        for type = (first form)
-        for name = (second form)
-        for list = (list type name)
-        when (member type '(:category :config))
-          do (setf (first list) :category-or-config)
-        if (gethash list hash-table)
-          do (protocol-error "Duplicate element form for ~{~S ~S~}." list)
-        else do (setf (gethash list hash-table) t)))
-
 (defun retain-duplicates (list)
   (loop with r = '() for i in list
         if (find i r) collect i else do (push i r)))
@@ -112,8 +100,14 @@ operations on these types."))
         if (and (listp element-form) (stringp string))
           do (embed-documentation element string)))
 
-(defmacro defgeneric? (name lambda-list &body options)
-  (if (or (not (fboundp name))
-          (not (typep (fdefinition name) 'generic-function)))
-      `(defgeneric ,name ,lambda-list ,@options)
-      `(progn)))
+(defun check-duplicate-element-forms (forms)
+  (loop with hash-table = (make-hash-table :test #'equal)
+        for form in forms
+        for type = (first form)
+        for name = (second form)
+        for list = (list type name)
+        when (member type '(:category :config))
+          do (setf (first list) :category-or-config)
+        if (gethash list hash-table)
+          do (protocol-error "Duplicate element form for ~{~S ~S~}." list)
+        else do (setf (gethash list hash-table) t)))

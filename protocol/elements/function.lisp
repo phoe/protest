@@ -66,6 +66,12 @@ The form for a protocol function consists of the following subforms:
         (defgeneric? ,name ,(strip-specializers lambda-list)
           ,@(when documentation `((:documentation ,documentation))))))))
 
+(defmacro defgeneric? (name lambda-list &body options)
+  (if (or (not (fboundp name))
+          (not (typep (fdefinition name) 'generic-function)))
+      `(defgeneric ,name ,lambda-list ,@options)
+      `(progn)))
+
 (defun strip-specializers (lambda-list)
   (loop for sublist on lambda-list
         for element = (car sublist)
