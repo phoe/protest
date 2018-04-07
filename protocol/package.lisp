@@ -6,7 +6,8 @@
         #:named-readtables
         #:protest/base)
   (:shadow #:type)
-  (:export #:protocol
+  (:export #:*protocols* #:*declaim-types*
+           #:protocol #:define-protocol
            #:protocol-element #:protocol-operation #:protocol-data-type
            #:protocol-function #:protocol-macro #:protocol-class
            #:protocol-condition-type #:protocol-variable #:protocol-category
@@ -14,4 +15,4 @@
            #:name #:form #:description #:tags #:dependencies #:exports
            #:elements #:lambda-list #:return-type #:superclasses #:slots
            #:options #:protocol-type #:default-value #:type #:mandatoryp
-           #:define-protocol))
+           #:keyword-types))

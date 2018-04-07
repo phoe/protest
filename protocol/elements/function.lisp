@@ -11,8 +11,18 @@
                  :initform (error "Must provide LAMBDA-LIST."))
    (%return-type :accessor return-type
                  :initarg :return-type
-                 :initform t))
-  (:documentation "Describes a generic function that is a part of a protocol."))
+                 :initform t)
+   (%keyword-types :accessor keyword-types
+                   :initarg :keyword-types
+                   :initform '()))
+  (:documentation "Describes a generic function that is a part of a protocol.
+\
+The form for a protocol function consists of the following subforms:
+* NAME - mandatory, must be a symbol. Denotes the name of the function.
+* LAMBDA-LIST - mandatory, must be a valid lambda list.
+* RETURN-TYPE - optional, must be a valid return type for a function.
+* KEYWORD-TYPES - optional, must be a valid plist containing some or all of the
+  &KEY arguments used in LAMBDA-LIST along with their respective types."))
 
 (defmethod generate-element ((type (eql :function)) &rest form)
   (destructuring-bind (name lambda-list . rest) form
@@ -26,6 +36,9 @@
       (when (<= 3 (length form))
         (let ((return-type (third form)))
           (setf (return-type element) return-type)))
+      (when (<= 4 (length form))
+        (let ((keyword-types (fourth form)))
+          (setf (keyword-types element) keyword-types)))
       element)))
 
 (defmethod embed-documentation ((element protocol-function) (string string))
@@ -39,3 +52,56 @@
                  ,@(unless (eq t return-type)
                      `(,return-type)))
       ,@(when documentation `(,documentation)))))
+
+(defmethod generate-code ((element protocol-function))
+  (with-accessors
+        ((name name) (lambda-list lambda-list)
+         (return-type return-type) (keyword-types keyword-types))
+      element
+    (let ((ftype-args (ftype-args lambda-list keyword-types))
+          (documentation (documentation name 'function)))
+      `(,@(when *declaim-types*
+            `((declaim (ftype (function ,ftype-args ,return-type) ,name))))
+        (defgeneric? ,name ,(strip-specializers lambda-list)
+          ,@(when documentation `((:documentation ,documentation))))))))
+
+(defun strip-specializers (lambda-list)
+  (loop for sublist on lambda-list
+        for element = (car sublist)
+        if (member element lambda-list-keywords)
+          return (nconc elements (list element) (cdr sublist))
+        else if (symbolp element)
+               collect element into elements
+        else if (listp element)
+               collect (car element) into elements
+        finally (return elements)))
+
+(defun ftype-args (lambda-list keyword-types)
+  (loop with keyword = nil
+        with repeatp = t
+        for elt = (pop lambda-list)
+        while repeatp
+        if (null lambda-list)
+          do (setf repeatp nil)
+        if (eq elt '&key)
+          collect elt
+          and do (setf keyword '&key)
+        if (eq elt '&allow-other-keys)
+          collect elt
+        else if (eq elt '&rest)
+               collect '&rest
+               and collect 't
+               and do (pop lambda-list)
+        else if (member elt lambda-list-keywords)
+               do (setf keyword elt)
+        else if (eq keyword '&key)
+               collect (let* ((keyword (make-keyword elt)))
+                         (multiple-value-bind (key value tail)
+                             (get-properties keyword-types (list keyword))
+                           (declare (ignore key))
+                           (list keyword (if tail value 't))))
+        else if (symbolp elt)
+               collect 't
+        else if (listp elt)
+               collect (second elt)
+        else do (error "ftype-args internal error")))

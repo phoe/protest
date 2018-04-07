@@ -59,9 +59,3 @@ directly."))
   (error (make-instance 'simple-protocol-error
                         :format-control format-control
                         :format-arguments args)))
-
-(defmacro defgeneric? (name lambda-list &body options)
-  (if (or (not (fboundp name))
-          (not (typep (fdefinition name) 'generic-function)))
-      `(defgeneric ,name ,lambda-list ,@options)
-      `(progn)))

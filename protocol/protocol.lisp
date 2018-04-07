@@ -2,7 +2,11 @@
 
 (in-package #:protest/protocol)
 
-(defvar *protocols* (make-hash-table))
+(defvar *protocols* (make-hash-table)
+  "A hash-table mapping from protocol names to protocol objects.")
+
+(defvar *declaim-types* t
+  "States if protocols should declaim function and variable types.")
 
 (defclass protocol ()
   ((%name :accessor name
@@ -96,6 +100,11 @@ operations on these types."))
         if (and (listp element-form) (stringp string))
           do (embed-documentation element string)))
 
+(defmacro defgeneric? (name lambda-list &body options)
+  (if (or (not (fboundp name))
+          (not (typep (fdefinition name) 'generic-function)))
+      `(defgeneric ,name ,lambda-list ,@options)
+      `(progn)))
 
 
 
@@ -114,16 +123,6 @@ operations on these types."))
 
 
 
-
-(defclass protocol-macro (protocol-operation)
-  ((%name :accessor name
-          :initarg :name
-          :initform (error "Must provide NAME.")))
-  (:documentation
-   "Describes a protocol macro that is a part of a protocol."))
-
-(defmethod generate-element ((type (eql :macro)) &rest form)
-  (error "not implemented"))
 
 (defclass protocol-class (protocol-data-type)
   ((%name :accessor name

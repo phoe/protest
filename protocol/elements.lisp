@@ -2,6 +2,13 @@
 
 (in-package #:protest/protocol)
 
+;;; Protocol functions
+
+(defgeneric name (protocol-element)
+  (:documentation
+   "Returns the name of the protocol element. The name might be a symbol or a
+list of symbols."))
+
 (defgeneric generate-element (type &rest form)
   (:documentation
    "Given the element type and the rest of the form, attempts to generate and
@@ -18,16 +25,18 @@ string of the given element."))
    "Generates a fresh list of forms that is suitable to be NCONCed with other
 forms to generate a protocol body."))
 
+(defgeneric generate-code (element)
+  (:documentation
+   "Generates a fresh list of forms that is suitable to be NCONCed with other
+forms to generate the Lisp code that is meant to come into effect when the
+protocol is defined."))
+
+;;; Protocol classes
+
 (define-protocol-class protocol-element () ()
   (:documentation "An element of a protocol.
 \
 This class is a protocol class and must not be instantiated directly."))
-
-(defgeneric name (protocol-element))
-
-(defmethod print-object ((object protocol-element) stream)
-  (print-unreadable-object (object stream :type t)
-    (prin1 (name object) stream)))
 
 (define-protocol-class protocol-operation () ()
   (:documentation "An operation belgonging to a protocol.
@@ -38,3 +47,7 @@ This class is a protocol class and must not be instantiated directly."))
   (:documentation "An data type belgonging to a protocol.
 \
 This class is a protocol class and must not be instantiated directly."))
+
+(defmethod print-object ((object protocol-element) stream)
+  (print-unreadable-object (object stream :type t)
+    (prin1 (name object) stream)))
