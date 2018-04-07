@@ -61,7 +61,7 @@ used to denote a form belonging to a given test step.
 ## Usage
 The code below:
 
-```
+```common-lisp
 (in-package :gateway/protocols)
 
 (define-protocol fuelable
