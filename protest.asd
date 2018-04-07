@@ -36,6 +36,8 @@
                (:file "protocol/elements/class")
                (:file "protocol/elements/condition-type")
                (:file "protocol/elements/variable")
+               (:file "protocol/elements/category")
+               (:file "protocol/elements/config")
                (:file "protocol/protocol")))
 
 ;; (asdf:defsystem #:protest

@@ -35,7 +35,6 @@ The form for a protocol configuration entry consists of the following subforms:
 * INITIAL-VALUE - optional. Denotes the default value that the configuration
   entry should have at the moment of defining the protocol. If not passed,
   the value will not be set."))
-;; TODO validate configuration entries against configuration categories
 
 (defmethod generate-element ((type (eql :config)) &rest form)
   (destructuring-bind (name . rest) form
@@ -86,9 +85,11 @@ The form for a protocol configuration entry consists of the following subforms:
   (make-hash-table :test #'equal))
 
 (defmethod documentation ((slotd list) (doc-type (eql 'config)))
-  (gethash slotd *config-documentation-store*))
+  (values (gethash slotd *config-documentation-store*)))
 
 (defmethod (setf documentation)
     (new-value (slotd list) (doc-type (eql 'config)))
-  (setf (gethash slotd *config-documentation-store*) new-value)
+  (if new-value
+      (setf (gethash slotd *config-documentation-store*) new-value)
+      (remhash slotd *config-documentation-store*))
   new-value)

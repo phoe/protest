@@ -38,9 +38,11 @@ subforms:
   (make-hash-table :test #'equal))
 
 (defmethod documentation ((slotd list) (doc-type (eql 'category)))
-  (gethash slotd *category-documentation-store*))
+  (values (gethash slotd *category-documentation-store*)))
 
 (defmethod (setf documentation)
     (new-value (slotd list) (doc-type (eql 'category)))
-  (setf (gethash slotd *category-documentation-store*) new-value)
+  (if new-value
+      (setf (gethash slotd *category-documentation-store*) new-value)
+      (remhash slotd *category-documentation-store*))
   new-value)

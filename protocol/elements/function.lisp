@@ -105,4 +105,4 @@ The form for a protocol function consists of the following subforms:
                collect 't
         else if (listp elt)
                collect (second elt)
-        else do (error "ftype-args internal error")))
+        else do (protocol-error "ftype-args internal error")))
