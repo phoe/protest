@@ -83,6 +83,8 @@ operations on these types."))
          (warn "Redefining ~A in DEFINE-PROTOCOL" ',name)))
      (setf (gethash ',name *protocols*) protocol)
      (generate-elements protocol elements)
+     ;; TODO check uniqueness of element names
+     ;; TODO assign elements to protocol
      ',name))
 
 (defun retain-duplicates (list)
@@ -105,50 +107,3 @@ operations on these types."))
           (not (typep (fdefinition name) 'generic-function)))
       `(defgeneric ,name ,lambda-list ,@options)
       `(progn)))
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-(defclass protocol-category (protocol-data-type)
-  ((%name :accessor name
-          :initarg :name
-          :initform (error "Must provide NAME.")))
-  (:documentation
-   "Describes a protocol configuration category that is a part of a protocol."))
-
-(defmethod generate-element ((type (eql :category)) &rest form)
-  (error "not implemented"))
-
-(defclass protocol-config (protocol-data-type)
-  ((%name :accessor name
-          :initarg :name
-          :initform (error "Must provide NAME."))
-   (%type :accessor type
-          :initarg :type
-          :initform t)
-   (%mandatoryp :accessor mandatoryp
-                :initarg :mandatoryp
-                :initform nil)
-   (%default-value :accessor default-value
-                   :initarg :default-value))
-  (:documentation
-   "Describes a protocol configuration entry that is a part of a protocol."))
-
-(defmethod generate-element ((type (eql :config)) &rest form)
-  (error "not implemented"))

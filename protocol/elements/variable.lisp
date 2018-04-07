@@ -17,9 +17,10 @@
 The form for a protocol variable consists of the following subforms:
 * NAME - mandatory, must be a symbol. Denotes the name of the variable.
 * TYPE - optional, must be a valid type specifier. Denotes the type of the value
-  bound to the variable. If not passed, the variable will be unbound.
+  bound to the variable. If not passed, the variable type will not be declaimed.
 * INITIAL-VALUE - optional. Denotes the default value that the variable will
-  have at the moment of defining the protocol."))
+  have at the moment of defining the protocol. If not passed, the variable will
+  be unbound."))
 
 (defmethod generate-element ((type (eql :variable)) &rest form)
   (destructuring-bind (name . rest) form
