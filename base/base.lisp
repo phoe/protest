@@ -1,4 +1,4 @@
-;;;; util/util.lisp
+;;;; base/base.lisp
 
 (defpackage #:protest/base
   (:use #:common-lisp
@@ -9,7 +9,10 @@
                           #:defmethod
                           #:defgeneric)
   (:export #:define-protocol-class
-           #:define-protocol-condition-type))
+           #:define-protocol-condition-type
+           #:protocol-error
+           #:protocol-object-instantiation
+           #:simple-protocol-error))
 
 (in-package #:protest/base)
 
@@ -30,22 +33,35 @@ directly."
      ;; TODO test this, especially on SBCL
      (defmethod initialize-instance :before ((object ,name) &key)
        (when (eq (class-of object) (find-class ',name))
-         (error ,(format nil "~S is a protocol ~A and thus cannot be ~
-instantiated." name string))))
+         (error (make-condition 'protocol-object-instantiation
+                                :symbol ',name :type ,string))))
      ',name))
+
+(define-protocol-condition-type protocol-error (error) ()
+  (:documentation
+   "The parent condition type for all protocol errors.
+\
+This condition type is a protocol condition type and must not be instantiated
+directly."))
+
+(define-condition protocol-object-instantiation (protocol-error)
+  ((symbol :initarg :symbol :reader protocol-error-symbol)
+   (type :initarg :type :reader protocol-error-type))
+  (:report
+   (lambda (condition stream)
+     (format stream "~S is a protocol ~A and thus cannot be instantiated."
+             (protocol-error-symbol condition)
+             (protocol-error-type condition)))))
+
+(define-condition simple-protocol-error (protocol-error simple-condition) ())
+
+(defun protocol-error (format-control &rest args)
+  (error (make-instance 'simple-protocol-error
+                        :format-control format-control
+                        :format-arguments args)))
 
 (defmacro defgeneric? (name lambda-list &body options)
   (if (or (not (fboundp name))
           (not (typep (fdefinition name) 'generic-function)))
       `(defgeneric ,name ,lambda-list ,@options)
       `(progn)))
-
-(defun test-protocol-class-instantiate ()
-  (unwind-protect
-       (define-protocol-class #1=#.(gensym) () ())
-    (setf (find-class '#1#) nil)))
-
-(defun test-protocol-condition-type-instantiate ()
-  (unwind-protect
-       (define-protocol-condition-type #1=#.(gensym) () ())
-    (setf (find-class '#1#) nil)))

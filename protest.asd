@@ -6,7 +6,7 @@
   :license "LLGPL"
   :serial t
   :depends-on (#:protest/base
-               ;; #:protest/protocol
+               #:protest/protocol
                ;; #:protest/test-case
                ;; #:protest/web
                )
@@ -18,9 +18,21 @@
   :license "LLGPL"
   :serial t
   :depends-on (#:alexandria
-               #:closer-mop
-               #:1am)
-  :components ((:file "base/base")))
+               #:closer-mop)
+  :components ((:file "base/base")
+               (:file "base/test")))
+
+(asdf:defsystem #:protest/protocol
+  :description "Protocol defining utilities for PROTEST"
+  :author "Michał \"phoe\" Herda <phoe@openmailbox.org>"
+  :license "LLGPL"
+  :serial t
+  :depends-on (#:alexandria
+               #:named-readtables)
+  :components ((:file "protocol/package")
+               (:file "protocol/elements")
+               (:file "protocol/elements/function")
+               (:file "protocol/protocol")))
 
 ;; (asdf:defsystem #:protest
 ;;   :description "Common Lisp PROtocol and TESTcase Manager"
