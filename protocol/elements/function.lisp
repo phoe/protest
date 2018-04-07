@@ -18,7 +18,8 @@
   (:documentation "Describes a generic function that is a part of a protocol.
 \
 The form for a protocol function consists of the following subforms:
-* NAME - mandatory, must be a symbol. Denotes the name of the function.
+* NAME - mandatory, must be a symbol or a (SETF symbol) form. Denotes the name
+  of the function.
 * LAMBDA-LIST - mandatory, must be a valid lambda list.
 * RETURN-TYPE - optional, must be a valid return type for a function.
 * KEYWORD-TYPES - optional, must be a valid plist containing some or all of the

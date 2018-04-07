@@ -32,6 +32,10 @@
   :components ((:file "protocol/package")
                (:file "protocol/elements")
                (:file "protocol/elements/function")
+               (:file "protocol/elements/macro")
+               (:file "protocol/elements/class")
+               (:file "protocol/elements/condition-type")
+               (:file "protocol/elements/variable")
                (:file "protocol/protocol")))
 
 ;; (asdf:defsystem #:protest

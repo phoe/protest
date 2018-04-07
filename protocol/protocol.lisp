@@ -124,58 +124,6 @@ operations on these types."))
 
 
 
-(defclass protocol-class (protocol-data-type)
-  ((%name :accessor name
-          :initarg :name
-          :initform (error "Must provide NAME."))
-   (%superclasses :accessor superclasses
-                  :initarg :superclasses
-                  :initform '())
-   (%slots :accessor slots
-           :initarg :slots
-           :initform '())
-   (%options :accessor options
-             :initarg :options
-             :initform '()))
-  (:documentation
-   "Describes a protocol class that is a part of a protocol."))
-
-(defmethod generate-element ((type (eql :class)) &rest form)
-  (error "not implemented"))
-
-(defclass protocol-condition-type (protocol-data-type)
-  ((%name :accessor name
-          :initarg :name
-          :initform (error "Must provide NAME."))
-   (%supertypes :accessor supertypes
-                :initarg :supertypes
-                :initform '())
-   (%slots :accessor slots
-           :initarg :slots
-           :initform '())
-   (%options :accessor options
-             :initarg :options
-             :initform '()))
-  (:documentation
-   "Describes a protocol condition type that is a part of a protocol."))
-
-(defmethod generate-element ((type (eql :condition-type)) &rest form)
-  (error "not implemented"))
-
-(defclass protocol-variable (protocol-data-type)
-  ((%name :accessor name
-          :initarg :name
-          :initform (error "Must provide NAME."))
-   (%type :accessor type
-          :initarg :type
-          :initform t)
-   (%default-value :accessor default-value
-                   :initarg :default-value))
-  (:documentation
-   "Describes a protocol variable that is a part of a protocol."))
-
-(defmethod generate-element ((type (eql :variable)) &rest form)
-  (error "not implemented"))
 
 (defclass protocol-category (protocol-data-type)
   ((%name :accessor name
