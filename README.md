@@ -4,7 +4,50 @@
 
 # Common Lisp PROtocol and TESTcase manager
 
-This is heavily WIP.
+PROTEST is a tool for defining protocols and test cases.
+
+For a formal definition of a protocol, see the related work by
+[Robert Strandh](http://metamodular.com/protocol.pdf).
+
+## Protocol
+
+PROTEST implements the concept of a protocol with operations being defined as
+generic functions and macros, and data types being protocol classes, protocol
+condition types, and special variables.
+
+Protocol classes and protocol condition types are instances of Common Lisp
+classes and condition types, respectively, except they must not be instantiated
+directly by client code. Users of these classes must instead create subclasses
+of these protocol classes or subtypes of these protocol condition types in order
+for them to participate in the protocol. For utility, PROTEST also describes
+configuration categories and entries, defined as list of keywords and
+non-keyword symbols, along with the value that each configuration entry is
+allowed to take.
+
+A protocol in PROTEST consists of metadata about a given protocol, such as
+description and tags, and a series of protocol element definitions.
+
+Each element of the protocol is described by a form whose first element is the
+keyword denoting the type of a given element.
+
+## Test case
+
+PROTEST implements the concept of a test case as an object describing the flow
+of a test.
+
+A test case in PROTEST consists of three elements: metadata about a
+given test phase, such as description and tags, test phases (denoted by
+keywords), and test steps (denoted by numbers and strings). PROTEST also
+implements the concept of a test that is an instance of the given test case.
+
+Each phase is required to be a keyword. These are meant to describe the group of
+test steps that come afterwards it.
+
+Each step is required to consist of a positive integers (in order) and a string
+description of the step.
+
+Inside a test body, the reader macro `#N?` with a numerical argument may be
+used to denote a form belonging to a given test step.
 
 ## TODO
   * Implement :DEPENDENCIES in DEFINE-PROTOCOL.
@@ -18,43 +61,51 @@ This is heavily WIP.
 ## Usage
 The code below:
 
-```lisp
-;;;; Example test case and protocol.
-
-(define-protocol wiggler ()
-  (:class wiggler () ())
-  "An object that is able to wiggle."
-  (:variable *wiggler* t nil)
-  "A dynamic variable denoting the current active wiggler."
-  (:macro with-wiggler)
-  "A wrapper macro that binds *WIGGLER* to the value of WIGGLER."
-  (:function make-wiggler ((type (or class symbol))) (wiggler wiggler))
-  "A constructor function that makes a wiggler of given type."
-  (:generic wiggle ((wiggler wiggler) (object fist)) (values))
-  "Wiggles inside target object.")
-
-(define-protocol killable ()
-  (:class killable () ())
-  "A killable object is something that lives and can therefore be killed."
-  (:generic alivep ((object killable)) :generalized-boolean)
-  "Returns true if the object is alive (was not killed) and false otherwise."
-  (:generic kill ((object killable)) (values))
-  "Kills the object.")
-
-(define-protocol fist ()
-  (:class fist (killable) ())
-  "A fist is something that can squeeze around objects and hold them ~
-despite any wiggling. If a fist dies, then it is possible to wiggle ~
-out of it."
-  (:generic squeeze ((object fist)) :generalized-boolean)
-  "Squeezes the fist.
-Returns true if the first was not previously squeezed and false otherwise."
-  (:generic unsqueeze ((object fist)) :generalized-boolean)
-  "Unsqueezes the fist.
-Returns true if the first was previously squeezed and false otherwise."
-  (:generic wigglep ((object fist)) :generalized-boolean)
-  "Checks if anything wiggled inside the fist since its last squeeze.")
 ```
+(in-package :gateway/protocols)
+
+(define-protocol fuelable
+    (:description "Defines objects which have a fuel tank and must be refueled
+to function."
+     :tags (:industrial :electricity :coal :oil)
+     :export t)
+  (:function fuel ((object fuelable)) real)
+  "Returns the current amount of fuel in the fuelable."
+  (:function (setf fuel) ((new-value real) (object-fuelable)) real)
+  "Sets the current amount of fuel in the fuelable.")
+
+(define-protocol car
+    (:description "Defines objects which are able to move forward by means of an
+engine and can hold people and luggage."
+     :tags (:industrial :machine)
+     :dependencies (fuelable)
+     :export t)
+  (:class car (fuelable) ())
+  "A car object. Objects participaring in this protocol must subclass this
+protocol class."
+  (:function brand ((object car)) keyword)
+  "Returns the brand of a car."
+  (:function (setf brand) ((new-value keyword) (object car)) keyword)
+  "Sets the brand of a car."
+  (:function drive ((object car) (distance real) &optional env) (values))
+  "Drives a given distance with the given car. If ENV is supplied, the drive
+occurs in that environment."
+  (:macro with-snow-tires ((tire-brand) &body body))
+  "Executes the body with snow tires on all cars, therefore diminishing chances
+of an accident in snow environment."
+  (:variable *accident-chance* (float 0.0 1.0) 0.005)
+  "The chance of an accident per 100 kilometers. This variable is expected to
+be rebound when the environment changes."
+  (:category :car)
+  "Describes configuration entries related to all cars in general."
+  (:config (:car :maximum-lead-per-100-kilometers) (float 0.0) :optional 0.0005)
+  "Describes how many grams of lead an engine is allowed to output after driving
+for 100 kilometers."
+  (:category :car :steering)
+  "Describes configuration entries related to the cars' steering."
+  (:config (:car :steering :wheel-side) (member :left :right :any) :mandatory)
+  "Describes if the cars must have steering wheels on left or right side.")
+  ```
 
 Produces the following effects:
 

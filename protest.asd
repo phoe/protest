@@ -3,35 +3,57 @@
 (asdf:defsystem #:protest
   :description "Common Lisp PROtocol and TESTcase Manager"
   :author "Michał \"phoe\" Herda <phoe@openmailbox.org>"
-  :license "MIT 2-Clause"
+  :license "LLGPL"
+  :serial t
+  :depends-on (#:protest/base
+               ;; #:protest/protocol
+               ;; #:protest/test-case
+               ;; #:protest/web
+               )
+  :components ((:file "package")))
+
+(asdf:defsystem #:protest/base
+  :description "Base macros and utilities for PROTEST"
+  :author "Michał \"phoe\" Herda <phoe@openmailbox.org>"
+  :license "LLGPL"
   :serial t
   :depends-on (#:alexandria
                #:closer-mop
-               #:cl-who
-               #:ningle
-               #:clack
-               #:1am
-               #:named-readtables
-               #:uiop)
-  :components (;; General data
-               (:file "util/package")
-               (:file "util/util")
-               ;; Protocol management
-               (:file "pro/vars")
-               (:file "pro/verify-class")
-               (:file "pro/parse/function")
-               (:file "pro/parse/macro")
-               (:file "pro/parse/variable")
-               (:file "pro/parse/class")
-               (:file "pro/parse/option")
-               (:file "pro/parse/config")
-               (:file "pro/parse/form")
-               (:file "pro/macros")
-               ;; Test case management
-               (:file "test/vars")
-               (:file "test/failures")
-               (:file "test/readtable")
-               (:file "test/functions")
-               (:file "test/macros")
-               ;; HTML generation
-               (:file "web/web")))
+               #:1am)
+  :components ((:file "base/base")))
+
+;; (asdf:defsystem #:protest
+;;   :description "Common Lisp PROtocol and TESTcase Manager"
+;;   :author "Michał \"phoe\" Herda <phoe@openmailbox.org>"
+;;   :license "MIT 2-Clause"
+;;   :serial t
+;;   :depends-on (#:alexandria
+;;                #:closer-mop
+;;                #:cl-who
+;;                #:ningle
+;;                #:clack
+;;                #:1am
+;;                #:named-readtables
+;;                #:uiop)
+;;   :components (;; General data
+;;                (:file "_old/util/package")
+;;                (:file "_old/util/util")
+;;                ;; Protocol management
+;;                (:file "_old/pro/vars")
+;;                (:file "_old/pro/verify-class")
+;;                (:file "_old/pro/parse/function")
+;;                (:file "_old/pro/parse/macro")
+;;                (:file "_old/pro/parse/variable")
+;;                (:file "_old/pro/parse/class")
+;;                (:file "_old/pro/parse/option")
+;;                (:file "_old/pro/parse/config")
+;;                (:file "_old/pro/parse/form")
+;;                (:file "_old/pro/macros")
+;;                ;; Test case management
+;;                (:file "_old/test/vars")
+;;                (:file "_old/test/failures")
+;;                (:file "_old/test/readtable")
+;;                (:file "_old/test/functions")
+;;                (:file "_old/test/macros")
+;;                ;; HTML generation
+;;                (:file "_old/web/web")))
