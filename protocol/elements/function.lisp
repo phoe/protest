@@ -11,7 +11,7 @@
                  :initform (error "Must provide LAMBDA-LIST."))
    (%return-type :accessor return-type
                  :initarg :return-type
-                 :initform t)
+                 :initform '*)
    (%keyword-types :accessor keyword-types
                    :initarg :keyword-types
                    :initform '()))
@@ -21,7 +21,8 @@ The form for a protocol function consists of the following subforms:
 * NAME - mandatory, must be a symbol or a (SETF symbol) form. Denotes the name
   of the function.
 * LAMBDA-LIST - mandatory, must be a valid lambda list.
-* RETURN-TYPE - optional, must be a valid return type for a function.
+* RETURN-TYPE - optional, must be a valid return type for a function. If not
+  specified, defaults to the symbol CL:*.
 * KEYWORD-TYPES - optional, must be a valid plist containing some or all of the
   &KEY arguments used in LAMBDA-LIST along with their respective types."))
 

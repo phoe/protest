@@ -7,6 +7,8 @@
 argument is the configuration entry name and the second is the value that should
 be set to it.")
 
+(defvar *compile-time-known-protocols*)
+
 (defclass protocol-config (protocol-data-type)
   ((%name :accessor name
           :initarg :name

@@ -48,6 +48,10 @@ This class is a protocol class and must not be instantiated directly."))
 \
 This class is a protocol class and must not be instantiated directly."))
 
+(defmethod make-load-form ((object protocol-element) &optional environment)
+  (declare (ignore environment))
+  (make-load-form-saving-slots object))
+
 (defmethod print-object ((object protocol-element) stream)
   (print-unreadable-object (object stream :type t)
     (prin1 (name object) stream)))

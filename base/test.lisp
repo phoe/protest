@@ -2,12 +2,15 @@
 
 (in-package #:protest/base)
 
-(defun test ()
-  (mapc #'funcall
-        '(test-protocol-class-define
-          test-protocol-class-instantiate
-          test-protocol-condition-type-define
-          test-protocol-condition-type-instantiate))
+(defun run-tests (&optional (package *package*))
+  (mapc (compose #'funcall #'print)
+        (uiop:while-collecting (collect)
+          (do-symbols (symbol package)
+            (let ((name (symbol-name symbol)))
+              (when (and (<= 5 (length name))
+                         (string= "TEST-" (subseq name 0 5))
+                         (fboundp symbol))
+                (collect symbol))))))
   (values))
 
 (defun test-protocol-class-define ()
