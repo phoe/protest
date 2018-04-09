@@ -26,11 +26,11 @@
   (let ((body (make-test-function test-name body)))
     (multiple-value-bind (package foundp)
         (gethash (symbol-package test-name) *test-packages*)
+      (unless foundp
+        (error *test-package-not-found* (symbol-package test-name)))
       `(progn
          (unless (find ',test-name *test-cases* :key #'car)
            (error *test-case-not-found* ',test-name))
-         ,(unless foundp
-            `(error *test-package-not-found* (symbol-package test-name)))
          ,(let ((symbol (intern (symbol-name test-name) package)))
             (export symbol package)
             `(test ,symbol ,body))))))
