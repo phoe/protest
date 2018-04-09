@@ -110,13 +110,36 @@
       (setf (documentation '#1# 'category) nil))))
 
 (defun test-protocol-define-class ()
-  (warn "Test not implemented yet."))
+  (with-test (t)
+    (unwind-protect
+         (progn (define-protocol #.(gensym) ()
+                  (:class #1=#.(gensym) () ())
+                  #2="qwer")
+                (assert (string= #2# (documentation '#1# 'cl:type))))
+      (setf (documentation '#1# 'category) nil
+            (find-class '#1#) nil))))
 
 (defun test-protocol-define-condition-type ()
-  (warn "Test not implemented yet."))
+  (with-test (t)
+    (unwind-protect
+         (progn (define-protocol #.(gensym) ()
+                  (:condition-type #1=#.(gensym) () ())
+                  #2="qwer")
+                (assert (string= #2# (documentation '#1# 'cl:type))))
+      (setf (documentation '#1# 'category) nil
+            (find-class '#1#) nil))))
 
 (defun test-protocol-define-config ()
-  (warn "Test not implemented yet."))
+  (with-test (t)
+    (let* ((variable nil)
+           (*configuration-setter*
+             (lambda (x y) (declare (ignore x y)) (setf variable t))))
+      (unwind-protect
+           (progn (define-protocol #.(gensym) ()
+                    (:config #1=(:foo :bar) string :mandatory "a")
+                    #2="qwer")
+                  (assert (string= #2# (documentation '#1# 'config))))
+        (setf (documentation '#1# 'config) nil)))))
 
 (defun test-protocol-define-function ()
   (warn "Test not implemented yet."))

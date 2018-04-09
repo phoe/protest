@@ -7,7 +7,7 @@
 argument is the configuration entry name and the second is the value that should
 be set to it.")
 
-(defvar *compile-time-known-protocols*)
+;; TODO configuration getter or something
 
 (defclass protocol-config (protocol-data-type)
   ((%name :accessor name
@@ -80,8 +80,8 @@ The form for a protocol configuration entry consists of the following subforms:
 
 (defmethod generate-code ((element protocol-config))
   (if (slot-boundp element '%initial-value)
-      `(funcall *configuration-setter*
-                ,(name element) ,(initial-value element))
+      `((funcall *configuration-setter*
+                 ',(name element) ,(initial-value element)))
       '()))
 
 (defvar *config-documentation-store*

@@ -16,7 +16,8 @@ The form of a protocol macro consists of the following subforms:
 * NAME - mandatory, must be a symbol. Denotes the name of the macro.
 * LAMBDA-LIST - mandatory, must be a valid macro lambda list."))
 
-(defmethod generate-element ((type (eql :macro)) &rest form)
+(defmethod generate-element ((type (eql :macro)) form &optional declaim-type-p)
+  (declare (ignore declaim-type-p))
   (destructuring-bind (name lambda-list . rest) form
     (declare (ignore rest))
     (assert (and (not (null name)) (symbolp name))
