@@ -57,9 +57,9 @@ The form for a protocol variable consists of the following subforms:
         ((name name) (type type) (initial-value initial-value))
       element
     (let ((documentation (documentation name 'variable)))
-      `(,@(when (and (declaim-type-p element) (not (eq type 't)))
-            `((declaim (cl:type ,type ,name))))
-        (defvar ,name ,@(when (slot-boundp element '%initial-value)
+      `((defvar ,name ,@(when (slot-boundp element '%initial-value)
                           `(,(initial-value element))))
+        ,@(when (and (declaim-type-p element) (not (eq type 't)))
+            `((declaim (cl:type ,type ,name))))
         ,@(when documentation
             `((setf (documentation ',name 'variable) ,documentation)))))))

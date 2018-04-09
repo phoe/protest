@@ -103,9 +103,10 @@
 
 (defun test-protocol-define-category ()
   (with-test (t)
-    (unwind-protect (progn (define-protocol #.(gensym) ()
-                             (:category #1=(:foo :bar)) #2="qwer")
-                           (assert (string= #2# (documentation '#1# 'category))))
+    (unwind-protect
+         (progn (define-protocol #.(gensym) ()
+                  (:category #1=(:foo :bar)) #2="qwer")
+                (assert (string= #2# (documentation '#1# 'category))))
       (setf (documentation '#1# 'category) nil))))
 
 (defun test-protocol-define-class ()
