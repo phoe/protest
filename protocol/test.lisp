@@ -4,24 +4,27 @@
 
 ;; TODO undoing variables/functions/classes
 (defmacro with-test ((success-expected-p) &body body)
-  (with-gensyms (function)
+  (with-gensyms (function warnp failp)
     `(tagbody
       :start
         (multiple-value-prog1 (values)
           (handler-case
               (let* ((*error-output* (make-broadcast-stream))
                      (*protocols* (make-hash-table))
-                     (*compile-time-protocols* (make-hash-table))
-                     (,function (compile nil '(lambda () ,@body))))
-                (funcall ,function)
-                (go ,(if success-expected-p :end :fail)))
-            (error (e)
+                     (*compile-time-protocols* (make-hash-table)))
+                (multiple-value-bind (,function ,warnp ,failp)
+                    (compile nil '(lambda () ,@body))
+                  (declare (ignore ,warnp))
+                  (when ,failp
+                    (go ,(if success-expected-p :fail :end)))
+                  (funcall ,function)
+                  (go :end)))
+            (protocol-error (e)
               (declare (ignorable e))
               ,(if success-expected-p
                    `(error "Test failure: unexpected failure:~%~A" e)
                    `(go :end)))))
-      :fail
-        (error "Test failure: unexpected success.")
+      :fail (error "Test failure: unexpected success.")
       :end)))
 
 (defun test-protocol-define-empty ()
@@ -114,7 +117,7 @@
                   (:class #1=#.(gensym) () ())
                   #2="qwer")
                 (assert (string= #2# (documentation '#1# 'cl:type))))
-      (setf (documentation '#1# 'category) nil
+      (setf (documentation '#1# 'cl:type) nil
             (find-class '#1#) nil))))
 
 (defun test-protocol-define-condition-type ()
@@ -124,7 +127,7 @@
                   (:condition-type #1=#.(gensym) () ())
                   #2="qwer")
                 (assert (string= #2# (documentation '#1# 'cl:type))))
-      (setf (documentation '#1# 'category) nil
+      (setf (documentation '#1# 'cl:type) nil
             (find-class '#1#) nil))))
 
 (defun test-protocol-define-config ()
