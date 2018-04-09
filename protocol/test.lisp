@@ -15,13 +15,11 @@
                      (,function (compile nil '(lambda () ,@body))))
                 (funcall ,function)
                 (go ,(if success-expected-p :end :fail)))
-            (protocol-error (e)
+            (error (e)
               (declare (ignorable e))
               ,(if success-expected-p
                    `(error "Test failure: unexpected failure:~%~A" e)
-                   `(go :end)))
-            (error (e)
-              (error "Test failure: unexpected failure:~%~A" e))))
+                   `(go :end)))))
       :fail
         (error "Test failure: unexpected success.")
       :end)))
