@@ -10,7 +10,9 @@
           :initarg :type
           :initform t)
    (%initial-value :accessor initial-value
-                   :initarg :initial-value))
+                   :initarg :initial-value)
+   (%declaim-type-p :accessor declaim-type-p
+                    :initform t))
   (:documentation
    "Describes a protocol variable that is a part of a protocol.
 \
@@ -22,12 +24,14 @@ The form for a protocol variable consists of the following subforms:
   have at the moment of defining the protocol. If not passed, the variable will
   be unbound."))
 
-(defmethod generate-element ((type (eql :variable)) &rest form)
+(defmethod generate-element
+    ((type (eql :variable)) form &optional (declaim-type-p t))
   (destructuring-bind (name . rest) form
     (declare (ignore rest))
     (assert (and (not (null name)) (symbolp name))
             () "Wrong thing to be a variable name: ~S" name)
     (let ((element (make-instance 'protocol-variable :name name)))
+      (setf (declaim-type-p element) declaim-type-p)
       (when (<= 2 (length form))
         (let ((type (second form)))
           (setf (type element) type)))
@@ -53,7 +57,7 @@ The form for a protocol variable consists of the following subforms:
         ((name name) (type type) (initial-value initial-value))
       element
     (let ((documentation (documentation name 'variable)))
-      `(,@(when (and *declaim-types* (not (eq type 't)))
+      `(,@(when (and (declaim-type-p element) (not (eq type 't)))
             `((declaim (cl:type ,type ,name))))
         (defvar ,name ,@(when (slot-boundp element '%initial-value)
                           `(,(initial-value element))))

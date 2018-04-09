@@ -9,11 +9,12 @@
    "Returns the name of the protocol element. The name might be a symbol or a
 list of symbols."))
 
-(defgeneric generate-element (type &rest form)
+(defgeneric generate-element (type form &optional declaim-type-p)
   (:documentation
    "Given the element type and the rest of the form, attempts to generate and
 return a matching protocol element. Signals PROTOCOL-ERROR if the generation
-fails."))
+fails. The argument DECLAIM-TYPE-P states if the types of functions and
+variables should be declaimed; it may be ignored by the method."))
 
 (defgeneric embed-documentation (element string)
   (:documentation
@@ -25,7 +26,7 @@ string of the given element."))
    "Generates a fresh list of forms that is suitable to be NCONCed with other
 forms to generate a protocol body."))
 
-(defgeneric generate-code (element)
+(defgeneric generate-code (object)
   (:documentation
    "Generates a fresh list of forms that is suitable to be NCONCed with other
 forms to generate the Lisp code that is meant to come into effect when the

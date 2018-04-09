@@ -29,7 +29,9 @@ The form for a protocol condition type consists of the following subforms:
 * OPTIONS - optional, is the tail of the list. Denotes the options that will
   be passed to DEFINE-CONDITION."))
 
-(defmethod generate-element ((type (eql :condition-type)) &rest form)
+(defmethod generate-element
+    ((type (eql :condition-type)) form &optional declaim-type-p)
+  (declare (ignore declaim-type-p))
   (destructuring-bind (name supertypes slots . options) form
     (assert (and (not (null name)) (symbolp name))
             () "Wrong thing to be a condition type name: ~S" name)

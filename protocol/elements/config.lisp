@@ -38,7 +38,8 @@ The form for a protocol configuration entry consists of the following subforms:
   entry should have at the moment of defining the protocol. If not passed,
   the value will not be set."))
 
-(defmethod generate-element ((type (eql :config)) &rest form)
+(defmethod generate-element ((type (eql :config)) form &optional declaim-type-p)
+  (declare (ignore declaim-type-p))
   (destructuring-bind (name . rest) form
     (declare (ignore rest))
     (assert (every #'keywordp name)

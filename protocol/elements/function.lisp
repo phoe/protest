@@ -14,7 +14,9 @@
                  :initform '*)
    (%keyword-types :accessor keyword-types
                    :initarg :keyword-types
-                   :initform '()))
+                   :initform '())
+   (%declaim-type-p :accessor declaim-type-p
+                    :initform t))
   (:documentation "Describes a generic function that is a part of a protocol.
 \
 The form for a protocol function consists of the following subforms:
@@ -26,7 +28,8 @@ The form for a protocol function consists of the following subforms:
 * KEYWORD-TYPES - optional, must be a valid plist containing some or all of the
   &KEY arguments used in LAMBDA-LIST along with their respective types."))
 
-(defmethod generate-element ((type (eql :function)) &rest form)
+(defmethod generate-element
+    ((type (eql :function)) form &optional (declaim-type-p t))
   (destructuring-bind (name lambda-list . rest) form
     (declare (ignore rest))
     (assert (or (and (not (null name)) (symbolp name))
@@ -35,6 +38,7 @@ The form for a protocol function consists of the following subforms:
     (parse-ordinary-lambda-list lambda-list :allow-specializers t)
     (let ((element (make-instance 'protocol-function :name name
                                                      :lambda-list lambda-list)))
+      (setf (declaim-type-p element) declaim-type-p)
       (when (<= 3 (length form))
         (let ((return-type (third form)))
           (setf (return-type element) return-type)))
@@ -62,7 +66,7 @@ The form for a protocol function consists of the following subforms:
       element
     (let ((ftype-args (ftype-args lambda-list keyword-types))
           (documentation (documentation name 'function)))
-      `(,@(when *declaim-types*
+      `(,@(when (declaim-type-p element)
             `((declaim (ftype (function ,ftype-args ,return-type) ,name))))
         (defgeneric? ,name ,(strip-specializers lambda-list)
           ,@(when documentation `((:documentation ,documentation))))))))

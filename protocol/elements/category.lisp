@@ -15,7 +15,9 @@ subforms:
   configuration category. The name of configuration entries and configuration
   categories must not collide with each other."))
 
-(defmethod generate-element ((type (eql :category)) &rest form)
+(defmethod generate-element
+    ((type (eql :category)) form &optional declaim-type-p)
+  (declare (ignore declaim-type-p))
   (destructuring-bind (name) form
     (assert (every #'keywordp name)
             () "Wrong thing to be a configuration category name: ~A" name)
