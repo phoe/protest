@@ -21,7 +21,7 @@
                else if (and (listp form)
                             (keywordp (car form)))
                       collect (parse-form form nil exportp))
-       (let ((data (remove-strings (cdr ',whole)))
+       (let ((data (remove-if #'stringp (cdr ',whole)))
              (value (find ',protocol-name *protocols* :key #'car)))
          (unless (equal data value)
            (when value
