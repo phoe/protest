@@ -14,14 +14,35 @@
                (multiple-value-bind (,function ,warnp ,failp)
                    (compile nil '(lambda () ,@body))
                  (declare (ignore ,warnp))
-                 (cond ((null ,failp)
-                        (funcall ,function))
-                       (,success-expected-p
-                        (error "Test failure: unexpected success.")))))
+                 (when (null ,failp)
+                   (funcall ,function)
+                   (when (not ,success-expected-p)
+                     (error "Test failure: unexpected success.")))))
            (protocol-error (e)
              (declare (ignorable e))
-             ,(when success-expected-p
-                `(error "Test failure: unexpected failure:~%~A" e))))))))
+             (when ,success-expected-p
+               (error "Test failure: unexpected failure of type ~S:~%~A"
+                      (type-of e) e))))))))
+
+(defun test-framework-expected-success ()
+  (with-test (t)))
+
+(defun test-framework-expected-failure ()
+  (with-test (nil) (error 'simple-protocol-error)))
+
+(defun test-framework-unexpected-success ()
+  (tagbody (handler-case (progn (with-test (nil)) (go :fail))
+             (error () (go :ok)))
+   :fail (error "fail")
+   :ok)
+  (values))
+
+(defun test-framework-unexpected-failure ()
+  (tagbody (handler-case (with-test (t) (error 'simple-protocol-error))
+             ((and error (not protocol-error)) () (go :ok)))
+   :fail (error "fail")
+   :ok)
+  (values))
 
 (defun test-protocol-define-empty ()
   (with-test (t)
@@ -112,9 +133,18 @@
          (progn (define-protocol #.(gensym) ()
                   (:class #1=#.(gensym) () ())
                   #2="qwer")
+                (assert (find-class '#1#))
                 (assert (string= #2# (documentation '#1# 'cl:type))))
       (setf (documentation '#1# 'cl:type) nil
             (find-class '#1#) nil))))
+
+(defun test-protocol-define-class-instantiate ()
+  (with-test (nil)
+    (unwind-protect
+         (progn (define-protocol #.(gensym) ()
+                  (:class #1=#.(gensym) () ()))
+                (make-instance (find-class '#1#)))
+      (setf (find-class '#1#) nil))))
 
 (defun test-protocol-define-condition-type ()
   (with-test (t)
@@ -122,9 +152,20 @@
          (progn (define-protocol #.(gensym) ()
                   (:condition-type #1=#.(gensym) () ())
                   #2="qwer")
+                (assert (find-class '#1#))
                 (assert (string= #2# (documentation '#1# 'cl:type))))
       (setf (documentation '#1# 'cl:type) nil
             (find-class '#1#) nil))))
+
+(defun #2=test-protocol-define-condition-type-instantiate ()
+  ;; https://bugs.launchpad.net/sbcl/+bug/1761950
+  #+sbcl (warn "~A broken on SBCL; skipping.~%" '#2#)
+  #-sbcl (with-test (nil)
+           (unwind-protect
+                (progn (define-protocol #.(gensym) ()
+                         (:condition-type #1=#.(gensym) () ()))
+                       (make-condition (find-class '#1#)))
+             (setf (find-class '#1#) nil))))
 
 (defun test-protocol-define-config ()
   (with-test (t)
