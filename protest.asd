@@ -38,7 +38,8 @@
                (:file "protocol/elements/variable")
                (:file "protocol/elements/category")
                (:file "protocol/elements/config")
-               (:file "protocol/protocol")))
+               (:file "protocol/protocol")
+               (:file "protocol/test")))
 
 ;; (asdf:defsystem #:protest
 ;;   :description "Common Lisp PROtocol and TESTcase Manager"

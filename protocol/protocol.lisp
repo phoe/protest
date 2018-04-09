@@ -85,9 +85,9 @@ operations on these types."))
 (defun check-dependencies-valid (protocol hash-table)
   (let ((name (name protocol))
         (dependencies (dependencies protocol)))
-    (unless (every #'symbolp dependencies)
-      (protocol-error "Dependency is not a symbol: ~A"
-                      (find-if #'symbolp dependencies)))
+    (unless (every (conjoin #'identity #'symbolp) dependencies)
+      (protocol-error "Dependency is not a non-null symbol: ~A"
+                      (find-if-not #'symbolp dependencies)))
     (when (member name dependencies)
       (protocol-error "Protocol ~A must not depend on itself." name))
     (loop for dependency in dependencies
