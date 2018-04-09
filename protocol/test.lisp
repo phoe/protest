@@ -2,6 +2,7 @@
 
 (in-package #:protest/protocol)
 
+;; TODO undoing variables/functions/classes
 (defmacro with-test ((success-expected-p) &body body)
   (with-gensyms (function)
     `(tagbody
@@ -14,11 +15,13 @@
                      (,function (compile nil '(lambda () ,@body))))
                 (funcall ,function)
                 (go ,(if success-expected-p :end :fail)))
-            (error (e)
+            (protocol-error (e)
               (declare (ignorable e))
               ,(if success-expected-p
                    `(error "Test failure: unexpected failure:~%~A" e)
-                   `(go :end)))))
+                   `(go :end)))
+            (error (e)
+              (error "Test failure: unexpected failure:~%~A" e))))
       :fail
         (error "Test failure: unexpected success.")
       :end)))
@@ -84,16 +87,26 @@
   (with-test (nil) (define-protocol #.(gensym) (:dependencies (nil)))))
 
 (defun test-protocol-define-duplicate-elements ()
-  (warn "Test not implemented yet."))
+  (with-test (nil) (define-protocol #.(gensym) ()
+                     (:variable #1=#.(gensym))
+                     (:variable #1#)))
+  (with-test (nil) (define-protocol #.(gensym) ()
+                     (:config (#2=#.(gensym)))
+                     (:config (#2#)))))
 
 (defun test-protocol-define-duplicate-elements-inheritance ()
-  (warn "Test not implemented yet."))
-
-(defun test-protocol-define-documentation ()
-  (warn "Test not implemented yet."))
+  (with-test (nil)
+    (define-protocol #1=#.(gensym) ()
+      (:variable #2=#.(gensym)))
+    (define-protocol #.(gensym) (:dependencies (#1#))
+      (:variable #2#))))
 
 (defun test-protocol-define-category ()
-  (warn "Test not implemented yet."))
+  (with-test (t)
+    (unwind-protect (progn (define-protocol #.(gensym) ()
+                             (:category #1=(:foo :bar)) #2="qwer")
+                           (assert (string= #2# (documentation '#1# 'category))))
+      (setf (documentation '#1# 'category) nil))))
 
 (defun test-protocol-define-class ()
   (warn "Test not implemented yet."))
