@@ -32,7 +32,7 @@
 
 (defun test-framework-unexpected-success ()
   (tagbody (handler-case (progn (with-test (nil)) (go :fail))
-             (error () (go :ok)))
+             ((and error (not protocol-error)) () (go :ok)))
    :fail (error "fail")
    :ok)
   (values))
