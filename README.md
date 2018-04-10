@@ -43,8 +43,9 @@ implements the concept of a test that is an instance of the given test case.
 Each phase is required to be a keyword. These are meant to describe the group of
 test steps that come afterwards it.
 
-Each step is required to consist of a positive integers (in order) and a string
-description of the step.
+Each step is required to consist of a positive integer and a string
+description of the step. The steps are required to be unsigned-bytes in
+increasing order.
 
 Inside a test body, the reader macro `#N?` with a numerical argument may be
 used to denote a form belonging to a given test step.

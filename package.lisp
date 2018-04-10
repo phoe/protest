@@ -4,12 +4,12 @@
   (:use #:common-lisp
         #:protest/base
         #:protest/protocol
-        #:protest/test-casse
+        #:protest/test-case
         ;; #:protest/web
         )
   (:shadowing-import-from #:protest/protocol #:type)
   (:reexport #:protest/base
              #:protest/protocol
-             #:protest/test-casse
+             #:protest/test-case
              ;; #:protest/web
              ))
