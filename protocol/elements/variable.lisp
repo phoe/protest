@@ -46,7 +46,7 @@ The form for a protocol variable consists of the following subforms:
 (defmethod generate-forms ((element protocol-variable))
   (let* ((name (name element))
          (type (type element))
-         (documentation (documentation name 'variable)))
+         (documentation (docstring element)))
     `((:variable ,name ,@(unless (eq type 't) `(,type))
                  ,@(when (slot-boundp element '%initial-value)
                      `(,(initial-value element))))
@@ -56,7 +56,7 @@ The form for a protocol variable consists of the following subforms:
   (with-accessors
         ((name name) (type type) (initial-value initial-value))
       element
-    (let ((documentation (documentation name 'variable)))
+    (let ((documentation (docstring element)))
       `((defvar ,name ,@(when (slot-boundp element '%initial-value)
                           `(,(initial-value element))))
         ,@(when (and (declaim-type-p element) (not (eq type 't)))

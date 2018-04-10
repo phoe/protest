@@ -198,4 +198,11 @@
     (setf (documentation '#1# 'function) nil)))
 
 (defun test-protocol-define-variable ()
-  (warn "Test not implemented yet."))
+  (unwind-protect
+       (progn (define-protocol #.(gensym) ()
+                (:variable #1=#.(gensym) string #2="asdf")
+                #3="qwer")
+              (assert (string= (symbol-value '#1#) #2#))
+              (assert (string= #3# (documentation '#1# 'variable))))
+    (makunbound '#1#)
+    (setf (documentation '#1# 'variable) nil)))

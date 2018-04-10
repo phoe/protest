@@ -68,9 +68,8 @@ operations on these types."))
           do (setf element
                    (generate-element (car form) (cdr form) declaim-type-p))
           and collect element
-        ;; if (and (listp form) (stringp string))
-        ;;   do (embed-documentation element string)
-        ))
+        if (and (listp form) (stringp string))
+          do (setf (docstring element) string)))
 
 (defun compute-exports (protocol)
   (loop for element in (elements protocol)

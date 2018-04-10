@@ -42,22 +42,17 @@ The form for a protocol condition type consists of the following subforms:
                                   :slots slots :options options)))
       element)))
 
-(defmethod embed-documentation
-    ((element protocol-condition-type) (string string))
-  (setf (documentation (name element) 'cl:type) string))
-
 (defmethod generate-forms ((element protocol-condition-type))
   (let* ((name (name element))
-         (documentation (documentation name 'cl:type)))
+         (documentation (docstring element)))
     `((:condition-type ,name ,(supertypes element)
                        ,(slots element) ,@(options element))
       ,@(when documentation `(,documentation)))))
 
 (defmethod generate-code ((element protocol-condition-type))
   (with-accessors
-        ((name name) (supertypes supertypes)
-         (slots slots) (options options))
+        ((name name) (supertypes supertypes) (slots slots) (options options))
       element
-    (let ((documentation (documentation name 'cl:type)))
+    (let ((documentation (docstring element)))
       `((define-protocol-condition-type ,name ,supertypes ,slots ,@options
           ,@(when documentation `((:documentation ,documentation))))))))

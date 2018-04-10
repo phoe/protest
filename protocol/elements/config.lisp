@@ -58,13 +58,10 @@ The form for a protocol configuration entry consists of the following subforms:
           (setf (initial-value element) initial-value)))
       element)))
 
-(defmethod embed-documentation ((element protocol-config) (string string))
-  (setf (documentation (name element) 'config) string))
-
 (defmethod generate-forms ((element protocol-config))
   (let* ((name (name element)) (type (type element))
          (mandatoryp (mandatoryp element))
-         (documentation (documentation name 'config)))
+         (documentation (docstring element)))
     `((:config ,name
                ,@(cond ((and (eq type 't) (eq mandatoryp 'nil)
                              (not (slot-boundp element '%initial-value)))
@@ -79,10 +76,12 @@ The form for a protocol configuration entry consists of the following subforms:
       ,@(when documentation `(,documentation)))))
 
 (defmethod generate-code ((element protocol-config))
-  (if (slot-boundp element '%initial-value)
-      `((funcall *configuration-setter*
-                 ',(name element) ,(initial-value element)))
-      '()))
+  (let ((documentation (docstring element)))
+    `(,@(when (slot-boundp element '%initial-value)
+          `((funcall *configuration-setter*
+                     ',(name element) ,(initial-value element))))
+      ,@(when documentation
+          `((setf (documentation ',(name element) 'config) ,documentation))))))
 
 (defvar *config-documentation-store*
   (make-hash-table :test #'equal))

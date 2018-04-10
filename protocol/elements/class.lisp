@@ -41,12 +41,9 @@ The form for a protocol class consists of the following subforms:
                                   :slots slots :options options)))
       element)))
 
-(defmethod embed-documentation ((element protocol-class) (string string))
-  (setf (documentation (name element) 'cl:type) string))
-
 (defmethod generate-forms ((element protocol-class))
   (let* ((name (name element))
-         (documentation (documentation name 'cl:type)))
+         (documentation (docstring element)))
     `((:class ,name ,(superclasses element)
               ,(slots element) ,@(options element))
       ,@(when documentation `(,documentation)))))
@@ -56,6 +53,6 @@ The form for a protocol class consists of the following subforms:
         ((name name) (superclasses superclasses)
          (slots slots) (options options))
       element
-    (let ((documentation (documentation name 'cl:type)))
+    (let ((documentation (docstring element)))
       `((define-protocol-class ,name ,superclasses ,slots ,@options
           ,@(when documentation `((:documentation ,documentation))))))))

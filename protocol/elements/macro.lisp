@@ -31,9 +31,10 @@ The form of a protocol macro consists of the following subforms:
 
 (defmethod generate-forms ((element protocol-macro))
   (let* ((name (name element))
-         (documentation (documentation name 'function)))
+         (documentation (docstring element)))
     `((:macro ,name ,(lambda-list element))
       ,@(when documentation `(,documentation)))))
 
 (defmethod generate-code ((element protocol-macro))
-  '())
+  (when-let ((documentation (docstring element)))
+    `((setf (documentation ',(name element) 'function) ,documentation))))

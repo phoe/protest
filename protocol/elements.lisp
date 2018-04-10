@@ -16,11 +16,6 @@ return a matching protocol element. Signals PROTOCOL-ERROR if the generation
 fails. The argument DECLAIM-TYPE-P states if the types of functions and
 variables should be declaimed; it may be ignored by the method."))
 
-(defgeneric embed-documentation (element string)
-  (:documentation
-   "Given a protocol element and a documentation string, sets the documentation
-string of the given element."))
-
 (defgeneric generate-forms (element)
   (:documentation
    "Generates a fresh list of forms that is suitable to be NCONCed with other
@@ -34,7 +29,10 @@ protocol is defined."))
 
 ;;; Protocol classes
 
-(define-protocol-class protocol-element () ()
+(define-protocol-class protocol-element ()
+  ((%docstring :accessor docstring
+               :initarg :docstring
+               :initform nil))
   (:documentation "An element of a protocol.
 \
 This class is a protocol class and must not be instantiated directly."))

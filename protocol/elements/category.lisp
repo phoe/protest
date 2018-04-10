@@ -24,17 +24,14 @@ subforms:
     (let ((element (make-instance 'protocol-category :name name)))
       element)))
 
-(defmethod embed-documentation ((element protocol-category) (string string))
-  (setf (documentation (name element) 'category) string))
-
 (defmethod generate-forms ((element protocol-category))
   (let* ((name (name element))
-         (documentation (documentation name 'category)))
+         (documentation (docstring element)))
     `((:category ,name)
       ,@(when documentation `(,documentation)))))
 
 (defmethod generate-code ((element protocol-category))
-  (when-let ((documentation (documentation (name element) 'category)))
+  (when-let ((documentation (docstring element)))
     `((setf (documentation ',(name element) 'category) ,documentation))))
 
 (defvar *category-documentation-store*

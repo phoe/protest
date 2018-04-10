@@ -47,29 +47,22 @@ The form for a protocol function consists of the following subforms:
           (setf (keyword-types element) keyword-types)))
       element)))
 
-(defmethod embed-documentation ((element protocol-function) (string string))
-  (setf (documentation (name element) 'function) string))
-
 (defmethod generate-forms ((element protocol-function))
   (let* ((name (name element))
          (return-type (return-type element))
-         (documentation (documentation name 'function)))
+         (documentation (docstring element)))
     `((:function ,name ,(lambda-list element)
                  ,@(unless (eq t return-type)
                      `(,return-type)))
       ,@(when documentation `(,documentation)))))
 
-;; TODO this is terribly broken, it only sets the documentation if it is
-;; already set. Change this to a DOCUMENTATION slot inside PROTOCOL-ELEMENT
-;; protoclass and set it explicitly from inside here. Then fix all elements
-;; to set their documentation explicitly.
 (defmethod generate-code ((element protocol-function))
   (with-accessors
         ((name name) (lambda-list lambda-list)
          (return-type return-type) (keyword-types keyword-types))
       element
     (let ((ftype-args (ftype-args lambda-list keyword-types))
-          (documentation (documentation name 'function)))
+          (documentation (docstring element)))
       `((defgeneric? ,name ,(strip-specializers lambda-list)
           ,@(when documentation `((:documentation ,documentation))))
         ,@(when (declaim-type-p element)
