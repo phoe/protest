@@ -31,7 +31,7 @@
 
 (defun #1=test-protocol-condition-type-define ()
   ;; https://bugs.launchpad.net/sbcl/+bug/1761950
-  #+sbcl (warn "~A broken on SBCL; skipping.~%" '#1#)
+  #+sbcl (format t "~A broken on SBCL; skipping.~%" '#1#)
   #-sbcl
   (unwind-protect
        (define-protocol-condition-type #2=#.(gensym) () ())
@@ -40,7 +40,7 @@
 
 (defun #1=test-protocol-condition-type-instantiate ()
   ;; https://bugs.launchpad.net/sbcl/+bug/1761950
-  #+sbcl (warn "~A broken on SBCL; skipping.~%" '#1#)
+  #+sbcl (format t "~A broken on SBCL; skipping.~%" '#1#)
   #-sbcl
   (unwind-protect (progn
                     (define-protocol-condition-type #2=#.(gensym) () ())
