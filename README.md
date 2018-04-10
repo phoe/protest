@@ -62,8 +62,6 @@ used to denote a form belonging to a given test step.
 The code below:
 
 ```common-lisp
-(in-package :gateway/protocols)
-
 (define-protocol fuelable
     (:description "Defines objects which have a fuel tank and must be refueled
 to function."

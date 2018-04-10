@@ -3,7 +3,6 @@
 (defpackage #:protest/protocol
   (:use #:common-lisp
         #:alexandria
-        #:named-readtables
         #:protest/base)
   (:shadow #:type)
   (:export #:*protocols* #:*declaim-types* #:*configuration-setter*

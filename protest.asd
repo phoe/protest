@@ -7,7 +7,7 @@
   :serial t
   :depends-on (#:protest/base
                #:protest/protocol
-               ;; #:protest/test-case
+               #:protest/test-case
                ;; #:protest/web
                )
   :components ((:file "package")))
@@ -28,7 +28,7 @@
   :license "LLGPL"
   :serial t
   :depends-on (#:alexandria
-               #:named-readtables)
+               #:protest/base)
   :components ((:file "protocol/package")
                (:file "protocol/elements")
                (:file "protocol/elements/function")
@@ -40,6 +40,15 @@
                (:file "protocol/elements/config")
                (:file "protocol/protocol")
                (:file "protocol/test")))
+
+(asdf:defsystem #:protest/test-case
+  :description "Test case defining utilities for PROTEST"
+  :author "Michał \"phoe\" Herda <phoe@openmailbox.org>"
+  :license "LLGPL"
+  :serial t
+  :depends-on (#:alexandria
+               #:named-readtables)
+  :components ((:file "test-case/package")))
 
 ;; (asdf:defsystem #:protest
 ;;   :description "Common Lisp PROtocol and TESTcase Manager"
