@@ -2,7 +2,6 @@
 
 (in-package #:protest/protocol)
 
-;; TODO undoing variables/functions/classes
 (defmacro with-test ((success-expected-p) &body body)
   (with-gensyms (function warnp failp)
     (once-only (success-expected-p)
@@ -159,7 +158,7 @@
 
 (defun #2=test-protocol-define-condition-type-instantiate ()
   ;; https://bugs.launchpad.net/sbcl/+bug/1761950
-  #+sbcl (format t "~A broken on SBCL; skipping.~%" '#2#)
+  #+sbcl (format t "~&~A broken on SBCL; skipping.~&" '#2#)
   #-sbcl (with-test (nil)
            (unwind-protect
                 (progn (define-protocol #.(gensym) ()
