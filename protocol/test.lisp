@@ -180,10 +180,22 @@
         (setf (documentation '#1# 'config) nil)))))
 
 (defun test-protocol-define-function ()
-  (warn "Test not implemented yet."))
+  (unwind-protect
+       (progn (define-protocol #.(gensym) ()
+                (:function #1=#.(gensym) (#2=#.(gensym) #3=#.(gensym)) 'string)
+                #4="qwer")
+              (assert (string= #4# (documentation '#1# 'function))))
+    (fmakunbound '#1#)
+    (setf (documentation '#1# 'function) nil)))
 
 (defun test-protocol-define-macro ()
-  (warn "Test not implemented yet."))
+  (unwind-protect
+       (progn (define-protocol #.(gensym) ()
+                (:macro #1=#.(gensym) (#2=#.(gensym) #3=#.(gensym)))
+                #4="qwer")
+              (assert (string= #4# (documentation '#1# 'function))))
+    (fmakunbound '#1#)
+    (setf (documentation '#1# 'function) nil)))
 
 (defun test-protocol-define-variable ()
   (warn "Test not implemented yet."))

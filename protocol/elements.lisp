@@ -39,12 +39,12 @@ protocol is defined."))
 \
 This class is a protocol class and must not be instantiated directly."))
 
-(define-protocol-class protocol-operation () ()
+(define-protocol-class protocol-operation (protocol-element) ()
   (:documentation "An operation belgonging to a protocol.
 \
 This class is a protocol class and must not be instantiated directly."))
 
-(define-protocol-class protocol-data-type () ()
+(define-protocol-class protocol-data-type (protocol-element) ()
   (:documentation "An data type belgonging to a protocol.
 \
 This class is a protocol class and must not be instantiated directly."))

@@ -59,6 +59,10 @@ The form for a protocol function consists of the following subforms:
                      `(,return-type)))
       ,@(when documentation `(,documentation)))))
 
+;; TODO this is terribly broken, it only sets the documentation if it is
+;; already set. Change this to a DOCUMENTATION slot inside PROTOCOL-ELEMENT
+;; protoclass and set it explicitly from inside here. Then fix all elements
+;; to set their documentation explicitly.
 (defmethod generate-code ((element protocol-function))
   (with-accessors
         ((name name) (lambda-list lambda-list)
