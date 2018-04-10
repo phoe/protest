@@ -36,21 +36,21 @@ compile-time constraint checking.")
    "Describes a protocol understood as a relation between data types and
 operations on these types."))
 
-(defmethod print-object ((object protocol) stream)
-  (print-unreadable-object (object stream :type t)
-    (princ (name object) stream)))
+(defmethod print-object ((protocol protocol) stream)
+  (print-unreadable-object (protocol stream :type t)
+    (princ (name protocol) stream)))
 
-(defmethod make-load-form ((object protocol) &optional environment)
+(defmethod make-load-form ((protocol protocol) &optional environment)
   (declare (ignore environment))
-  (make-load-form-saving-slots object))
+  (make-load-form-saving-slots protocol))
 
 (defmethod initialize-instance :after
     ((protocol protocol) &key name dependencies export (declaim-type-p t))
   (when (or (null name) (not (symbolp name)))
     (protocol-error "NAME must be a non-null symbol, not ~S." name))
-  (setf (name protocol) name)
-  (setf (dependencies protocol) dependencies)
-  (setf (exports protocol)
+  (setf (name protocol) name
+        (dependencies protocol) dependencies
+        (exports protocol)
         (if (eq export 't) (compute-exports protocol) export))
   (let ((element-forms (cdddr (whole protocol))))
     (setf (elements protocol)
