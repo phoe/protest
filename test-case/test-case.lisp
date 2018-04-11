@@ -79,7 +79,10 @@ describing each part of the test."))
         (do () ((null forms))
           (let ((elt (pop forms)))
             (typecase elt
-              (unsigned-byte (collect (make elt (pop forms))))
+              (unsigned-byte
+               (let ((string (pop forms)))
+                 (assert (typep string 'string))
+                 (collect (make elt string))))
               (symbol (setf current-phase elt))
               (t (protocol-error "Wrong thing in a test case definition: ~S"
                                  elt)))))))))
