@@ -6,10 +6,10 @@
 
 PROTEST is a tool for defining protocols and test cases.
 
+## Protocol
+
 For a formal definition of a protocol, see the related work by
 [Robert Strandh](http://metamodular.com/protocol.pdf).
-
-## Protocol
 
 PROTEST implements the concept of a protocol with operations being defined as
 generic functions and macros, and data types being protocol classes, protocol
@@ -53,14 +53,13 @@ increasing order.
 Inside a test body, the reader macro `#N?` with a numerical argument may be
 used to denote a form belonging to a given test step.
 
-## TODO
-  * Implement :DEPENDENCIES in DEFINE-PROTOCOL.
-  * Take care of STYLE-WARNINGs when defining :FUNCTIONs.
-  * Ordinary functions are no longer creatable here - :GENERIC is removed and
-  instead, :FUNCTION creates a generic function.
-  * Fix and document DEFINE-TEST-CASE
-  * Integrate DEFINE-TEST-CASE with some testing framework
-  * Unit tests for macros and functions
+## HTML generation
+
+TODO
+
+## Integration with Parachute
+
+TODO
 
 ## Usage
 The code below:
@@ -111,18 +110,7 @@ for 100 kilometers."
 
 Produces the following effects:
 
-### Doc Generation
-The package `CL-PROTEST-WEB` contains the functions to produce HTML documentation of the protocols - see https://rawgit.com/phoe/protest/master/doc/example.html .
-
-### Code Generation
-  * All DEFINE-PROTOCOL forms (sans documentation strings) are stored in the variable `*PROTOCOLS*`.
-  * All documentation strings are stored in proper parts of the `CL:DOCUMENTATION` system.
-  * Checks are made to make sure that protocol classes and generic functions are defined, but never _re_defined.
-  * A code equivalent to the following is executed:
-
-```lisp
-;;;; TODO
-```
+TODO
 
 ### License
 
