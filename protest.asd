@@ -52,6 +52,7 @@
   :components ((:file "test-case/package")
                (:file "test-case/test-step")
                (:file "test-case/test-case")
+               (:file "test-case/test-implementation")
                (:file "test-case/test")))
 
 ;; (asdf:defsystem #:protest

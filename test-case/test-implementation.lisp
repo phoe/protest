@@ -2,7 +2,9 @@
 
 (in-package #:protest/test-case)
 
-(defvar *define-test-closure-symbol* (gensym)
+;; TODO split /TEST-CASE into /TEST-CASE and /PARACHUTE
+(defparameter *define-test-closure-symbol*
+  (gensym "PROTEST-SYNTAX-USED-OUTSIDE-DEFINE-TEST")
   "A symbol used for generating lexical bindings for closures inside
 DEFINE-TEST. Must NOT be proclaimed special.")
 
@@ -39,35 +41,157 @@ DEFINE-TEST. Must NOT be proclaimed special.")
 (defclass test-case-finishing-result
     (test-case-result parachute:finishing-result) ())
 
+(defmacro true (form &optional description &rest format-args)
+  `(parachute:eval-in-context
+    parachute:*context*
+    (make-instance
+     'test-case-comparison-result
+     :expression '(true ,form)
+     :value-form ',form
+     :body (lambda () ,form)
+     :expected 'T
+     :comparison 'geq
+     ,@(when description
+         `(:description (format NIL ,description ,@format-args))))))
+
+(defmacro false (form &optional description &rest format-args)
+  `(eval-in-context
+    *context*
+    (make-instance
+     'test-case-comparison-result
+     :expression '(false ,form)
+     :value-form ',form
+     :body (lambda () ,form)
+     :expected 'NIL
+     :comparison 'geq
+     ,@(when description
+         `(:description (format NIL ,description ,@format-args))))))
+
+(defmacro is (comp expected form &optional description &rest format-args)
+  `(eval-in-context
+    *context*
+    (make-instance
+     'test-case-comparison-result
+     :expression '(is ,comp ,expected ,form)
+     :value-form ',form
+     :body (lambda () ,form)
+     :expected ,expected
+     :comparison ,(parachute::maybe-quote comp)
+     ,@(when description
+         `(:description (format NIL ,description ,@format-args))))))
+
+(defmacro isnt (comp expected form &optional description &rest format-args)
+  `(eval-in-context
+    *context*
+    (make-instance
+     'test-case-comparison-result
+     :expression '(is ,comp ,expected ,form)
+     :value-form ',form
+     :body (lambda () ,form)
+     :expected ,expected
+     :comparison ,(parachute::maybe-quote comp)
+     :comparison-geq NIL
+     ,@(when description
+         `(:description (format NIL ,description ,@format-args))))))
+
+(defmacro is-values (form &body body)
+  (multiple-value-bind (comp-expected expected comparison description format-args)
+      (parachute::destructure-is-values-body body)
+    `(eval-in-context
+      *context*
+      (make-instance
+       'multiple-value-test-case-comparison-result
+       :expression '(is-values ,form ,@comp-expected)
+       :value-form ',form
+       :body (lambda () ,form)
+       :expected (list ,@expected)
+       :comparison (list ,@comparison)
+       ,@(when description
+           `(:description (format NIL ,description ,@format-args)))))))
+
+(defmacro isnt-values (form &body body)
+  (multiple-value-bind (comp-expected expected comparison description format-args)
+      (parachute::destructure-is-values-body body)
+    `(eval-in-context
+      *context*
+      (make-instance
+       'multiple-value-test-case-comparison-result
+       :expression '(isnt-values ,form ,@comp-expected)
+       :value-form ',form
+       :body (lambda () ,form)
+       :expected (list ,@expected)
+       :comparison (list ,@comparison)
+       :comparison-geq NIL
+       ,@(when description
+           `(:description (format NIL ,description ,@format-args)))))))
+
+(defmacro fail (form &optional (type 'error) description &rest format-args)
+  `(eval-in-context
+    *context*
+    (make-instance
+     'test-case-comparison-result
+     :expression '(fail ,form ,type)
+     :value-form '(capture-error ,form)
+     :body (lambda () (capture-error ,form ,(parachute::maybe-unquote type)))
+     :expected ',(parachute::maybe-unquote type)
+     :comparison 'typep
+     ,@(when description
+         `(:description (format NIL ,description ,@format-args))))))
+
+(defmacro of-type (type form &optional description &rest format-args)
+  `(eval-in-context
+    *context*
+    (make-instance 'test-case-comparison-result
+                   :expression '(of-type ,type ,form)
+                   :value-form ',form
+                   :body (lambda () ,form)
+                   :expected ',(parachute::maybe-unquote type)
+                   :comparison 'typep
+                   ,@(when description
+                       `(:description (format NIL ,description ,@format-args))))))
+
+(defmacro finish (form &optional description &rest format-args)
+  `(eval-in-context
+    *context*
+    (make-instance 'test-case-finishing-result
+                   :expression '(finish ,form)
+                   :body (lambda () ,form)
+                   ,@(when description
+                       `(:description (format NIL ,description ,@format-args))))))
+
+
+
+
+
+
+
+
+
+
+
 (defmacro define-test (name &body arguments-and-body)
   (unless (gethash name *test-cases*)
     (protocol-error "Test case named ~S was not found. ~
 Use DEFINE-TEST-CASE first." name))
   `(let ((,*define-test-closure-symbol* ,name))
+     ;;(declare (ignorable ,*define-test-closure-symbol*))
      (parachute:define-test ,name ,@arguments-and-body)))
 
 (defun test-step-macro-reader (stream subchar arg)
   (declare (ignore subchar))
   (let ((form (read stream t nil t))
-        (symbol *define-test-closure-symbol*))
-    ;; (handler-case (let ((*error-output* (make-broadcast-stream)))
-    ;;                 (funcall (compile nil `(lambda () ,symbol))))
-    ;;   (unbound-variable ()
-    ;;     (protocol-error
-    ;;      "The #? reader macro must be used inside DEFINE-TEST.")))
-    (with-gensyms (test-case test-step foundp)
-      `(multiple-value-bind (,test-case ,foundp)
-           (gethash ,symbol *test-cases*)
-         (unless ,foundp (protocol-error "Test case ~S was not found. ~
-Use DEFINE-TEST-CASE first." ,symbol))
-         (multiple-value-bind (,test-step ,foundp)
-             (gethash ,arg (steps ,test-case))
-           (unless ,foundp (protocol-error "Step with ID ~D was not found ~
-in test case ~S." ,arg (name ,test-case)))
-           (let ((*current-test-case* ,test-case)
-                 (*current-test-step* ,test-step))
-             ,form))))))
+        (name *define-test-closure-symbol*))
+    `(let* ((*current-test-case* (gethash ,name *test-cases*))
+            (*current-test-step*
+              (when *current-test-case*
+                (gethash ,arg (steps *current-test-case*)))))
+       ,form)))
 
 (defreadtable protest
   (:merge :standard)
   (:dispatch-macro-char #\# #\? 'test-step-macro-reader))
+
+(uiop:define-package #:protest/parachute
+  (:use)
+  (:mix #:protest/test-case #:parachute)
+  (:reexport #:protest/test-case #:parachute))
