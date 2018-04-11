@@ -3,7 +3,7 @@
 (in-package #:protest/for-parachute)
 
 (defvar *define-test-closure-symbol*
-  (gensym "PROTEST-SYNTAX-USED-OUTSIDE-DEFINE-TEST")
+  (gensym "PROTEST-CLOSURE-VAR")
   "A symbol used for generating lexical bindings for closures inside
 DEFINE-TEST. Must NEVER be proclaimed special.")
 
