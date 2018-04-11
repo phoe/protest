@@ -55,9 +55,9 @@
                (:file "test-case/test")))
 
 (asdf:defsystem #:protest/parachute
-  :description "Test case defining utilities for PROTEST"
+  :description "PROTEST integration with Parachute library"
   :author "Michał \"phoe\" Herda <phoe@openmailbox.org>"
-  :license "LLGPL"
+  :license "Artistic"
   :serial t
   :depends-on (#:alexandria
                #:named-readtables
