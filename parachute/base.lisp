@@ -31,6 +31,33 @@ DEFINE-TEST. Must NEVER be proclaimed special.")
                             test-case-name test-phase id)))
       (concatenate 'string prologue (call-next-method)))))
 
+(defvar *last-printed-phase* nil)
+
+(defvar *printing-protest-report* nil)
+
+(defmethod parachute:eval-in-context :around
+    ((report parachute:plain) (result parachute:parent-result))
+  (let* ((*printing-protest-report* t))
+    (call-next-method)))
+
+(defmethod parachute:report-on :before
+    ((result test-case-result) (report parachute:plain))
+  (when *printing-protest-report*
+    (alexandria:when-let ((phase (test-phase result)))
+      (unless (eq phase *last-printed-phase*)
+        (setf *last-printed-phase* phase)
+        (format (parachute:output report)
+                "             #~v@{  ~} Phase ~S~%"
+                parachute::*level* phase)))
+    (format (parachute:output report) "~4D " (id result))))
+
+(defmethod parachute:report-on :around
+    ((result parachute:result) (report parachute:plain))
+  (when *printing-protest-report*
+    (unless (typep result 'test-case-result)
+      (format (parachute:output report) "     ")))
+  (call-next-method))
+
 (defclass test-case-comparison-result
     (test-case-result parachute:comparison-result) ())
 
@@ -58,6 +85,6 @@ DEFINE-TEST. Must NEVER be proclaimed special.")
   (unless (gethash name *test-cases*)
     (protocol-error "Test case named ~S was not found. ~
 Use DEFINE-TEST-CASE first." name))
-  `(let ((,*define-test-closure-symbol* ,name))
+  `(let ((,*define-test-closure-symbol* ',name))
      (declare (ignorable ,*define-test-closure-symbol*))
      (parachute:define-test ,name ,@arguments-and-body)))

@@ -61,7 +61,7 @@
     `(eval-in-context
       *context*
       (make-instance
-       'multiple-value-test-case-comparison-result
+       'test-case-multiple-value-comparison-result
        :expression '(is-values ,form ,@comp-expected)
        :value-form ',form
        :body (lambda () ,form)
@@ -76,7 +76,7 @@
     `(eval-in-context
       *context*
       (make-instance
-       'multiple-value-test-case-comparison-result
+       'test-case-multiple-value-comparison-result
        :expression '(isnt-values ,form ,@comp-expected)
        :value-form ',form
        :body (lambda () ,form)

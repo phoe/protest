@@ -100,6 +100,6 @@ describing each part of the test."))
   (let ((instance (apply #'make-instance 'test-case
                          :name name :whole whole options)))
     (validate-test-case instance)
-    `(progn
+    `(eval-when (:compile-toplevel :load-toplevel :execute)
        (setf (gethash ',name *test-cases*) ,instance)
        ',name)))

@@ -5,7 +5,8 @@
         #:named-readtables
         #:protest/base
         #:protest/test-case)
-  (:import-from #:parachute #:geq)
+  (:import-from #:parachute
+                #:geq #:*context* #:eval-in-context #:capture-error)
   (:export
    #:define-test
    #:test-case-result #:test-case-comparison-result

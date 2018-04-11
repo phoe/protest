@@ -65,7 +65,8 @@
                #:protest/test-case)
   :components ((:file "parachute/package")
                (:file "parachute/base")
-               (:file "parachute/macros")))
+               (:file "parachute/macros")
+               (:file "parachute/test")))
 
 ;; (asdf:defsystem #:protest
 ;;   :description "Common Lisp PROtocol and TESTcase Manager"
