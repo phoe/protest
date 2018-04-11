@@ -7,6 +7,8 @@
         #:protest/test-case)
   (:import-from #:parachute
                 #:geq #:*context* #:eval-in-context #:capture-error)
+  (:import-from #:protest/test-case
+                #:define-test-case)
   (:export
    #:define-test
    #:test-case-result #:test-case-comparison-result

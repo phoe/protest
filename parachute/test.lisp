@@ -4,7 +4,7 @@
 
 (in-readtable protest/parachute)
 
-(protest/test-case:define-test-case self-test ()
+(define-test-case self-test ()
   :first-three
   1 "true"
   2 "false"
