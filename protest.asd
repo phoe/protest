@@ -66,5 +66,5 @@
   :components ((:file "parachute/package")
                (:file "parachute/base")
                (:file "parachute/macros")
-               (:file "parachute/modification")
+               (:file "parachute/parachute-modification")
                (:file "parachute/test")))

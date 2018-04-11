@@ -2,7 +2,9 @@
 
 (in-package #:protest/for-parachute)
 
-(protest:define-test-case self-test ()
+(in-readtable protest/parachute)
+
+(protest/test-case:define-test-case self-test ()
   :first-three
   1 "true"
   2 "false"
