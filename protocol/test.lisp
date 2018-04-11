@@ -78,7 +78,7 @@
     (define-protocol #7=#.(gensym) (:dependencies (#2#)))
     (define-protocol #.(gensym) (:dependencies (#1# #2# #3# #4# #5# #6# #7#)))))
 
-(defun #5=test-protocol-define-circular-dependency ()
+(defun test-protocol-define-circular-dependency ()
   (with-test (nil)
     (define-protocol #1=#.(gensym) ())
     (define-protocol #2=#.(gensym) (:dependencies (#1#)))
@@ -86,17 +86,17 @@
     (define-protocol #4=#.(gensym) (:dependencies (#3#)))
     (define-protocol #1# (:dependencies (#4#)))))
 
-(defun #2=test-protocol-define-self-dependency ()
+(defun test-protocol-define-self-dependency ()
   (with-test (nil)
     (define-protocol #1=#.(gensym) (:dependencies (#1#)))))
 
-(defun #2=test-protocol-define-invalid-name ()
+(defun test-protocol-define-invalid-name ()
   (with-test (nil) (define-protocol 2 ()))
   (with-test (nil) (define-protocol "PROTOCOL" ()))
   (with-test (nil) (define-protocol '(#.(gensym) #.(gensym)) ()))
   (with-test (nil) (define-protocol nil ())))
 
-(defun #2=test-protocol-define-invalid-dependencies ()
+(defun test-protocol-define-invalid-dependencies ()
   (with-test (nil) (define-protocol #.(gensym) (:dependencies (2))))
   (with-test (nil) (define-protocol #.(gensym) (:dependencies ("ABC"))))
   (with-test (nil) (define-protocol #.(gensym) (:dependencies ((#.(gensym))))))
@@ -108,7 +108,7 @@
                      (:variable #1=#.(gensym))
                      (:variable #1#)))
   (with-test (nil) (define-protocol #.(gensym) ()
-                     (:config (#2=#.(gensym)))
+                     (:category (#2=#.(gensym)))
                      (:config (#2#)))))
 
 (defun test-protocol-define-duplicate-elements-inheritance ()

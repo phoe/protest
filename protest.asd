@@ -49,7 +49,8 @@
   :depends-on (#:alexandria
                #:named-readtables)
   :components ((:file "test-case/package")
-               (:file "test-case/test-case")))
+               (:file "test-case/test-case")
+               (:file "test-case/test")))
 
 ;; (asdf:defsystem #:protest
 ;;   :description "Common Lisp PROtocol and TESTcase Manager"

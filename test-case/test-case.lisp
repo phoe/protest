@@ -71,37 +71,46 @@ describing each part of the test."))
           (generate-steps step-forms))))
 
 (defun generate-steps (forms)
-  (let ((forms forms) (current-phase nil))
+  (let ((forms forms) (current-phase nil) (result (make-hash-table)))
     (flet ((make (id description)
              (make-instance 'test-step :id id :description description
                                        :test-phase current-phase)))
-      (uiop:while-collecting (collect)
-        (do () ((null forms))
-          (let ((elt (pop forms)))
-            (typecase elt
-              (unsigned-byte
-               (let ((string (pop forms)))
-                 (assert (typep string 'string))
-                 (collect (make elt string))))
-              (symbol (setf current-phase elt))
-              (t (protocol-error "Wrong thing in a test case definition: ~S"
-                                 elt)))))))))
+      (do () ((null forms))
+        (let ((elt (pop forms)))
+          (typecase elt
+            (unsigned-byte
+             (let ((string (pop forms)))
+               (assert (typep string 'string))
+               (setf (gethash elt result) (make elt string))))
+            (symbol (setf current-phase elt))
+            (t (protocol-error "Wrong thing in a test case definition: ~S"
+                               elt)))))
+      result)))
 
 (defun validate-test-case (test-case)
+  (check-duplicate-ids test-case)
+  (check-duplicate-test-phases test-case)
+  (check-id-order test-case))
+
+(defun check-duplicate-ids (test-case)
   (loop with hash-table = (make-hash-table)
         for test-step in (step test-case)
         for id = (id test-step)
         for (value foundp) in (multiple-value-list (gethash id hash-table))
         if foundp
           do (protocol-error "Duplicate step ID ~D found." id)
-        else do (setf (gethash id hash-table) t))
+        else do (setf (gethash id hash-table) t)))
+
+(defun check-duplicate-test-phases (test-case)
   (loop with hash-table = (make-hash-table)
         with forms = (cdddr (whole test-case))
         for symbol in (remove-if-not #'symbolp forms)
         for (value foundp) in (multiple-value-list (gethash symbol hash-table))
         if foundp
           do (protocol-error "Duplicate test phase ~A found." symbol)
-        else do (setf (gethash symbol hash-table) t))
+        else do (setf (gethash symbol hash-table) t)))
+
+(defun check-id-order (test-case)
   (loop with forms = (cdddr (whole test-case))
         with previous-number = -1
         for number in (remove-if-not #'integerp forms)

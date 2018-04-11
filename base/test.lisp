@@ -7,7 +7,7 @@
         (uiop:while-collecting (collect)
           (do-symbols (symbol package)
             (let ((name (symbol-name symbol)))
-              (when (and (<= 5 (length name))
+              (when (and (<= 11 (length name))
                          (string= "TEST-" (subseq name 0 5))
                          (fboundp symbol))
                 (collect symbol))))))
