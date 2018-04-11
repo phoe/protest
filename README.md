@@ -121,63 +121,28 @@ The package `CL-PROTEST-WEB` contains the functions to produce HTML documentatio
   * A code equivalent to the following is executed:
 
 ```lisp
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; Protocol WIGGLER
-;; Protocol Class WIGGLER
-(DEFINE-PROTOCOL-CLASS WIGGLER NIL NIL)
-(SETF (DOCUMENTATION 'WIGGLER 'TYPE) "An object that is able to wiggle.")
-;; Variable *WIGGLER*
-(SETF (DOCUMENTATION '*WIGGLER* 'VARIABLE)
-      "A dynamic variable denoting the current active wiggler.")
-(DECLAIM (TYPE T *WIGGLER*))
-(DEFVAR *WIGGLER* NIL)
-;; Macro WITH-WIGGLER
-(SETF (DOCUMENTATION 'WITH-WIGGLER 'VARIABLE)
-      "A wrapper macro that binds *WIGGLER* to the value of WIGGLER.")
-;; Function MAKE-WIGGLER
-(SETF (DOCUMENTATION 'MAKE-WIGGLER 'FUNCTION)
-      "A constructor function that makes a wiggler of given type.")
-(DECLAIM (FTYPE (FUNCTION ((OR CLASS SYMBOL))) MAKE-WIGGLER))
-;; Generic Function WIGGLE
-(SETF (DOCUMENTATION 'WIGGLE 'FUNCTION) "Wiggles inside target object.")
-(DEFGENERIC WIGGLE (WIGGLER OBJECT))
-(DECLAIM (FTYPE (FUNCTION * (VALUES)) WIGGLE))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; Protocol KILLABLE
-;; Protocol Class KILLABLE
-(DEFINE-PROTOCOL-CLASS KILLABLE NIL NIL)
-(SETF (DOCUMENTATION 'KILLABLE 'TYPE)
-      "A killable object is something that lives and can therefore be killed.")
-;; Generic Function ALIVEP
-(SETF (DOCUMENTATION 'ALIVEP 'FUNCTION)
-      "Returns true if the object is alive (was not killed) and false otherwise.")
-(DEFGENERIC ALIVEP (OBJECT))
-(DECLAIM (FTYPE (FUNCTION * T) ALIVEP))
-;; Generic Function KILL
-(SETF (DOCUMENTATION 'KILL 'FUNCTION) "Kills the object.")
-(DEFGENERIC KILL (OBJECT))
-(DECLAIM (FTYPE (FUNCTION * (VALUES)) KILL))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; Protocol FIST
-;; Protocol Class FIST
-(DEFINE-PROTOCOL-CLASS FIST (KILLABLE) NIL)
-(SETF (DOCUMENTATION 'FIST 'TYPE)
-      "A fist is something that can squeeze around objects and hold them despite any wiggling. If a fist dies, then it is possible to wiggle out of it.")
-;; Generic Function SQUEEZE
-(SETF (DOCUMENTATION 'SQUEEZE 'FUNCTION) "Squeezes the fist.
-Returns true if the first was not previously squeezed and false otherwise.")
-(DEFGENERIC SQUEEZE (OBJECT))
-(DECLAIM (FTYPE (FUNCTION * T) SQUEEZE))
-;; Generic Function UNSQUEEZE
-(SETF (DOCUMENTATION 'UNSQUEEZE 'FUNCTION) "Unsqueezes the fist.
-Returns true if the first was previously squeezed and false otherwise.")
-(DEFGENERIC UNSQUEEZE (OBJECT))
-(DECLAIM (FTYPE (FUNCTION * T) UNSQUEEZE))
-;; Generic Function WIGGLEP
-(SETF (DOCUMENTATION 'WIGGLEP 'FUNCTION)
-      "Checks if anything wiggled inside the fist since its last squeeze.")
-(DEFGENERIC WIGGLEP (OBJECT))
-(DECLAIM (FTYPE (FUNCTION * T) WIGGLEP))
+;;;; TODO
 ```
+
+### License
+
+All of PROTEST is licensed under GNU Lisp Lesser General Public License,
+**except** the `PROTEST/PARACHUTE` system which is an extension to the Parachute
+library and therefore licensed under the Artistic license.
+
+-----------
+
+PROTEST © 2018 Michał "phoe" Herda
+
+This library is free software; you can redistribute it and/or modify it under
+the terms of the GNU Lesser General Public License as published by the Free
+Software Foundation; either version 2.1 of the License, or (at your option) any
+later version.
+
+This library is distributed in the hope that it will be useful, but WITHOUT ANY
+WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public License along
+with this library; if not, write to the Free Software Foundation, Inc., 51
+Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
