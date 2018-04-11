@@ -68,5 +68,25 @@
   (with-test (nil) (define-test-case #.(gensym) 2 "a" 1 "b")))
 
 (defun test-test-case-define-complex ()
-  ;; TODO implement
-  )
+  (with-test (t)
+    (define-test-case #1=#.(gensym) ()
+      #2=#.(gensym)
+      10 "ten"
+      20 "twenty"
+      #3=#.(gensym)
+      30 "thirty")
+    (let* ((test-case (gethash '#1# *test-cases*))
+           (test-steps (hash-table-alist (steps test-case)))
+           (test-steps (sort test-steps #'< :key #'id))
+           (first (first test-steps))
+           (second (second test-steps))
+           (third (third test-steps)))
+      (assert (= 10 (id first)))
+      (assert (= 20 (id second)))
+      (assert (= 30 (id third)))
+      (assert (eq '#2# (test-phase first)))
+      (assert (eq '#2# (test-phase second)))
+      (assert (eq '#3# (test-phase third)))
+      (assert (string= "ten" (description first)))
+      (assert (string= "twenty" (description second)))
+      (assert (string= "thirty" (description third))))))
