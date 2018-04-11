@@ -3,8 +3,8 @@
 (defpackage #:protest/protocol
   (:use #:common-lisp
         #:alexandria
-        #:protest/base)
-  (:shadow #:type)
+        #:protest/base
+        #:protest/common)
   (:export #:*protocols* #:*declaim-types* #:*configuration-setter*
            #:protocol #:define-protocol
            #:protocol-element #:protocol-operation #:protocol-data-type
@@ -13,5 +13,5 @@
            #:protocol-config #:category #:config
            #:name #:form #:description #:tags #:dependencies #:exports
            #:elements #:lambda-list #:return-type #:superclasses #:slots
-           #:options #:protocol-type #:default-value #:type #:mandatoryp
-           #:keyword-types))
+           #:options #:protocol-type #:default-value #:mandatoryp
+           #:keyword-types #:value-type))

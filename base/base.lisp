@@ -14,6 +14,10 @@
            #:protocol-object-instantiation
            #:simple-protocol-error))
 
+(defpackage #:protest/common
+  (:use)
+  (:export #:tags #:description #:name #:whole))
+
 (in-package #:protest/base)
 
 (defmacro define-protocol-class (name superclasses slots &rest options)

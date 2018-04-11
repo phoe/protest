@@ -13,9 +13,9 @@ be set to it.")
   ((%name :accessor name
           :initarg :name
           :initform (error "Must provide NAME."))
-   (%type :accessor type
-          :initarg :type
-          :initform t)
+   (%value-type :accessor value-type
+                :initarg :type
+                :initform t)
    (%mandatoryp :accessor mandatoryp
                 :initarg :mandatoryp
                 :initform nil)
@@ -28,9 +28,9 @@ The form for a protocol configuration entry consists of the following subforms:
 * NAME - mandatory, must be a list of keywords. Denotes the name of the
   configuration entry. The name of configuration entries and configuration
   categories must not collide with each other.
-* TYPE - optional, must be a valid type specifier. Denotes the type of the value
-  bound to the configuration entry. If not specified, the configuration type
-  will default to T.
+* VALUE-TYPE - optional, must be a valid type specifier. Denotes the type of the
+  value bound to the configuration entry. If not specified, the configuration
+  type will default to T.
 * MANDATORYP - optional, must be of type (MEMBER :MANDATORY :OPTIONAL). States
   if the configuration entry must have a value set in the configuration before
   any client code may be executed. If not provided, defaults to :OPTIONAL.
@@ -47,7 +47,7 @@ The form for a protocol configuration entry consists of the following subforms:
     (let ((element (make-instance 'protocol-config :name name)))
       (when (<= 2 (length form))
         (let ((type (second form)))
-          (setf (type element) type)))
+          (setf (value-type element) type)))
       (when (<= 3 (length form))
         (let ((mandatory (third form)))
           (assert (member mandatory '(:mandatory :optional))
@@ -59,7 +59,7 @@ The form for a protocol configuration entry consists of the following subforms:
       element)))
 
 (defmethod generate-forms ((element protocol-config))
-  (let* ((name (name element)) (type (type element))
+  (let* ((name (name element)) (type (value-type element))
          (mandatoryp (mandatoryp element))
          (documentation (docstring element)))
     `((:config ,name

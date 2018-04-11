@@ -6,9 +6,9 @@
   ((%name :accessor name
           :initarg :name
           :initform (error "Must provide NAME."))
-   (%type :accessor type
-          :initarg :type
-          :initform t)
+   (%value-type :accessor value-type
+                :initarg :value-type
+                :initform t)
    (%initial-value :accessor initial-value
                    :initarg :initial-value)
    (%declaim-type-p :accessor declaim-type-p
@@ -18,8 +18,9 @@
 \
 The form for a protocol variable consists of the following subforms:
 * NAME - mandatory, must be a symbol. Denotes the name of the variable.
-* TYPE - optional, must be a valid type specifier. Denotes the type of the value
-  bound to the variable. If not passed, the variable type will not be declaimed.
+* VALUE-TYPE - optional, must be a valid type specifier. Denotes the type of
+  the value bound to the variable. If not passed, the variable type will not be
+  declaimed.
 * INITIAL-VALUE - optional. Denotes the default value that the variable will
   have at the moment of defining the protocol. If not passed, the variable will
   be unbound."))
@@ -34,7 +35,7 @@ The form for a protocol variable consists of the following subforms:
       (setf (declaim-type-p element) declaim-type-p)
       (when (<= 2 (length form))
         (let ((type (second form)))
-          (setf (type element) type)))
+          (setf (value-type element) type)))
       (when (<= 3 (length form))
         (let ((initial-value (third form)))
           (setf (initial-value element) initial-value)))
@@ -45,7 +46,7 @@ The form for a protocol variable consists of the following subforms:
 
 (defmethod generate-forms ((element protocol-variable))
   (let* ((name (name element))
-         (type (type element))
+         (type (value-type element))
          (documentation (docstring element)))
     `((:variable ,name ,@(unless (eq type 't) `(,type))
                  ,@(when (slot-boundp element '%initial-value)
@@ -54,12 +55,13 @@ The form for a protocol variable consists of the following subforms:
 
 (defmethod generate-code ((element protocol-variable))
   (with-accessors
-        ((name name) (type type) (initial-value initial-value))
+        ((name name) (value-type value-type)
+         (initial-value initial-value))
       element
     (let ((documentation (docstring element)))
       `((defvar ,name ,@(when (slot-boundp element '%initial-value)
                           `(,(initial-value element))))
-        ,@(when (and (declaim-type-p element) (not (eq type 't)))
-            `((declaim (cl:type ,type ,name))))
+        ,@(when (and (declaim-type-p element) (not (eq value-type 't)))
+            `((declaim (type ,value-type ,name))))
         ,@(when documentation
             `((setf (documentation ',name 'variable) ,documentation)))))))
