@@ -40,6 +40,9 @@ given test phase, such as description and tags, test phases (denoted by
 keywords), and test steps (denoted by numbers and strings). PROTEST also
 implements the concept of a test that is an instance of the given test case.
 
+Each test case in PROTEST has a name, which may be a string or a symbol. All names
+are internally coerced to strings.
+
 Each phase is required to be a keyword. These are meant to describe the group of
 test steps that come afterwards it.
 

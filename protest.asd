@@ -47,8 +47,10 @@
   :license "LLGPL"
   :serial t
   :depends-on (#:alexandria
-               #:named-readtables)
+               #:named-readtables
+               #:parachute)
   :components ((:file "test-case/package")
+               (:file "test-case/test-step")
                (:file "test-case/test-case")
                (:file "test-case/test")))
 

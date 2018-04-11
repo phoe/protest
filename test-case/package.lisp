@@ -5,4 +5,4 @@
         #:alexandria
         #:named-readtables
         #:protest/base)
-  (:export #:define-test-case #:define-test #:define-testing-library))
+  (:export #:define-test-case))

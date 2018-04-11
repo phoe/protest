@@ -2,8 +2,6 @@
 
 (in-package #:protest)
 
-(defvar *test-packages* (make-hash-table))
-
 (defvar *current-test* nil)
 
 (defvar *current-step* nil)

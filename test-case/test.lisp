@@ -2,6 +2,7 @@
 
 (in-package #:protest/test-case)
 
+;; TODO write a better test framework, this one doesn't work well
 (defmacro with-test ((success-expected-p) &body body)
   (with-gensyms (function warnp failp)
     (once-only (success-expected-p)
@@ -48,7 +49,7 @@
 
 (defun test-test-case-define-invalid-name ()
   (with-test (nil) (define-test-case 2 ()))
-  (with-test (nil) (define-test-case "TEST-CASE" ()))
+  (with-test (t) (define-test-case "TEST-CASE" ()))
   (with-test (nil) (define-test-case '(#.(gensym) #.(gensym)) ()))
   (with-test (nil) (define-test-case nil ())))
 
@@ -76,11 +77,10 @@
       #3=#.(gensym)
       30 "thirty")
     (let* ((test-case (gethash '#1# *test-cases*))
-           (test-steps (hash-table-alist (steps test-case)))
-           (test-steps (sort test-steps #'< :key #'id))
-           (first (first test-steps))
-           (second (second test-steps))
-           (third (third test-steps)))
+           (steps (steps-list test-case))
+           (first (first steps))
+           (second (second steps))
+           (third (third steps)))
       (assert (= 10 (id first)))
       (assert (= 20 (id second)))
       (assert (= 30 (id third)))

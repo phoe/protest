@@ -2,35 +2,8 @@
 
 (in-package #:protest/test-case)
 
-;; TODO put accessor symbols in some sorta BASE package or something so
-;; PROTOCOL:DESCRIPTION does not collide with TEST-CASE:DESCRIPTION
-(defclass test-step ()
-  ((%id :reader id
-        :initarg :id
-        :initform 0)
-   (%description :reader description
-                 :initarg :description
-                 :initform nil)
-   (%test-phase :reader test-phase
-                :initarg :test-phase
-                :initform nil)))
-
-(defmethod print-object ((test-step test-step) stream)
-  (print-unreadable-object (test-step stream :type t)
-    (format stream "~A ~D: ~A"
-            (test-phase test-step) (id test-step) (description test-step))))
-
-(defmethod make-load-form ((test-step test-step) &optional environment)
-  (declare (ignore environment))
-  (make-load-form-saving-slots test-step))
-
-(defmethod initialize-instance :after ((test-step test-step) &key)
-  (assert (typep (id test-step) 'unsigned-byte))
-  (assert (typep (description test-step) '(or string null)))
-  (assert (typep (test-phase test-step) 'symbol)))
-
-(defvar *test-cases* (make-hash-table)
-  "A hash-table mapping from test case names to test case objects.")
+(defvar *test-cases* (make-hash-table :test #'equal)
+  "A mapping from test case names to test cases.")
 
 (defclass test-case ()
   ((%name :accessor name
@@ -49,10 +22,13 @@
                  :initform '()) ;; TODO attachments for protocols
    (%steps :accessor steps
            :initarg :steps
-           :initform '()))
+           :initform (make-hash-table)))
   (:documentation
    "Describes a test case understood as a series of test phases and test steps
 describing each part of the test."))
+
+(defmethod steps-list ((test-case test-case))
+  (sort (hash-table-values (steps test-case)) #'< :key #'id))
 
 (defmethod print-object ((test-case test-case) stream)
   (print-unreadable-object (test-case stream :type t)
@@ -63,9 +39,9 @@ describing each part of the test."))
   (make-load-form-saving-slots test-case))
 
 (defmethod initialize-instance :after ((test-case test-case) &key name)
-  (when (or (null name) (not (symbolp name)))
-    (protocol-error "NAME must be a non-null symbol, not ~S." name))
-  (setf (name test-case) name)
+  (unless (and name (typep name 'string-designator))
+    (protocol-error "Wrong thing to be a test case name: ~A" name))
+  (setf (name test-case) (string name))
   (let ((step-forms (cdddr (whole test-case))))
     (setf (steps test-case)
           (generate-steps step-forms))))
@@ -94,7 +70,7 @@ describing each part of the test."))
 
 (defun check-duplicate-ids (test-case)
   (loop with hash-table = (make-hash-table)
-        for test-step in (step test-case)
+        for test-step in (steps-list test-case)
         for id = (id test-step)
         for (value foundp) in (multiple-value-list (gethash id hash-table))
         if foundp
