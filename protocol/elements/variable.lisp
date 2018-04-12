@@ -25,6 +25,9 @@ The form for a protocol variable consists of the following subforms:
   have at the moment of defining the protocol. If not passed, the variable will
   be unbound."))
 
+;; TODO check if VALUE-TYPE is of type INITIAL-VALUE when instantiating
+;; TODO embed https://plaster.tymoon.eu/view/764 somewhere
+
 (defmethod generate-element
     ((type (eql :variable)) form &optional (declaim-type-p t))
   (destructuring-bind (name . rest) form
