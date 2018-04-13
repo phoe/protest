@@ -25,15 +25,14 @@ The form for a protocol variable consists of the following subforms:
   have at the moment of defining the protocol. If not passed, the variable will
   be unbound."))
 
-;; TODO check if VALUE-TYPE is of type INITIAL-VALUE when instantiating
 ;; TODO embed https://plaster.tymoon.eu/view/764 somewhere
 
 (defmethod generate-element
     ((type (eql :variable)) form &optional (declaim-type-p t))
   (destructuring-bind (name . rest) form
     (declare (ignore rest))
-    (assert (and (not (null name)) (symbolp name))
-            () "Wrong thing to be a variable name: ~S" name)
+    (assert (and (not (null name)) (symbolp name)) ()
+            "Wrong thing to be a variable name: ~S" name)
     (let ((element (make-instance 'protocol-variable :name name)))
       (setf (declaim-type-p element) declaim-type-p)
       (when (<= 2 (length form))
@@ -41,6 +40,9 @@ The form for a protocol variable consists of the following subforms:
           (setf (value-type element) type)))
       (when (<= 3 (length form))
         (let ((initial-value (third form)))
+          (assert (typep initial-value type) ()
+                  "The provided initial value, ~S, is not of the provided ~
+type ~S." (value-type element) initial-value)
           (setf (initial-value element) initial-value)))
       element)))
 
