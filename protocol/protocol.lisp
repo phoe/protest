@@ -59,6 +59,22 @@ operations on these types."))
     (setf (elements protocol)
           (generate-elements element-forms declaim-type-p))))
 
+(defvar *protocol-documentation-store* (make-hash-table))
+
+(defmethod documentation ((slotd symbol) (type (eql 'protocol)))
+  (gethash slotd *protocol-documentation-store*))
+
+(defmethod documentation ((slotd protocol) (type (eql 'protocol)))
+  (gethash (name slotd) *protocol-documentation-store*))
+
+(defmethod (setf documentation)
+    (new-value (slotd symbol) (type (eql 'protocol)))
+  (setf (gethash slotd *protocol-documentation-store*) new-value))
+
+(defmethod (setf documentation)
+    (new-value (slotd protocol) (type (eql 'protocol)))
+  (setf (gethash (name slotd) *protocol-documentation-store*) new-value))
+
 (defmethod generate-code ((protocol protocol))
   (mappend #'generate-code (elements protocol)))
 

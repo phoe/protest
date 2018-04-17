@@ -7,13 +7,16 @@
     (once-only (success-expected-p)
       `(multiple-value-prog1 (values)
          (handler-case
-             (let ((*error-output* (make-broadcast-stream))
+             (let ((*error-output* (make-string-output-stream))
                    (*protocols* (make-hash-table))
                    (*compile-time-protocols* (make-hash-table)))
                (multiple-value-bind (,function ,warnp ,failp)
                    (compile nil '(lambda () ,@body))
-                 (declare (ignore ,warnp))
-                 (when (null ,failp)
+                 (when (and ,success-expected-p
+                            (or ,warnp ,failp))
+                   (format t "Errors/warnings when compiling tests:~%~A"
+                           (get-output-stream-string *error-output*)))
+                 (when (and (null ,warnp) (null ,failp))
                    (funcall ,function)
                    (when (not ,success-expected-p)
                      (error "Test failure: unexpected success.")))))

@@ -49,6 +49,22 @@ describing each part of the test."))
     (setf (steps test-case)
           (generate-steps step-forms))))
 
+(defvar *test-case-documentation-store* (make-hash-table))
+
+(defmethod documentation ((slotd symbol) (type (eql 'test-case)))
+  (gethash slotd *test-case-documentation-store*))
+
+(defmethod documentation ((slotd test-case) (type (eql 'test-case)))
+  (gethash (name slotd) *test-case-documentation-store*))
+
+(defmethod (setf documentation)
+    (new-value (slotd symbol) (type (eql 'test-case)))
+  (setf (gethash slotd *test-case-documentation-store*) new-value))
+
+(defmethod (setf documentation)
+    (new-value (slotd test-case) (type (eql 'test-case)))
+  (setf (gethash (name slotd) *test-case-documentation-store*) new-value))
+
 (defun generate-steps (forms)
   (let ((forms forms) (current-phase nil) (result (make-hash-table)))
     (flet ((make (id description)
