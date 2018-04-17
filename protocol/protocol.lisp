@@ -18,9 +18,6 @@ compile-time constraint checking.")
           :initform (error "Must provide NAME."))
    (%whole :accessor whole
            :initarg :whole)
-   (%description :accessor description
-                 :initarg :description
-                 :initform nil)
    (%tags :accessor tags
           :initarg :tags
           :initform '())
@@ -45,9 +42,15 @@ operations on these types."))
   (make-load-form-saving-slots protocol))
 
 (defmethod initialize-instance :after
-    ((protocol protocol) &key name dependencies export (declaim-type-p t))
+    ((protocol protocol)
+     &key name dependencies export (declaim-type-p t) documentation)
   (when (or (null name) (not (symbolp name)))
     (protocol-error "NAME must be a non-null symbol, not ~S." name))
+  (when documentation
+    (unless (typep documentation 'string)
+      (protocol-error "DOCUMENTATION must be a string, not ~A."
+                      documentation))
+    (setf (documentation protocol 'protocol) documentation))
   (setf (name protocol) name
         (dependencies protocol) dependencies
         (exports protocol)

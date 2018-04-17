@@ -16,7 +16,7 @@
 
 (defpackage #:protest/common
   (:use)
-  (:export #:tags #:description #:name #:whole))
+  (:export #:tags #:name #:whole))
 
 (in-package #:protest/base)
 

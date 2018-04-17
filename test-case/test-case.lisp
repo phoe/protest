@@ -11,9 +11,6 @@
           :initform (error "Must provide NAME."))
    (%whole :accessor whole
            :initarg :whole)
-   (%description :accessor description
-                 :initarg :description
-                 :initform nil)
    (%tags :accessor tags
           :initarg :tags
           :initform '())
@@ -38,10 +35,16 @@ describing each part of the test."))
   (declare (ignore environment))
   (make-load-form-saving-slots test-case))
 
-(defmethod initialize-instance :after ((test-case test-case) &key name)
+(defmethod initialize-instance :after
+    ((test-case test-case) &key name documentation)
   (unless (and name (typep name 'string-designator))
     (protocol-error "Wrong thing to be a test case name: ~A" name))
   (setf (name test-case) (string name))
+  (when documentation
+    (unless (typep documentation 'string)
+      (protocol-error "DOCUMENTATION must be a string, not ~A."
+                      documentation))
+    (setf (documentation test-case'test-case) documentation))
   (let ((step-forms (cdddr (whole test-case))))
     (setf (steps test-case)
           (generate-steps step-forms))))

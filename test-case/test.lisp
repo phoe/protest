@@ -27,7 +27,7 @@
   (with-test (t)
     (define-test-case #1=#.(gensym) ())
     (let ((test-case (gethash '#1# *test-cases*)))
-      (assert (null (description test-case)))
+      (assert (null (documentation test-case 'test-case)))
       (assert (null (tags test-case)))
       (assert (null (attachments test-case)))
       (assert (null (hash-table-alist (steps test-case))))))
@@ -37,10 +37,10 @@
   (with-test (t)
     (define-test-case #1=#.(gensym) (:attachments (#2="haha")
                                      :tags (#3=#.(gensym))
-                                     :description "asdf"
+                                     :documentation "asdf"
                                      :export t))
     (let ((test-case (gethash '#1# *test-case*)))
-      (assert (string= "asdf" (description test-case)))
+      (assert (string= "asdf" (documentation test-case 'test-case)))
       (assert (equal '(#3#) (tags test-case)))
       (assert (= 1 (length (attachments test-case))))
       (assert (string= "haha" (first (attachments test-case))))

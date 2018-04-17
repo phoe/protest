@@ -11,7 +11,7 @@
            #:protocol-function #:protocol-macro #:protocol-class
            #:protocol-condition-type #:protocol-variable #:protocol-category
            #:protocol-config #:category #:config
-           #:name #:form #:description #:tags #:dependencies #:exports
+           #:name #:form #:documentation #:tags #:dependencies #:exports
            #:elements #:lambda-list #:return-type #:superclasses #:slots
            #:options #:protocol-type #:default-value #:mandatoryp
            #:keyword-types #:value-type))

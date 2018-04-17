@@ -66,7 +66,7 @@ The code below:
 
 ```common-lisp
 (define-protocol fuelable
-    (:description "Defines objects which have a fuel tank and must be refueled
+    (:documentation "Defines objects which have a fuel tank and must be refueled
 to function."
      :tags (:industrial :electricity :coal :oil)
      :export t)
@@ -76,7 +76,7 @@ to function."
   "Sets the current amount of fuel in the fuelable.")
 
 (define-protocol car
-    (:description "Defines objects which are able to move forward by means of an
+    (:documentation "Defines objects which are able to move forward by means of an
 engine and can hold people and luggage."
      :tags (:industrial :machine)
      :dependencies (fuelable)

@@ -47,7 +47,7 @@
   (with-test (t)
     (define-protocol #1=#.(gensym) ())
     (let ((protocol (gethash '#1# *protocols*)))
-      (assert (null (description protocol)))
+      (assert (null (documentation protocol 'protocol)))
       (assert (null (tags protocol)))
       (assert (null (dependencies protocol)))
       (assert (null (exports protocol)))
@@ -58,10 +58,11 @@
     (define-protocol #1=#.(gensym) (:export ()))
     (define-protocol #2=#.(gensym) (:dependencies (#1#)
                                     :tags (#3=#.(gensym))
-                                    :description "asdf"
+                                    :documentation "asdf"
                                     :export t))
     (let ((protocol (gethash '#2# *protocols*)))
-      (assert (string= "asdf" (description protocol)))
+      (assert (string= "asdf"
+                       (documentation protocol 'protocol)))
       (assert (equal '(#3#) (tags protocol)))
       (assert (equal '(#1#) (dependencies protocol)))
       (assert (null (exports protocol)))
