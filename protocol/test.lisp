@@ -46,6 +46,13 @@
    :ok)
   (values))
 
+(defun test-framework-unexpected-error ()
+  (tagbody (handler-case (with-test (t) (error 'simple-error))
+             ((and error (not protocol-error)) () (go :ok)))
+   :fail (error "fail")
+   :ok)
+  (values))
+
 (defun test-protocol-define-empty ()
   (with-test (t)
     (define-protocol #1=#.(gensym) ())
