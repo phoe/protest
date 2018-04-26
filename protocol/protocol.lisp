@@ -76,7 +76,7 @@ operations on these types."))
   (setf (gethash (name slotd) *protocol-documentation-store*) new-value))
 
 (defmethod generate-code ((protocol protocol))
-  (mappend #'generate-code (elements protocol)))
+  `(progn ,@(mappend #'generate-code (elements protocol)) (values)))
 
 (defun generate-elements (elements declaim-type-p)
   (loop for sublist on elements
@@ -178,19 +178,26 @@ in protocol ~A." list (name protocol))
           for element = (find export (elements protocol) :key #'name)
           unless element do (error "Export not found: ~S" export))))
 
+(defun ensure-protocol (name options whole)
+  (let* ((protocol (apply #'make-instance 'protocol
+                          :name name :whole whole options)))
+    (validate-protocol protocol *protocols*)
+    (multiple-value-bind (value foundp) (gethash name *protocols*)
+      (when (and foundp (not (equalp (whole value) (whole protocol))))
+        (warn "Redefining ~A in DEFINE-PROTOCOL" name)))
+    (setf (gethash name *protocols*) protocol)
+    name))
+
 (defmacro define-protocol (&whole whole name (&rest options) &body forms)
   "Defines the protocol with the provided NAME and OPTIONS, instantiating all
 its elements based on FORMS."
   (declare (ignore forms))
-  (let* ((protocol (apply #'make-instance 'protocol
-                          :name name :whole whole options)))
-    (validate-protocol protocol *compile-time-protocols*)
-    (setf (gethash name *compile-time-protocols*) protocol)
-    (with-gensyms (value foundp)
-      `(progn
-         (validate-protocol ,protocol *protocols*)
-         (multiple-value-bind (,value ,foundp) (gethash ',name *protocols*)
-           (when (and ,foundp (not (equalp (whole ,value) (whole ,protocol))))
-             (warn "Redefining ~A in DEFINE-PROTOCOL" ',name)))
-         ,@(generate-code protocol)
-         (setf (gethash ',name *protocols*) ,protocol)))))
+  `(ensure-protocol ',name ',options ',whole))
+
+(defmacro execute-protocol (name)
+  "Applies all the effects of the protocol with the provided NAME."
+  (check-type name symbol)
+  (multiple-value-bind (protocol foundp) (gethash name *protocols*)
+    (if foundp
+        (generate-code protocol)
+        (error "Protocol ~S was not found." name))))

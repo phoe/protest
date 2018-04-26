@@ -2,23 +2,6 @@
 
 (in-package #:protest/base)
 
-(defun run-tests (&optional (package *package*))
-  (mapc (compose #'funcall #'print)
-        (uiop:while-collecting (collect)
-          (do-symbols (symbol package)
-            (let ((name (symbol-name symbol)))
-              (when (and (<= 11 (length name))
-                         (string= "TEST-" (subseq name 0 5))
-                         (fboundp symbol))
-                (collect symbol))))))
-  (values))
-
-(defun test-protocol-class-define ()
-  (unwind-protect
-       (define-protocol-class #1=#.(gensym) () ())
-    (setf (find-class '#1#) nil))
-  (values))
-
 (defun #1=test-protocol-class-instantiate ()
   (unwind-protect (progn
                     (define-protocol-class #2=#.(gensym) () ())

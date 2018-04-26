@@ -20,7 +20,8 @@
   :serial t
   :depends-on (#:alexandria
                #:closer-mop)
-  :components ((:file "base/base")
+  :components ((:file "base/1am")
+               (:file "base/base")
                (:file "base/test")))
 
 (asdf:defsystem #:protest/protocol
