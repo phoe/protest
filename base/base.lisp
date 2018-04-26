@@ -1,15 +1,14 @@
 ;;;; base/base.lisp
 
 (uiop:define-package #:protest/base
-  (:use #:common-lisp
-        #:alexandria
-        #:closer-mop
-        #:protest/1am)
+    (:use #:common-lisp
+          #:alexandria
+          #:closer-mop
+          #:protest/1am)
   (:shadowing-import-from #:closer-mop
                           #:standard-generic-function
                           #:defmethod
                           #:defgeneric)
-  (:reexport #:protest/1am)
   (:export #:define-protocol-class
            #:define-protocol-condition-type
            #:protocol-error

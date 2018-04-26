@@ -192,7 +192,8 @@ in protocol ~A." list (name protocol))
   "Defines the protocol with the provided NAME and OPTIONS, instantiating all
 its elements based on FORMS."
   (declare (ignore forms))
-  `(ensure-protocol ',name ',options ',whole))
+  `(eval-when (:compile-toplevel :load-toplevel :execute)
+     (ensure-protocol ',name ',options ',whole)))
 
 (defmacro execute-protocol (name)
   "Applies all the effects of the protocol with the provided NAME."

@@ -4,7 +4,8 @@
   (:use #:common-lisp
         #:alexandria
         #:protest/base
-        #:protest/common)
+        #:protest/common
+        #:protest/1am)
   (:export #:*protocols* #:*declaim-types* #:*configuration-setter*
            #:protocol #:define-protocol
            #:protocol-element #:protocol-operation #:protocol-data-type

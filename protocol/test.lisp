@@ -123,7 +123,7 @@
                 (eval '(execute-protocol #3#))
                 (is (string= #2# (documentation '#1# 'category))))
       (setf (documentation '#1# 'category) nil)
-      (is (eq (documentation '#1# 'category) nil)))))
+      (is (null (documentation '#1# 'category))))))
 
 (define-protest-test test-protocol-define-class
   (with-fresh-state
@@ -135,9 +135,9 @@
                 (is (find-class '#1#))
                 (is (string= #2# (documentation '#1# 'type))))
       (setf (documentation '#1# 'type) nil)
-      (is (eq (documentation '#1# 'type) nil))
+      (is (null (documentation '#1# 'type)))
       (setf (find-class '#1#) nil)
-      (is (eq (find-class '#1# nil) nil)))))
+      (is (null (find-class '#1# nil))))))
 
 (define-protest-test test-protocol-define-class-instantiate
   (with-fresh-state
@@ -148,7 +148,7 @@
                 (signals protocol-error
                   (make-instance (find-class '#1#))))
       (setf (find-class '#1#) nil)
-      (is (eq (find-class '#1# nil) nil)))))
+      (is (null (find-class '#1# nil))))))
 
 (define-protest-test test-protocol-define-condition-type
   (with-fresh-state
@@ -160,19 +160,22 @@
                 (is (find-class '#1#))
                 (is (string= #2# (documentation '#1# 'type))))
       (setf (documentation '#1# 'type) nil)
-      (is (eq (documentation '#1# 'type) nil))
+      (is (null (documentation '#1# 'type)))
       (setf (find-class '#1#) nil)
-      (is (eq (find-class '#1# nil) nil)))))
+      (is (null (find-class '#1# nil))))))
 
 (define-protest-test #2=test-protocol-define-condition-type-instantiate
   ;; https://bugs.launchpad.net/sbcl/+bug/1761950
   #+sbcl (format t "~&~A broken on SBCL; skipping.~&" '#2#)
   #-sbcl (with-fresh-state
            (unwind-protect
-                (progn (define-protocol #.(gensym) ()
+                (progn (define-protocol #3=#.(gensym) ()
                          (:condition-type #1=#.(gensym) () ()))
-                       (make-condition (find-class '#1#)))
-             (setf (find-class '#1#) nil))))
+                       (eval '(execute-protocol #3#))
+                       (signals protocol-error
+                         (make-condition '#1#)))
+             (setf (find-class '#1#) nil)
+             (is (null (find-class '#1# nil))))))
 
 (define-protest-test test-protocol-define-config
   (with-fresh-state
@@ -180,48 +183,59 @@
            (*configuration-setter*
              (lambda (x y) (declare (ignore x y)) (setf variable t))))
       (unwind-protect
-           (progn (define-protocol #.(gensym) ()
+           (progn (define-protocol #3=#.(gensym) ()
                     (:config #1=(:foo :bar) string :mandatory "a")
                     #2="qwer")
-                  (assert (string= #2# (documentation '#1# 'config))))
-        (setf (documentation '#1# 'config) nil)))))
+                  (eval '(execute-protocol #3#))
+                  (is (string= #2# (documentation '#1# 'config))))
+        (setf (documentation '#1# 'config) nil)
+        (is (null (documentation '#1# 'config)))))))
 
 (define-protest-test test-protocol-define-function
   (with-fresh-state
     (unwind-protect
-         (progn (define-protocol #.(gensym) ()
-                  (:function #1=#.(gensym) (#2=#.(gensym) #3=#.(gensym)) 'string)
+         (progn (define-protocol #5=#.(gensym) ()
+                  (:function #1=#.(gensym) (#.(gensym) #.(gensym)) 'string)
                   #4="qwer")
-                (assert (fdefinition '#1#))
-                (assert (string= #4# (documentation '#1# 'function))))
+                (eval '(execute-protocol #5#))
+                (is (typep (fdefinition '#1#) 'generic-function))
+                (is (string= #4# (documentation '#1# 'function))))
       (fmakunbound '#1#)
-      (setf (documentation '#1# 'function) nil))))
+      (is (not (fboundp'#1#)))
+      (setf (documentation '#1# 'function) nil)
+      (is (null (documentation '#1# 'function))))))
 
 (define-protest-test test-protocol-define-macro
   (with-fresh-state
     (unwind-protect
-         (progn (define-protocol #.(gensym) ()
-                  (:macro #1=#.(gensym) (#2=#.(gensym) #3=#.(gensym)))
+         (progn (define-protocol #5=#.(gensym) ()
+                  (:macro #1=#.(gensym) (#.(gensym) #.(gensym)))
                   #4="qwer")
-                (assert (string= #4# (documentation '#1# 'function))))
+                (eval '(execute-protocol #5#))
+                (is (string= #4# (documentation '#1# 'function))))
       (fmakunbound '#1#)
-      (setf (documentation '#1# 'function) nil))))
+      (is (not (fboundp'#1#)))
+      (setf (documentation '#1# 'function) nil)
+      (is (null (documentation '#1# 'function))))))
 
 (define-protest-test test-protocol-define-variable
   (with-fresh-state
     (unwind-protect
-         (progn (define-protocol #.(gensym) ()
+         (progn (define-protocol #4=#.(gensym) ()
                   (:variable #1=#.(gensym) string #2="asdf")
                   #3="qwer")
-                (assert (string= (symbol-value '#1#) #2#))
-                (assert (string= #3# (documentation '#1# 'variable))))
+                (eval '(execute-protocol #4#))
+                (is (string= (symbol-value '#1#) #2#))
+                (is (string= #3# (documentation '#1# 'variable))))
       (makunbound '#1#)
-      (setf (documentation '#1# 'variable) nil))))
+      (is (not (boundp '#1#)))
+      (setf (documentation '#1# 'variable) nil)
+      (is (null (documentation '#1# 'variable))))))
 
 (define-protest-test test-protocol-define-complex
   (with-fresh-state
     (unwind-protect
-         (progn (define-protocol #.(gensym) ()
+         (progn (define-protocol #8=#.(gensym) ()
                   (:category #1=(:foo :bar))
                   (:class #2=#.(gensym) () ())
                   (:condition-type #3=#.(gensym) () ())
@@ -229,10 +243,11 @@
                   (:function #5=#.(gensym) ())
                   (:macro #6=#.(gensym) ())
                   (:variable #7=#.(gensym) t "asdf"))
-                (assert (find-class '#2#))
-                (assert (find-class '#3#))
-                (assert (fdefinition '#5#))
-                (assert (string= "asdf" (symbol-value '#7#))))
+                (eval '(execute-protocol #8#))
+                (is (find-class '#2#))
+                (is (find-class '#3#))
+                (is (fdefinition '#5#))
+                (is (string= "asdf" (symbol-value '#7#))))
       (setf (find-class '#2#) nil
             (find-class '#3#) nil)
       (fmakunbound '#5#)
