@@ -2,30 +2,6 @@
 
 (in-package #:protest/protocol)
 
-;; (defmacro with-test ((success-expected-p) &body body)
-;;   (with-gensyms (function warnp failp)
-;;     (once-only (success-expected-p)
-;;       `(multiple-value-prog1 (values)
-;;          (handler-case
-;;              (let ((*error-output* (make-string-output-stream))
-;;                    (*protocols* (make-hash-table))
-;;                    (*compile-time-protocols* (make-hash-table)))
-;;                (multiple-value-bind (,function ,warnp ,failp)
-;;                    (compile nil '(lambda () ,@body))
-;;                  (when (and ,success-expected-p
-;;                             (or ,warnp ,failp))
-;;                    (format t "Errors/warnings when compiling tests:~%~A"
-;;                            (get-output-stream-string *error-output*)))
-;;                  (when (and (null ,warnp) (null ,failp))
-;;                    (funcall ,function)
-;;                    (when (not ,success-expected-p)
-;;                      (error "Test failure: unexpected success.")))))
-;;            (protocol-error (e)
-;;              (declare (ignorable e))
-;;              (when ,success-expected-p
-;;                (error "Test failure: unexpected failure of type ~S:~%~A"
-;;                       (type-of e) e))))))))
-
 (defmacro with-fresh-state (&body body)
   `(let ((*protocols* (make-hash-table)))
      ,@body
@@ -89,11 +65,21 @@
     (signals protocol-error (define-protocol nil ()))))
 
 (define-protest-test test-protocol-define-invalid-dependencies
-  (with-fresh-state (define-protocol #.(gensym) (:dependencies (2))))
-  (with-fresh-state (define-protocol #.(gensym) (:dependencies ("ABC"))))
-  (with-fresh-state (define-protocol #.(gensym) (:dependencies ((#.(gensym))))))
-  (with-fresh-state (define-protocol #.(gensym) (:dependencies ((1 2 3 4)))))
-  (with-fresh-state (define-protocol #.(gensym) (:dependencies (nil)))))
+  (with-fresh-state
+    (signals protocol-error
+      (define-protocol #.(gensym) (:dependencies (2)))))
+  (with-fresh-state
+    (signals protocol-error
+      (define-protocol #.(gensym) (:dependencies ("ABC")))))
+  (with-fresh-state
+    (signals protocol-error
+      (define-protocol #.(gensym) (:dependencies ((#.(gensym)))))))
+  (with-fresh-state
+    (signals protocol-error
+      (define-protocol #.(gensym) (:dependencies ((1 2 3 4))))))
+  (with-fresh-state
+    (signals protocol-error
+      (define-protocol #.(gensym) (:dependencies (nil))))))
 
 (define-protest-test test-protocol-define-duplicate-elements
   (with-fresh-state

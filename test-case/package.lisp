@@ -4,7 +4,8 @@
   (:use #:common-lisp
         #:alexandria
         #:protest/base
-        #:protest/common)
+        #:protest/common
+        #:protest/1am)
   (:shadow #:of-type)
   (:export #:*test-cases*
            #:test-step #:test-case #:define-test-case

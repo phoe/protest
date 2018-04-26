@@ -75,7 +75,9 @@ describing each part of the test."))
           (typecase elt
             (unsigned-byte
              (let ((string (pop forms)))
-               (assert (typep string 'string))
+               (unless (typep string 'string)
+                 (protocol-error "Wrong thing in a test case definition: ~S"
+                                 string))
                (setf (gethash elt result) (make elt string))))
             (symbol (setf current-phase elt))
             (t (protocol-error "Wrong thing in a test case definition: ~S"
@@ -91,7 +93,7 @@ describing each part of the test."))
   (loop with hash-table = (make-hash-table)
         for test-step in (steps-list test-case)
         for id = (id test-step)
-        for (value foundp) in (multiple-value-list (gethash id hash-table))
+        for (value foundp) = (multiple-value-list (gethash id hash-table))
         if foundp
           do (protocol-error "Duplicate step ID ~D found." id)
         else do (setf (gethash id hash-table) t)))
@@ -100,7 +102,7 @@ describing each part of the test."))
   (loop with hash-table = (make-hash-table)
         with forms = (cdddr (whole test-case))
         for symbol in (remove-if-not #'symbolp forms)
-        for (value foundp) in (multiple-value-list (gethash symbol hash-table))
+        for (value foundp) = (multiple-value-list (gethash symbol hash-table))
         if foundp
           do (protocol-error "Duplicate test phase ~A found." symbol)
         else do (setf (gethash symbol hash-table) t)))
@@ -114,11 +116,16 @@ describing each part of the test."))
         else do (protocol-error "Test step IDs not in order: ~D came after ~D."
                                 previous-number number)))
 
+(defun ensure-test-case (name options whole)
+  (let ((test-case (apply #'make-instance 'test-case
+                          :name name :whole whole options)))
+    (validate-test-case test-case)
+    (multiple-value-bind (value foundp) (gethash name *test-cases*)
+      (when (and foundp (not (equalp (whole value) (whole test-case))))
+        (warn "Redefining ~A in DEFINE-PROTOCOL" name)))
+    (setf (gethash name *test-cases*) test-case)
+    name))
+
 (defmacro define-test-case (&whole whole name (&rest options) &body forms)
   (declare (ignore forms))
-  (let ((instance (apply #'make-instance 'test-case
-                         :name name :whole whole options)))
-    (validate-test-case instance)
-    `(eval-when (:compile-toplevel :load-toplevel :execute)
-       (setf (gethash ',name *test-cases*) ,instance)
-       ',name)))
+  `(ensure-test-case ',name ',options ',whole))
