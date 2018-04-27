@@ -2,6 +2,10 @@
 
 (in-package #:protest/protocol)
 
+(defvar *category-callback* (constantly nil)
+  "A function of one argument used as a callback for declaring categories. The
+only argument is the category name.")
+
 (defclass protocol-category (protocol-data-type)
   ((%name :accessor name
           :initarg :name
@@ -32,7 +36,8 @@ subforms:
 
 (defmethod generate-code ((element protocol-category))
   (when-let ((documentation (docstring element)))
-    `((setf (documentation ',(name element) 'category) ,documentation))))
+    `((funcall *category-callback* ',(name element))
+      (setf (documentation ',(name element) 'category) ,documentation))))
 
 (defvar *category-documentation-store*
   (make-hash-table :test #'equal))

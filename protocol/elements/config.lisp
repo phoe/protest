@@ -2,10 +2,10 @@
 
 (in-package #:protest/protocol)
 
-(defvar *configuration-setter* (constantly nil)
-  "A function of two arguments used for setting configuration values. The first
-argument is the configuration entry name and the second is the value that should
-be set to it.")
+(defvar *configuration-callback* (constantly nil)
+  "A function of two arguments used as a callback for declaring configuration
+values. The first argument is the configuration entry name and the second is
+the initial value that was passed in the protocol.")
 
 ;; TODO configuration getter or something
 
@@ -78,7 +78,7 @@ The form for a protocol configuration entry consists of the following subforms:
 (defmethod generate-code ((element protocol-config))
   (let ((documentation (docstring element)))
     `(,@(when (slot-boundp element '%initial-value)
-          `((funcall *configuration-setter*
+          `((funcall *configuration-callback*
                      ',(name element) ,(initial-value element))))
       ,@(when documentation
           `((setf (documentation ',(name element) 'config) ,documentation))))))
