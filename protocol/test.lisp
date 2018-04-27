@@ -103,13 +103,17 @@
 
 (define-protest-test test-protocol-define-category
   (with-fresh-state
-    (unwind-protect
-         (progn (define-protocol #3=#.(gensym) ()
-                  (:category #1=(:foo :bar)) #2="qwer")
-                (eval '(execute-protocol #3#))
-                (is (string= #2# (documentation '#1# 'category))))
-      (setf (documentation '#1# 'category) nil)
-      (is (null (documentation '#1# 'category))))))
+    (let* ((variable nil)
+           (*category-callback*
+             (lambda (x) (declare (ignore x)) (setf variable t))))
+      (unwind-protect
+           (progn (define-protocol #3=#.(gensym) ()
+                    (:category #1=(:foo :bar)) #2="qwer")
+                  (eval '(execute-protocol #3#))
+                  (is (string= #2# (documentation '#1# 'category)))
+                  (is (eq variable t)))
+        (setf (documentation '#1# 'category) nil)
+        (is (null (documentation '#1# 'category)))))))
 
 (define-protest-test test-protocol-define-class
   (with-fresh-state
@@ -166,14 +170,15 @@
 (define-protest-test test-protocol-define-config
   (with-fresh-state
     (let* ((variable nil)
-           (*configuration-setter*
+           (*configuration-callback*
              (lambda (x y) (declare (ignore x y)) (setf variable t))))
       (unwind-protect
            (progn (define-protocol #3=#.(gensym) ()
                     (:config #1=(:foo :bar) string :mandatory "a")
                     #2="qwer")
                   (eval '(execute-protocol #3#))
-                  (is (string= #2# (documentation '#1# 'config))))
+                  (is (string= #2# (documentation '#1# 'config)))
+                  (is (eq variable t)))
         (setf (documentation '#1# 'config) nil)
         (is (null (documentation '#1# 'config)))))))
 
