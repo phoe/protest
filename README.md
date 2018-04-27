@@ -43,20 +43,26 @@ in other PROTEST packages.
 ### Exported symbols:
 
   * **Macro `DEFINE-PROTOCOL-CLASS`**
-    Like `DEFCLASS`, but instances of the defined class will not be directly instantiable.
+    Like `DEFCLASS`, but instances of the defined class will not be directly
+    instantiable.
   * **Macro `DEFINE-PROTOCOL-CONDITION-TYPE`**
-    Like `DEFINE-CONDITION`, but instances of the defined condition type will not be directly instantiable.
-    **SBCL Note:** This constraint is not enforced on SBCL. See [this](https://bugs.launchpad.net/sbcl/+bug/1761735) for details.
+    Like `DEFINE-CONDITION`, but instances of the defined condition type will
+    not be directly instantiable.
+      **SBCL Note:** This constraint is not enforced on SBCL. See
+      [this](https://bugs.launchpad.net/sbcl/+bug/1761735) for details.
   * **Condition Type `PROTOCOL-ERROR`**
     Parent condition type of all errors related to protocols.
   * **Condition Type `SIMPLE-PROTOCOL-ERROR`**
     Condition type of supertypes `PROTOCOL-ERROR` and `SIMPLE-CONDITION`.
   * **Condition Type `PROTOCOL-OBJECT-INSTANTIATION`**
-    Error type signaled whenever protocol objects (such as protocol classes and protocol condition types) are attempted to be instantiated.
+    Error type signaled whenever protocol objects (such as protocol classes and
+    protocol condition types) are attempted to be instantiated.
   * **Reader `PROTOCOL-OBJECT-INSTANTIATION-SYMBOL`**
-    Returns the name of the object that was attempted to be instantiated when `PROTOCOL-OBJECT-INSTANTIATION` was signaled.
+    Returns the name of the object that was attempted to be instantiated when
+    `PROTOCOL-OBJECT-INSTANTIATION` was signaled.
   * **Reader `PROTOCOL-OBJECT-INSTANTIATION-TYPE`**
-    Returns the human-readable representation of type of the object that was attempted to be instantiated when `PROTOCOL-OBJECT-INSTANTIATION` was signaled.
+    Returns the human-readable representation of type of the object that was
+    attempted to be instantiated when `PROTOCOL-OBJECT-INSTANTIATION` was signaled.
 
 ## Protocol
 
