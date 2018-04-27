@@ -3,9 +3,12 @@
 (defpackage #:protest/test/test-case
   (:use #:cl
         #:protest
+        #:protest/test
         #:protest/1am))
 
 (in-package #:protest/test/test-case)
+
+(register-test-package)
 
 (defmacro with-fresh-state (&body body)
   `(let ((*test-cases* (make-hash-table)))

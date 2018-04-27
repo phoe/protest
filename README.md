@@ -4,7 +4,27 @@
 
 # Common Lisp PROtocol and TESTcase manager
 
-PROTEST is a tool for defining protocols and test cases.
+PROTEST is a tool for defining protocols and test cases written in and for
+Common Lisp.
+
+## tl;dr
+
+TODO
+
+## Modules
+
+The currently implemented modules are:
+
+  * [`PROTEST/BASE`](src/base/README.md) - define protocol classes and protocol condition types
+  * [`PROTEST/PROTOCOL`](src/protocol/README.md) - define protocols
+  * [`PROTEST/TEST-CASE`](src/test-case/README.md) - define test cases
+  * [`PROTEST/PARACHUTE`](src/parachute/README.md) - integrate test cases with Parachute testing library
+
+The modules planned for development are:
+
+  * `PROTEST/WEB` - output test cases and protocols to HTML
+  * `PROTEST/5AM` - integrate test cases with 5AM testing library
+  * `PROTEST/PROVE` - integrate test cases with Prove testing library
 
 ## Protocol
 

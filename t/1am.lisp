@@ -54,16 +54,22 @@
     (multiple-value-prog1 (call-with-random-state fn)
       (report test-count *pass-count*))))
 
-(defun run (&optional (package *package*))
+(defun package-test-symbols (package)
+  (uiop:while-collecting (collect)
+    (do-symbols (symbol package)
+      (let ((name (symbol-name symbol)))
+        (when (and (<= 11 (length name))
+                   (string= "TEST-" (subseq name 0 5))
+                   (fboundp symbol))
+          (collect symbol))))))
+
+(defun run (&optional (package-or-packages *package*))
   "Run each test in the package `package'. Default is `*package*'."
   (let ((*running* t)
-        (tests (uiop:while-collecting (collect)
-                 (do-symbols (symbol package)
-                   (let ((name (symbol-name symbol)))
-                     (when (and (<= 11 (length name))
-                                (string= "TEST-" (subseq name 0 5))
-                                (fboundp symbol))
-                       (collect symbol)))))))
+        (tests (etypecase package-or-packages
+                 (package (package-test-symbols package-or-packages))
+                 (list (apply #'append (mapcar #'package-test-symbols
+                                               package-or-packages))))))
     (%run (lambda () (map nil #'funcall (shuffle tests)))
           (length tests)))
   (values))

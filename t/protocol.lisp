@@ -4,9 +4,12 @@
 (defpackage #:protest/test/protocol
   (:use #:cl
         #:protest
+        #:protest/test
         #:protest/1am))
 
 (in-package #:protest/test/protocol)
+
+(register-test-package)
 
 (defmacro with-fresh-state (&body body)
   `(let ((*protocols* (make-hash-table)))

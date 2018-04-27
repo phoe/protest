@@ -10,8 +10,14 @@
                #:protest/test-case
                #:protest/parachute
                ;; #:protest/web
+               ;; #:protest/5am
+               ;; #:protest/prove
                )
   :components ((:file "src/package")))
+
+(defmethod perform ((o test-op) (c (eql (find-system :protest))))
+  (load-system :protest/test)
+  (symbol-call :protest/test :run-all-tests))
 
 (asdf:defsystem #:protest/base
   :description "Base macros and utilities for PROTEST"
@@ -73,6 +79,7 @@
   :serial t
   :depends-on (#:protest)
   :components ((:file "t/1am")
+               (:file "t/test")
                (:file "t/base")
                (:file "t/protocol")
                (:file "t/test-case")))

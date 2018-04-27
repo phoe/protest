@@ -3,9 +3,12 @@
 (defpackage #:protest/test/base
   (:use #:cl
         #:protest
+        #:protest/test
         #:protest/1am))
 
 (in-package #:protest/test/base)
+
+(register-test-package)
 
 (define-protest-test test-protocol-class-define
   (unwind-protect
