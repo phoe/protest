@@ -95,43 +95,48 @@ to function."
   (:function (setf fuel) ((new-value real) (object-fuelable)) real)
   "Sets the current amount of fuel in the fuelable.")
 
-(define-protocol car
-    (:documentation "Defines objects which are able to move forward by means of an
-engine and can hold people and luggage."
+(define-protocol automobile
+    (:documentation "Defines objects which are able to move forward by means of
+an engine and can hold people and luggage."
      :tags (:industrial :machine)
      :dependencies (fuelable)
      :export t)
-  (:class car (fuelable) ())
-  "A car object. Objects participaring in this protocol must subclass this
-protocol class."
-  (:function brand ((object car)) keyword)
-  "Returns the brand of a car."
-  (:function (setf brand) ((new-value keyword) (object car)) keyword)
-  "Sets the brand of a car."
-  (:function drive ((object car) (distance real) &optional env) (values))
-  "Drives a given distance with the given car. If ENV is supplied, the drive
-occurs in that environment."
+  (:class automobile (fuelable) ())
+  "An automobile object. Objects participaring in this protocol must subclass
+this protocol class."
+  (:function brand ((object automobile)) keyword)
+  "Returns the brand of a automobile."
+  (:function (setf brand) ((new-value keyword) (object automobile)) keyword)
+  "Sets the brand of an automobile."
+  (:function drive ((object automobile) (distance real) &optional env) (values))
+  "Drives a given distance with the given automobile. If ENV is supplied, the
+drive occurs in that environment."
   (:macro with-snow-tires ((tire-brand) &body body))
-  "Executes the body with snow tires on all cars, therefore diminishing chances
-of an accident in snow environment."
+  "Executes the body with snow tires on all automobiles, therefore diminishing
+chances of an accident in snow environment."
   (:variable *accident-chance* (float 0.0 1.0) 0.005)
   "The chance of an accident per 100 kilometers. This variable is expected to
 be rebound when the environment changes."
-  (:category :car)
-  "Describes configuration entries related to all cars in general."
-  (:config (:car :maximum-lead-per-100-kilometers) (float 0.0) :optional 0.0005)
+  (:category :automobile)
+  "Describes configuration entries related to all automobiles in general."
+  (:config (:automobile :maximum-lead-per-100-kilometers) (float 0.0) :optional 0.0005)
   "Describes how many grams of lead an engine is allowed to output after driving
 for 100 kilometers."
-  (:category (:car :steering))
-  "Describes configuration entries related to the cars' steering."
-  (:config (:car :steering :wheel-side) (member :left :right :any) :mandatory)
-  "Describes if the cars must have steering wheels on left or right side.")
+  (:category (:automobile :steering))
+  "Describes configuration entries related to the automobiles' steering."
+  (:config (:automobile :steering :wheel-side) (member :left :right :any)
+           :mandatory)
+  "Describes if the automobiles must have steering wheels on left or right side.")
   ```
 
 Produces the following effects:
 
 ```common-lisp
 ;;;; Protocol FUELABLE
+(setf (documentation 'fuelable 'protocol)
+      "Defines objects which have a fuel tank and must be refueled
+to function.")
+
 (defgeneric fuel (object)
   (:documentation "Returns the current amount of fuel in the fuelable."))
 (declaim (ftype (function (fuelable) real) fuel))
@@ -141,6 +146,10 @@ Produces the following effects:
 (declaim (ftype (function (real fuelable) real) (setf fuel)))
 
 ;;;; Protocol AUTOMOBILE
+(setf (documentation automobile 'protocol)
+      "Defines objects which are able to move forward by means of an
+engine and can hold people and luggage.")
+
 (define-protocol-class automobile (fuelable) nil
   (:documentation "An automobile object. Objects participaring in this protocol
 must subclass this protocol class."))
