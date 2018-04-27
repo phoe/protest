@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="logo.png">
+  <img src="doc/logo.png">
 </p>
 
 # Common Lisp PROtocol and TESTcase manager

@@ -1,6 +1,12 @@
 ;;;; protocol/test.lisp
+;; TODO update these comments
 
-(in-package #:protest/protocol)
+(defpackage #:protest/test/protocol
+  (:use #:cl
+        #:protest
+        #:protest/1am))
+
+(in-package #:protest/test/protocol)
 
 (defmacro with-fresh-state (&body body)
   `(let ((*protocols* (make-hash-table)))

@@ -1,6 +1,11 @@
 ;;;; test-case/test.lisp
 
-(in-package #:protest/test-case)
+(defpackage #:protest/test/test-case
+  (:use #:cl
+        #:protest
+        #:protest/1am))
+
+(in-package #:protest/test/test-case)
 
 (defmacro with-fresh-state (&body body)
   `(let ((*test-cases* (make-hash-table)))
@@ -14,7 +19,7 @@
       (is (null (documentation test-case 'test-case)))
       (is (null (tags test-case)))
       (is (null (attachments test-case)))
-      (is (null (hash-table-alist (steps test-case))))))
+      (is (null (steps-list test-case)))))
   (with-fresh-state
     (define-test-case "TEST-CASE" ()))
   (with-fresh-state
