@@ -128,4 +128,5 @@ describing each part of the test."))
 
 (defmacro define-test-case (&whole whole name (&rest options) &body forms)
   (declare (ignore forms))
-  `(ensure-test-case ',name ',options ',whole))
+  `(eval-when (:compile-toplevel :load-toplevel :execute)
+     (ensure-test-case ',name ',options ',whole)))

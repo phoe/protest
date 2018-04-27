@@ -21,6 +21,9 @@ compile-time constraint checking.")
    (%tags :accessor tags
           :initarg :tags
           :initform '())
+   (%attachments :accessor attachments
+                 :initarg :attachments
+                 :initform '())
    (%dependencies :accessor dependencies
                   :initform '())
    (%exports :accessor exports

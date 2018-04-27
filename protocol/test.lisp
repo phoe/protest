@@ -18,19 +18,21 @@
       (is (null (elements protocol))))))
 
 (define-protest-test test-protocol-define-detailed
-    (with-fresh-state
-        (define-protocol #1=#.(gensym) (:export ()))
-      (define-protocol #2=#.(gensym) (:dependencies (#1#)
-                                      :tags (#3=#.(gensym))
-                                      :documentation "asdf"
-                                      :export t))
-      (let ((protocol (gethash '#2# *protocols*)))
-        (is (string= "asdf"
-                     (documentation protocol 'protocol)))
-        (is (equal '(#3#) (tags protocol)))
-        (is (equal '(#1#) (dependencies protocol)))
-        (is (null (exports protocol)))
-        (is (null (elements protocol))))))
+  (with-fresh-state
+    (define-protocol #1=#.(gensym) (:export ()))
+    (define-protocol #2=#.(gensym) (:dependencies (#1#)
+                                    :tags (#3=#.(gensym))
+                                    :attachments (#4="haha")
+                                    :documentation "asdf"
+                                    :export t))
+    (let ((protocol (gethash '#2# *protocols*)))
+      (is (string= "asdf"
+                   (documentation protocol 'protocol)))
+      (is (equal '(#3#) (tags protocol)))
+      (is (equal '(#1#) (dependencies protocol)))
+      (is (string= "haha" (first (attachments protocol))))
+      (is (null (exports protocol)))
+      (is (null (elements protocol))))))
 
 (define-protest-test test-protocol-define-dependencies
   (with-fresh-state
