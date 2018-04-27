@@ -16,8 +16,11 @@
    #:define-protocol-condition-type
    ;; CONDITIONS
    #:protocol-error
+   #:simple-protocol-error
    #:protocol-object-instantiation
-   #:simple-protocol-error))
+   ;; ACCESSORS
+   #:protocol-object-instantiation-symbol
+   #:protocol-object-instantiation-type))
 
 (defpackage #:protest/common
   (:documentation

@@ -31,13 +31,13 @@ This condition type is a protocol condition type and must not be instantiated
 directly."))
 
 (define-condition protocol-object-instantiation (protocol-error)
-  ((symbol :initarg :symbol :reader protocol-error-symbol)
-   (type :initarg :type :reader protocol-error-type))
+  ((symbol :initarg :symbol :reader protocol-object-instantiation-symbol)
+   (type :initarg :type :reader protocol-object-instantiation-type))
   (:report
    (lambda (condition stream)
      (format stream "~S is a protocol ~A and thus cannot be instantiated."
-             (protocol-error-symbol condition)
-             (protocol-error-type condition)))))
+             (protocol-object-instantiation-symbol condition)
+             (protocol-object-instantiation-type condition)))))
 
 (define-condition simple-protocol-error (protocol-error simple-condition) ())
 

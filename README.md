@@ -26,6 +26,30 @@ The modules planned for development are:
   * `PROTEST/5AM` - integrate test cases with 5AM testing library
   * `PROTEST/PROVE` - integrate test cases with Prove testing library
 
+## Base
+
+The package `PROTEST/BASE` exports several
+
+**Internal dependencies:** none. This package can be used standalone.
+
+### Exported symbols:
+
+  * Macro `DEFINE-PROTOCOL-CLASS`
+  Like `DEFCLASS`, but instances of the defined class will not be directly instantiable.
+  * Macro `DEFINE-PROTOCOL-CONDITION-TYPE`
+  Like `DEFINE-CONDITION`, but instances of the defined condition type will not be directly instantiable.
+  **Note:** This constraint is not enforced on SBCL. See [this](https://bugs.launchpad.net/sbcl/+bug/1761735) for details.
+  * Condition Type `PROTOCOL-ERROR`
+  Parent condition type of all errors related to protocols.
+  * Condition Type `SIMPLE-PROTOCOL-ERROR`
+  Condition type of supertypes `PROTOCOL-ERROR` and `SIMPLE-CONDITION`.
+  * Condition Type `PROTOCOL-OBJECT-INSTANTIATION`
+  Condition signaled whenever protocol objects (such as protocol classes and protocol condition types) are attempted to be instantiated.
+  * Reader `PROTOCOL-OBJECT-INSTANTIATION-SYMBOL`
+  Returns the name of the object that was attempted to be instantiated when `PROTOCOL-OBJECT-INSTANTIATION` was signaled.
+  * Reader `PROTOCOL-OBJECT-INSTANTIATION-TYPE`
+  Returns the human-readable representation of type of the object that was attempted to be instantiated when `PROTOCOL-OBJECT-INSTANTIATION` was signaled.
+
 ## Protocol
 
 For a formal definition of a protocol, see the related work by
