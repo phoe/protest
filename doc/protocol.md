@@ -43,6 +43,10 @@ that will be passed to that element's constructor.
     (define-protocol NAME (&rest OPTIONS) . ELEMENTS-AND-DOCSTRINGS)
     ```
 
+## Syntax
+
+TODO documentation strings
+
 ## Options
 
   * **Option `:DOCUMENTATION`**
@@ -84,9 +88,55 @@ that will be passed to that element's constructor.
 
 ## Protocol elements
 
+TODO accessors for each protocol element class
+
 ### :CLASS
 
+Describes a protocol class that is a part of a protocol.
+
+Elements of this type are of class `PROTOCOL-CLASS`.
+
+The form for obeys the following grammar:
+
+```
+(:class NAME SUPERCLASSES SLOTS . OPTIONS)
+```
+
+  * **`NAME`** - must be a symbol. Denotes the name of the class.
+  * **`SUPERCLASSES`** - must be a list of symbols. Denotes the superclasses of
+    the class.
+  * **`SLOTS`** - must be a list of slot definitions. Denotes the slots of the
+    class. It is discouraged to create slots in protocol classes; client code
+    should instead create slots in concrete classes which subclass the protocol
+    classes.
+  * **`OPTIONS`** - denotes the options that will be passed to
+    `DEFINE-PROTOCOL-CLASS`.
+
+This element expands into `DEFINE-PROTOCOL-CLASS`.
+
 ### :CONDITION-TYPE
+
+Describes a protocol condition type that is a part of a protocol.
+
+Elements of this type are of class `PROTOCOL-CONDITION-TYPE`.
+
+The form for obeys the following grammar:
+
+```
+(:condition-type NAME SUPERTYPES SLOTS . OPTIONS)
+```
+
+  * **`NAME`** - must be a symbol. Denotes the name of the condition type.
+  * **`SUPERTYPES`** - must be a list of symbols. Denotes the supertypes of the
+    condition type.
+  * **`SLOTS`** - must be a list of slot definitions. Denotes the slots of the
+    condition type. It is discouraged to create slots in protocol condition
+    types; client code should instead create slots in concrete condition types
+    which subtype the protocol condition types.
+  * **`OPTIONS`** - denotes the options that will be passed to
+    `DEFINE-PROTOCOL-CONDITION-TYPE`.
+
+This element expands into `DEFINE-PROTOCOL-CONDITION-TYPE`.
 
 ### :FUNCTION
 
@@ -118,6 +168,21 @@ from `LAMBDA-LIST`, `RETURN-TYPE` and `KEYWORD-TYPES` will be passed to a
 true.
 
 ### :MACRO
+
+Describes a macro that is a part of a protocol.
+
+Elements of this type are of class `PROTOCOL-MACRO`.
+
+The form obeys the following grammar:
+
+```
+(:macro NAME LAMBDA-LIST)
+```
+
+  * **`NAME`** - must be a symbol. Denotes the name of the macro.
+  * **`LAMBDA-LIST`** - must be a valid macro lambda list.
+
+This element does not expand into anything.
 
 ### :VARIABLE
 
