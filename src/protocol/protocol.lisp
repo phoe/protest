@@ -13,8 +13,7 @@ compile-time constraint checking.")
   "States if protocols should declaim function and variable types.")
 
 (defclass protocol ()
-  ((%name :accessor name
-          :initarg :name
+  ((%name :reader name
           :initform (error "Must provide NAME."))
    (%whole :accessor whole
            :initarg :whole)
@@ -24,7 +23,7 @@ compile-time constraint checking.")
    (%attachments :accessor attachments
                  :initarg :attachments
                  :initform '())
-   (%dependencies :accessor dependencies
+   (%dependencies :reader dependencies
                   :initform '())
    (%exports :accessor exports
              :initarg :exports
@@ -35,6 +34,8 @@ compile-time constraint checking.")
   (:documentation
    "Describes a protocol understood as a relation between data types and
 operations on these types."))
+
+;; TODO compute effective protocol
 
 (defmethod print-object ((protocol protocol) stream)
   (print-unreadable-object (protocol stream :type t)
@@ -54,7 +55,7 @@ operations on these types."))
       (protocol-error "DOCUMENTATION must be a string, not ~A."
                       documentation))
     (setf (documentation protocol 'protocol) documentation))
-  (setf (name protocol) name
+  (setf (slot-value protocol '%name) name
         (dependencies protocol) dependencies
         (exports protocol)
         (if (eq export 't) (compute-exports protocol) export))
@@ -79,7 +80,9 @@ operations on these types."))
   (setf (gethash (name slotd) *protocol-documentation-store*) new-value))
 
 (defmethod generate-code ((protocol protocol))
-  `(progn ,@(mappend #'generate-code (elements protocol)) (values)))
+  `(progn ,@(mappend #'generate-code (elements protocol))
+          (export ',(exports protocol))
+          (values)))
 
 (defun generate-elements (elements declaim-type-p)
   (loop for sublist on elements

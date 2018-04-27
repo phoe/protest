@@ -15,13 +15,13 @@ TODO
 
 The currently implemented modules are:
 
-  * [`PROTEST/BASE`](src/base/README.md) -
+  * [`PROTEST/BASE`](doc/base.md) -
     define protocol classes and protocol condition types
-  * [`PROTEST/PROTOCOL`](src/protocol/README.md) -
+  * [`PROTEST/PROTOCOL`](doc/protocolmd) -
     define protocols
-  * [`PROTEST/TEST-CASE`](src/test-case/README.md) -
+  * [`PROTEST/TEST-CASE`](doc/test-case.md) -
     define test cases
-  * [`PROTEST/PARACHUTE`](src/parachute/README.md) -
+  * [`PROTEST/PARACHUTE`](doc/parachutemd) -
     integrate test cases with
     [Parachute](https://github.com/Shinmera/parachute/) testing library
 
@@ -38,29 +38,6 @@ The modules planned for development are:
 
 
 ## Protocol
-
-For a formal definition of a protocol, see the related work by
-[Robert Strandh](http://metamodular.com/protocol.pdf).
-
-PROTEST implements the concept of a protocol with operations being defined as
-generic functions and macros, and data types being protocol classes, protocol
-condition types, and special variables.
-
-Protocol classes and protocol condition types are instances of Common Lisp
-classes and condition types, respectively, except they must not be instantiated
-directly by client code. Users of these classes must instead create subclasses
-of these protocol classes or subtypes of these protocol condition types in order
-for them to participate in the protocol. For utility, PROTEST also describes
-configuration categories and entries, defined as list of keywords and
-non-keyword symbols, along with the value that each configuration entry is
-allowed to take.
-
-A protocol in PROTEST consists of metadata about a given protocol, such as
-description and tags, and a series of protocol element definitions.
-
-Each element of the protocol is described by a form whose first element is the
-keyword denoting the type of a given element.
-
 ## Test case
 
 PROTEST implements the concept of a test case as an object describing the flow
@@ -95,6 +72,7 @@ TODO
 ## Usage
 The code below:
 
+;; TODO exports
 ```common-lisp
 (define-protocol fuelable
     (:documentation "Defines objects which have a fuel tank and must be refueled

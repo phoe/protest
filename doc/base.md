@@ -5,6 +5,12 @@
 The package `PROTEST/BASE` exports the base functionality useful
 for manual definition of protcols.
 
+Protocol classes and protocol condition types are instances of Common Lisp
+classes and condition types, respectively, except they must not be instantiated
+directly by client code. Users of these classes must instead create subclasses
+of these protocol classes or subtypes of these protocol condition types in order
+for them to participate in the protocol.
+
 The macros `DEFINE-PROTOCOL-CLASS` and `DEFINE-PROTOCOL-CONDITION-TYPE` can be
 used for defining protocol classes and protocol condition types, while condition
 type `PROTOCOL-OBJECT-INSTANTIATION` can be handled specifically to handle
@@ -16,19 +22,18 @@ type is later reused in other PROTEST packages.
 
 ## Internal dependencies
 
-None. This package can be used standalone.
+None.
 
 ## Exports
 
   * **Macro `DEFINE-PROTOCOL-CLASS`**
 
-    Like `DEFCLASS`, but instances of the defined class will not be directly
-    instantiable.
+    Like `DEFCLASS`, but the defined class will not be directly instantiable.
 
   * **Macro `DEFINE-PROTOCOL-CONDITION-TYPE`**
 
-    Like `DEFINE-CONDITION`, but instances of the defined condition type will
-    not be directly instantiable.
+    Like `DEFINE-CONDITION`, but the defined condition type will not be directly
+    instantiable.
 
     *SBCL Note: This constraint is not enforced on SBCL. See
     [this](https://bugs.launchpad.net/sbcl/+bug/1761735) for details.
