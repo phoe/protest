@@ -18,7 +18,7 @@ type is later reused in other PROTEST packages.
 
 None. This package can be used standalone.
 
-## Exported symbols:
+## Exports
 
   * **Macro `DEFINE-PROTOCOL-CLASS`**
 
