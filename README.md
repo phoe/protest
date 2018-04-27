@@ -122,7 +122,7 @@ be rebound when the environment changes."
   (:config (:car :maximum-lead-per-100-kilometers) (float 0.0) :optional 0.0005)
   "Describes how many grams of lead an engine is allowed to output after driving
 for 100 kilometers."
-  (:category :car :steering)
+  (:category (:car :steering))
   "Describes configuration entries related to the cars' steering."
   (:config (:car :steering :wheel-side) (member :left :right :any) :mandatory)
   "Describes if the cars must have steering wheels on left or right side.")

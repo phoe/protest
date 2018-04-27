@@ -23,7 +23,8 @@ subforms:
     ((type (eql :category)) form &optional declaim-type-p)
   (declare (ignore declaim-type-p))
   (destructuring-bind (name) form
-    (assert (every #'keywordp name)
+    (assert (and (consp name)
+                 (every #'keywordp name))
             () "Wrong thing to be a configuration category name: ~A" name)
     (let ((element (make-instance 'protocol-category :name name)))
       element)))
