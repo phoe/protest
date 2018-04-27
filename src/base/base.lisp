@@ -1,28 +1,5 @@
 ;;;; base/base.lisp
 
-(uiop:define-package #:protest/base
-  (:use
-   #:common-lisp
-   #:alexandria
-   #:closer-mop)
-  (:shadowing-import-from
-   #:closer-mop
-   #:standard-generic-function
-   #:defmethod
-   #:defgeneric)
-  (:export
-   ;; MACROS
-   #:define-protocol-class
-   #:define-protocol-condition-type
-   ;; CONDITIONS
-   #:protocol-error
-   #:protocol-object-instantiation
-   #:simple-protocol-error))
-
-(defpackage #:protest/common
-  (:use)
-  (:export #:tags #:name #:whole #:attachments))
-
 (in-package #:protest/base)
 
 (defmacro define-protocol-class (name superclasses slots &rest options)

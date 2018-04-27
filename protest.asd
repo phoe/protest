@@ -26,7 +26,8 @@
   :serial t
   :depends-on (#:alexandria
                #:closer-mop)
-  :components ((:file "src/base/base")))
+  :components ((:file "src/base/package")
+               (:file "src/base/base")))
 
 (asdf:defsystem #:protest/protocol
   :description "Protocol defining utilities for PROTEST"
