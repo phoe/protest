@@ -8,7 +8,7 @@
    #:protest/base
    #:protest/common)
   (:export
-   ;; SPECIAL VARIABLES
+   ;; VARIABLES
    #:*protocols*
    #:*config-callback*
    #:*category-callback*

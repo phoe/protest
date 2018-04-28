@@ -12,16 +12,16 @@ variables, etc., and executing a protocol may mean executing, among others,
 (For a formal definition of a protocol, see the related work by
 [Robert Strandh](http://metamodular.com/protocol.pdf).)
 
-PROTEST implements the concept of a protocol with operations being defined as
-generic functions and macros, and data types being, among others, protocol
-classes, protocol condition types, and special variables.
+PROTEST/PROTOCOL implements the concept of a protocol with operations being
+defined as generic functions and macros, and data types being, among others,
+protocol classes, protocol condition types, and special variables.
 
-For utility, PROTEST also describes configuration categories and entries,
-defined as list of keywords and non-keyword symbols, along with the type that
-the value of each configuration entry is allowed to take.
+For utility, PROTEST/PROTOCOL also describes configuration categories and
+entries, defined as list of keywords and non-keyword symbols, along with the
+type that the value of each configuration entry is allowed to take.
 
-A protocol in PROTEST consists of metadata about a given protocol, such as
-description and tags, and a series of protocol element definitions.
+A protocol in PROTEST/PROTOCOL consists of metadata about a given protocol, such
+as description and tags, and a series of protocol element definitions.
 
 Each element of the protocol is described by a list whose first element is the
 keyword denoting the type of a given element, and the rest contain the arguments
@@ -45,15 +45,15 @@ Syntax summary of all options and configuration elements:
   (:config NAME &optional VALUE-TYPE MANDATORYP INITIAL-VALUE))
 ```
 
-## Internal dependencies
+## Internal Dependencies
 
-  * [`PROTEST-BASE`](base.md)
+  * [`PROTEST/BASE`](base.md)
 
 ## Exports
 
 ### Variables
 
-* **Variable `*PROTOCOLS*`**
+  * **Variable `*PROTOCOLS*`**
 
     Its value is a hash-table mapping from symbols naming the protocols to the
     protocol objects themselves.

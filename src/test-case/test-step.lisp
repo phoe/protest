@@ -2,8 +2,6 @@
 
 (in-package #:protest/test-case)
 
-;; TODO put accessor symbols in some sorta BASE package or something so
-;; PROTOCOL:DESCRIPTION does not collide with TEST-CASE:DESCRIPTION
 (defclass test-step ()
   ((%id :reader id
         :initarg :id

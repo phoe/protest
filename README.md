@@ -9,33 +9,49 @@ Common Lisp.
 
 ## tl;dr
 
-TODO
+```common-lisp
+;; clone PROTEST into your local-projects directory, we are not in Quicklisp yet
+(ql:quickload :protest)
+(use-package :protest)
+
+;; depending on your choice of test library, load one of the following
+(ql:quickload :protest/parachute)
+(use-package :protest/parachute)
+
+;; (ql:quickload :protest/5am) ;; TODO
+;; (use-package :protest/5am) ;; TODO
+
+;; (ql:quickload :protest/prove) ;; TODO
+;; (use-package :protest/prove) ;; TODO
+```
 
 ## Modules
 
 The currently implemented modules are:
 
   * [`PROTEST/BASE`](doc/base.md) -
-    define protocol classes and protocol condition types
+    for defining protocol classes and protocol condition types
   * [`PROTEST/PROTOCOL`](doc/protocol.md) -
-    define protocols
+    for defining and executing protocols
   * [`PROTEST/TEST-CASE`](doc/test-case.md) -
-    define test cases
+    for defining test cases
   * [`PROTEST/PARACHUTE`](doc/parachute.md) -
-    integrate test cases with
+    for integrating test cases with
     [Parachute](https://github.com/Shinmera/parachute/) testing library
 
 The modules planned for development are:
 
-  * `PROTEST/WEB` -
+  * [`PROTEST/WEB`](doc/web.md) -
     output test cases and protocols to HTML
-  * `PROTEST/5AM` -
-    integrate test cases with [5AM](https://github.com/sionescu/fiveam) testing
-    library
-  * `PROTEST/PROVE` -
-    integrate test cases with [Prove](https://github.com/fukamachi/prove)
+  * [`PROTEST/5AM`](doc/5am.md) -
+    for integratingtest cases with [5AM](https://github.com/sionescu/fiveam)
     testing library
-
+  * [`PROTEST/PROVE`](doc/prove.md) -
+    for integrating test cases with [Prove](https://github.com/fukamachi/prove)
+    testing library
+  * [`PROTEST/1AM`](doc/1am.md) -
+    for integrating test cases with [1AM](https://github.com/lmj/1am/) testing
+    library
 
 ## Protocol
 ## Test case

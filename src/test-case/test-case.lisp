@@ -6,7 +6,7 @@
   "A mapping from test case names to test cases.")
 
 (defclass test-case ()
-  ((%name :accessor name
+  ((%name :reader name
           :initarg :name
           :initform (error "Must provide NAME."))
    (%whole :accessor whole
@@ -16,7 +16,7 @@
           :initform '())
    (%attachments :accessor attachments
                  :initarg :attachments
-                 :initform '()) ;; TODO attachments for protocols
+                 :initform '())
    (%steps :accessor steps
            :initarg :steps
            :initform (make-hash-table)))
@@ -39,7 +39,7 @@ describing each part of the test."))
     ((test-case test-case) &key name documentation)
   (unless (and name (typep name 'string-designator))
     (protocol-error "Wrong thing to be a test case name: ~A" name))
-  (setf (name test-case) (string name))
+  (setf (slot-value test-case '%name) (string name))
   (when documentation
     (unless (typep documentation 'string)
       (protocol-error "DOCUMENTATION must be a string, not ~A."
@@ -51,15 +51,22 @@ describing each part of the test."))
 
 (defvar *test-case-documentation-store* (make-hash-table))
 
-(defmethod documentation ((slotd symbol) (type (eql 'test-case)))
+(defmethod documentation ((slotd string) (type (eql 'test-case)))
   (gethash slotd *test-case-documentation-store*))
+
+(defmethod documentation ((slotd symbol) (type (eql 'test-case)))
+  (gethash (string slotd) *test-case-documentation-store*))
 
 (defmethod documentation ((slotd test-case) (type (eql 'test-case)))
   (gethash (name slotd) *test-case-documentation-store*))
 
 (defmethod (setf documentation)
-    (new-value (slotd symbol) (type (eql 'test-case)))
+    (new-value (slotd string) (type (eql 'test-case)))
   (setf (gethash slotd *test-case-documentation-store*) new-value))
+
+(defmethod (setf documentation)
+    (new-value (slotd symbol) (type (eql 'test-case)))
+  (setf (gethash (string slotd) *test-case-documentation-store*) new-value))
 
 (defmethod (setf documentation)
     (new-value (slotd test-case) (type (eql 'test-case)))
@@ -126,7 +133,7 @@ describing each part of the test."))
     (setf (gethash name *test-cases*) test-case)
     name))
 
-(defmacro define-test-case (&whole whole name (&rest options) &body forms)
-  (declare (ignore forms))
+(defmacro define-test-case (&whole whole name (&rest options) &body steps)
+  (declare (ignore steps))
   `(eval-when (:compile-toplevel :load-toplevel :execute)
      (ensure-test-case ',name ',options ',whole)))

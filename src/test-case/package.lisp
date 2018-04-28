@@ -8,21 +8,22 @@
    #:protest/common)
   (:shadow #:of-type)
   (:export
-   ;; SPECIAL-VARIABLES
+   ;; VARIABLES
    #:*test-cases*
    ;; CLASSES
    #:test-step
    #:test-case
+   ;; DOCUMENTATION TYPES
+   #:test-case
    ;; ACCESSORS
-   #:id
-   #:test-phase
    #:name
    #:whole
-   #:documentation
    #:tags
    #:attachments
    #:steps
    #:steps-list
+   #:id
    #:description
+   #:test-phase
    ;; MACROS
    #:define-test-case))

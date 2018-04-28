@@ -28,14 +28,20 @@ None.
 
   * **Macro `DEFINE-PROTOCOL-CLASS`**
 
+    Syntax: `(define-protocol-class name superclasses
+                                    slots &rest options)`
+
     Like `DEFCLASS`, but the defined class will not be directly instantiable.
 
   * **Macro `DEFINE-PROTOCOL-CONDITION-TYPE`**
 
+    Syntax: `(define-protocol-condition-type name supertypes
+                                             slots &rest options)`
+
     Like `DEFINE-CONDITION`, but the defined condition type will not be directly
     instantiable.
 
-    *SBCL Note: This constraint is not enforced on SBCL. See
+    *SBCL Note:* This constraint is not enforceable on SBCL. See
     [this](https://bugs.launchpad.net/sbcl/+bug/1761735) for details.
 
   * **Condition Type `PROTOCOL-ERROR`**
@@ -51,12 +57,10 @@ None.
     Error type signaled whenever protocol objects (such as protocol classes and
     protocol condition types) are attempted to be instantiated.
 
-  * **Reader `PROTOCOL-OBJECT-INSTANTIATION-SYMBOL`**
-
-    Returns the name of the object that was attempted to be instantiated when
-    `PROTOCOL-OBJECT-INSTANTIATION` was signaled.
-
-  * **Reader `PROTOCOL-OBJECT-INSTANTIATION-TYPE`**
-
-    Returns the human-readable representation of type of the object that was
-    attempted to be instantiated when `PROTOCOL-OBJECT-INSTANTIATION` was signaled.
+    Accessors:
+    * **Reader `PROTOCOL-OBJECT-INSTANTIATION-SYMBOL`** - returns the name of
+      the object that was attempted to be instantiated when
+      `PROTOCOL-OBJECT-INSTANTIATION` was signaled.
+    * **Reader `PROTOCOL-OBJECT-INSTANTIATION-TYPE`** - returns the
+      human-readable representation of type of the object that was attempted to
+      be instantiated when `PROTOCOL-OBJECT-INSTANTIATION` was signaled.
