@@ -703,7 +703,7 @@ from protocol code, you may consider using
 PROTEST/PROTOCOL. This way, `DEFINE-PROTOCOL` can hold the protocol definition
 and `DEFINE-DOCS` can hold the respective documentation.
 
-```
+```common-lisp
 (define-protocol foo (...)
   (:function bar ...)
   (:variable baz ...)
