@@ -391,7 +391,6 @@ side.")
 (export '(automobile brand drive with-snow-tires *accident-chance*))
 ```
 
-
 ## Extending PROTEST/PROTOCOL
 
 In order to introduce a new protocol element into PROTEST/PROTOCOL, define a new

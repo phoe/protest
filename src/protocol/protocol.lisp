@@ -5,10 +5,6 @@
 (defvar *protocols* (make-hash-table)
   "A hash-table mapping from protocol names to protocol objects.")
 
-(defvar *compile-time-protocols* (make-hash-table)
-  "A hash-table mapping from protocol names to protocol objects, used for
-compile-time constraint checking.")
-
 (defclass protocol ()
   ((%name :reader name
           :initarg :name
