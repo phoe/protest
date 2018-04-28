@@ -30,7 +30,7 @@ testing libraries:
   * [`PROTEST/PARACHUTE`](parachute.md)
   * [`PROTEST/5AM`](5am.md)
   * [`PROTEST/PROVE`](prove.md)
-  * [`PROTEST/1AM`](doc/1am.md)
+  * [`PROTEST/1AM`](1am.md)
 
 ## Internal Dependencies
 

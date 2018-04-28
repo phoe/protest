@@ -53,38 +53,6 @@ The modules planned for development are:
     for integrating test cases with [1AM](https://github.com/lmj/1am/) testing
     library
 
-## Protocol
-## Test case
-
-PROTEST implements the concept of a test case as an object describing the flow
-of a test.
-
-A test case in PROTEST consists of three elements: metadata about a
-given test phase, such as description and tags, test phases (denoted by
-keywords), and test steps (denoted by numbers and strings). PROTEST also
-implements the concept of a test that is an instance of the given test case.
-
-Each test case in PROTEST has a name, which may be a string or a symbol. All names
-are internally coerced to strings.
-
-Each phase is required to be a keyword. These are meant to describe the group of
-test steps that come afterwards it.
-
-Each step is required to consist of a positive integer and a string
-description of the step. The steps are required to be unsigned-bytes in
-increasing order.
-
-Inside a test body, the reader macro `#N?` with a numerical argument may be
-used to denote a form belonging to a given test step.
-
-## HTML generation
-
-TODO
-
-## Integration with Parachute
-
-TODO describe
-
 ### License
 
 All of PROTEST is licensed under GNU Lisp Lesser General Public License,
