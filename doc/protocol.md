@@ -413,8 +413,8 @@ use it in an  EQL specializer when defining a method on `GENERATE-ELEMENT.`
 You may also want to define methods on `DOCUMENTATION` and `SETF DOCUMENTATION`
 for your protocol element.
 
-An example PROTEST/PROTOCOL extension with the protocol element `:FOO` of class
-`PROTOCOL-FOO` may look like this:
+An example PROTEST/PROTOCOL extension with the protocol element `:FOO` with list
+representation `(:FOO . FORM)` of class `PROTOCOL-FOO` may look like this:
 
 ```common-lisp
 (defclass protocol-foo (protocol-data-type)
