@@ -23,6 +23,9 @@ Common Lisp.
 
 ;; (ql:quickload :protest/prove) ;; TODO
 ;; (use-package :protest/prove) ;; TODO
+
+;; (ql:quickload :protest/1am) ;; TODO
+;; (use-package :protest/1am) ;; TODO
 ```
 
 ## Modules
