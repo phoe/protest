@@ -694,3 +694,24 @@ representation `(:FOO . FORM)` of class `PROTOCOL-FOO` may look like this:
 (defmethod (setf documentation) (new-value slotd (doc-type (eql 'foo)))
   ...)
 ```
+
+## Trivia
+
+If you prefer a programming style where the documentation strings are separated
+from protocol code, you may consider using
+[documentation-utils](https://github.com/Shinmera/documentation-utils) alongside
+PROTEST/PROTOCOL. This way, `DEFINE-PROTOCOL` can hold the protocol definition
+and `DEFINE-DOCS` can hold the respective documentation.
+
+```
+(define-protocol foo (...)
+  (:function bar ...)
+  (:variable baz ...)
+  (:config quux ...))
+
+(define-docs
+  (protocol foo ...)
+  (function bar ...)
+  (variable baz ...)
+  (config quux ...))
+```
