@@ -5,7 +5,8 @@
 # Common Lisp PROtocol and TESTcase manager
 
 PROTEST is a tool for defining protocols and test cases written in and for
-Common Lisp.
+Common Lisp, featuring integration with ~~multiple~~ one testing framework.
+(More will come.)
 
 ## tl;dr
 
