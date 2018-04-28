@@ -275,7 +275,7 @@ that will be passed to that element's constructor.
 
     Syntax summary of all options and configuration elements:
 
-```common-lisp
+    ```common-lisp
 (define-protocol SYMBOL (:documentation STRING
                          :tags KEYWORD-LIST
                          :attachments STRING-LIST
@@ -289,7 +289,7 @@ that will be passed to that element's constructor.
   (:variable NAME &optional VALUE-TYPE INITIAL-VALUE)
   (:category NAME)
   (:config NAME &optional VALUE-TYPE MANDATORYP INITIAL-VALUE))
-```
+    ```
 
     For details, see Options and Protocol Elements below.
 
