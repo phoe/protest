@@ -3,10 +3,10 @@
 (in-package #:protest/protocol)
 
 (defclass protocol-macro (protocol-operation)
-  ((%name :accessor name
+  ((%name :reader name
           :initarg :name
           :initform (error "Must provide NAME."))
-   (%lambda-list :accessor lambda-list
+   (%lambda-list :reader lambda-list
                  :initarg :lambda-list
                  :initform (error "Must provide LAMBDA-LIST.")))
   (:documentation
@@ -16,9 +16,9 @@ The form of a protocol macro consists of the following subforms:
 * NAME - mandatory, must be a symbol. Denotes the name of the macro.
 * LAMBDA-LIST - mandatory, must be a valid macro lambda list."))
 
-(defmethod generate-element ((type (eql :macro)) form &optional declaim-type-p)
+(defmethod generate-element ((type (eql :macro)) details &optional declaim-type-p)
   (declare (ignore declaim-type-p))
-  (destructuring-bind (name lambda-list . rest) form
+  (destructuring-bind (name lambda-list . rest) details
     (declare (ignore rest))
     (assert (and (not (null name)) (symbolp name))
             () "Wrong thing to be a macro name: ~S" name)

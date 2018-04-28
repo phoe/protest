@@ -96,6 +96,7 @@ that will be passed to that element's constructor.
       to the element during protocol definition.
 
   * **Protocol Class `PROTOCOL-OPERATION`**
+
     Subclass of `PROTOCOL-ELEMENT` that describes an operation belonging to a
     protocol.
 
@@ -124,30 +125,74 @@ that will be passed to that element's constructor.
     Subclass of `PROTOCOL-OPERATION` that describes a macro belonging to a
     protocol. See protocol element `:MACRO` below.
 
+    Accessors:
+    * **Reader `NAME`** - returns the symbol naming the macro.
+    * **Reader `LAMBDA-LIST`** - returns the lambda-list of the macro.
+
   * **Class `PROTOCOL-CLASS`**
 
     Subclass of `PROTOCOL-DATA-TYPE` that describes a class belonging to a
     protocol. See protocol element `:CLASS` below.
+
+    Accessors:
+    * **Reader `NAME`** - returns the symbol naming the class.
+    * **Accessor `SUPERCLASSES`** - accesses the list of all superclasses of the
+      class.
+    * **Accessor `SLOTS`** - accesses the list of all slot definitions of the
+      class.
+    * **Accessor `OPTIONS`** - accesses the list of all options of the class.
 
   * **Class `PROTOCOL-CONDITION-TYPE`**
 
     Subclass of `PROTOCOL-DATA-TYPE` that describes a condition type belonging
     to a protocol. See protocol element `:CONDITION-TYPE` below.
 
+    Accessors:
+    * **Reader `NAME`** - returns the symbol naming the condition type.
+    * **Accessor `SUPERTYPES`** - accesses the list of all supertypes of the
+      condition type.
+    * **Accessor `SLOTS`** - accesses the list of all slot definitions of the
+      condition type.
+    * **Accessor `OPTIONS`** - accesses the list of all options of the
+      condition type.
+
   * **Class `PROTOCOL-VARIABLE`**
 
     Subclass of `PROTOCOL-DATA-TYPE` that describes a variable belonging to a
     protocol. See protocol element `:VARIABLE` below.
+
+    Accessors:
+    * **Reader `NAME`** - returns the symbol naming the variable.
+    * **Accessor `VALUE-TYPE`** - accesses the type of the value bound to the
+      variable.
+    * **Accessor `INITIAL-VALUE`** - accesses the default value that the
+      variable will be bound to at the moment of executing the protocol.
+    * **Accessor `DECLAIM-TYPE-P`** - accesses the boolean value stating if this
+      variable's type should be proclaimed via `DECLAIM TYPE`.
 
   * **Class `PROTOCOL-CATEGORY`**
 
     Subclass of `PROTOCOL-DATA-TYPE` that describes a configuration category
     belonging to a protocol. See protocol element `:CATEGORY` below.
 
+    Accessors:
+    * **Reader `NAME`** - returns the list of keywords naming the category.
+
   * **Class `PROTOCOL-CONFIG`**
 
     Subclass of `PROTOCOL-DATA-TYPE` that describes a configuration entry
     belonging to a protocol. See protocol element `:CONFIG` below.
+
+    Accessors:
+    * **Reader `NAME`** - returns the list of keywords naming the category.
+    * **Accessor `VALUE-TYPE`** - accesses the type of the value bound to the
+      configuration entry.
+    * **Accessor `MANDATORYP`** - accesses the boolean stating whether this
+      configuration entry must have a value set before any client code may be
+      executed.
+    * **Accessor `INITIAL-VALUE`** - accesses the default value that the
+      configuration entry will be bound to at the moment of executing the
+      protocol.
 
   * **Documentation Type `PROTOCOL`**
 
@@ -161,6 +206,98 @@ that will be passed to that element's constructor.
 
     Names documentation strings belonging to configuration entries.
 
+  * **Generic Function `GENERATE-ELEMENT`**
+
+    Syntax: `(generate-element TYPE DETAILS &OPTIONAL DECLAIM-TYPE-P)`
+
+    Generates the protocol element based on its list representation.
+
+    This function is called by `DEFINE-PROTOCOL` for each element it encounters
+    in the protocol definition form. `TYPE` is bound to the head of the form and
+    `DETAILS` is bound to its tail. The parameter `DECLAIM-TYPE-P` states
+    whether the element is meant to declaim any types; an element which has no
+    types to declaim may ignore this argument.
+
+    This function can be freely called by the user to manually create new
+    protocol elements that can later be attached to protocols.
+
+  * **Generic Function `GENERATE-FORMS`**
+
+    Syntax: `(generate-forms PROTOCOL-ELEMENT)`
+
+    Generates a fresh list of forms that is suitable to be `NCONC`ed with other
+    forms to generate a protocol body.
+
+    This function is effectively an inverse of `GENERATE-ELEMENT`.
+
+  * **Generic Function `GENERATE-CODE`**
+
+    Syntax: `(generate-code PROTOCOL-ELEMENT)`
+
+    Generates a fresh list of forms that is suitable to be `NCONC`ed with other
+    forms to generate the Lisp code that is meant to come into effect when the
+    protocol is defined.
+
+    This function is called by `EXECUTE-PROTOCOL` to generate code for side
+    effects that are meant to take place when the protocol is executed.
+
+  * **Generic Function `PROTOCOL-ELEMENT-BOUNDP`**
+
+    Syntax: `(protocol-element-boundp PROTOCOL-ELEMENT)`
+
+    Checks if the initial value of the protocol element is bound.
+
+    If the protocol element contains an initial value and that value is bound,
+    this function returns `(VALUES T T)`.
+
+    If the protocol element contains an initial value and that value is unbound,
+    this function returns `(VALUES NIL T)`.
+
+    If the protocol element does not contain an initial value, this function
+    returns `(VALUES NIL NIL)`.
+
+  * **Generic Function `PROTOCOL-ELEMENT-MAKUNBOUND`**
+
+    Syntax: `(protocol-element-makunbound PROTOCOL-ELEMENT)`
+
+    Attempts to unbind the initial value of the protocol element.
+
+    If the protocol element contains an initial value and that value is bound,
+    this function unbinds that value. Otherwise, it does nothing. In any case,
+    the protocol element is returned.
+
+  * **Macro `DEFINE-PROTOCOL`**
+
+    Syntax: `(define-protocol NAME (&rest OPTIONS) &body ELEMENTS)`
+
+    Defines the protocol named `NAME` with the provided `OPTIONS`, containing
+    the provided `ELEMENTS`.
+
+    Syntax summary of all options and configuration elements:
+
+```common-lisp
+(define-protocol SYMBOL (:documentation STRING
+                         :tags KEYWORD-LIST
+                         :attachments STRING-LIST
+                         :dependencies PROTOCOL-NAME-LIST
+                         :export SYMBOL-LIST
+                         :declaim-types-p BOOLEAN)
+  (:class NAME SUPERCLASSES SLOTS . OPTIONS)
+  (:condition-type NAME SUPERTYPES SLOTS . OPTIONS)
+  (:function NAME LAMBDA-LIST &optional RETURN-TYPE KEYWORD-TYPES)
+  (:macro NAME LAMBDA-LIST)
+  (:variable NAME &optional VALUE-TYPE INITIAL-VALUE)
+  (:category NAME)
+  (:config NAME &optional VALUE-TYPE MANDATORYP INITIAL-VALUE))
+```
+
+    For details, see Options and Protocol Elements below.
+
+  * **Macro `EXECUTE-PROTOCOL`**
+
+    Syntax: `(execute-protocol name)`
+
+    Executes all the side effects of the protocol with the provided `NAME`.
 
 ## Options
 
@@ -206,21 +343,9 @@ that will be passed to that element's constructor.
     States if the types and ftypes of the elements should be declaimed when the
     protocol is executed. If not supplied, it defaults to `T`.
 
-## Protocol elements
+## Protocol Elements
 
 TODO accessors for each protocol element class
-
-Syntax summary of all configuration elements:
-
-```common-lisp
-(:class NAME SUPERCLASSES SLOTS . OPTIONS)
-(:condition-type NAME SUPERTYPES SLOTS . OPTIONS)
-(:function NAME LAMBDA-LIST &optional RETURN-TYPE KEYWORD-TYPES)
-(:macro NAME LAMBDA-LIST)
-(:variable NAME &optional VALUE-TYPE INITIAL-VALUE)
-(:category NAME)
-(:config NAME &optional VALUE-TYPE MANDATORYP INITIAL-VALUE)
-```
 
 ### :FUNCTION
 
@@ -535,17 +660,10 @@ In order to introduce a new protocol element into PROTEST/PROTOCOL, define a new
 class subtyping one of `PROTOCOL-ELEMENT`'s protocol subclasses - either
 `PROTOCOL-OPERATION` for operations or `PROTOCOL-DATA-TYPE` for data types.
 
-You will need to define methods on three generic functions:
-
-  * `GENERATE-ELEMENT`, which generates the element based on its list
-    representation,
-  * `GENERATE-FORMS`, which accepts a protocol element and returns its list
-    representation,
-  * `GENERATE-CODE`, which accepts a protocol element and generates code to be
-    executed whenever the protocol is executed.
-
-For `GENERATE-ELEMENT`, pick a keyword that will represent your new element and
-use it in an  EQL specializer when defining a method on `GENERATE-ELEMENT.`
+You will need to define methods on generic functions `GENERATE-ELEMENT`,
+`GENERATE-FORMS` and `GENERATE-CODE`. For `GENERATE-ELEMENT`, pick a keyword
+that will represent your new element and use it in an  EQL specializer when
+defining a method on `GENERATE-ELEMENT.`
 
 You may also want to define methods on `DOCUMENTATION` and `SETF DOCUMENTATION`
 for your protocol element.

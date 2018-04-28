@@ -29,8 +29,8 @@ The form for a protocol function consists of the following subforms:
   &KEY arguments used in LAMBDA-LIST along with their respective types."))
 
 (defmethod generate-element
-    ((type (eql :function)) form &optional (declaim-type-p t))
-  (destructuring-bind (name lambda-list . rest) form
+    ((type (eql :function)) details &optional (declaim-type-p t))
+  (destructuring-bind (name lambda-list . rest) details
     (declare (ignore rest))
     (assert (or (and (not (null name)) (symbolp name))
                 (and (listp name) (= (length name) 2) (eq (first name) 'setf)))
@@ -39,11 +39,11 @@ The form for a protocol function consists of the following subforms:
     (let ((element (make-instance 'protocol-function :name name
                                                      :lambda-list lambda-list)))
       (setf (declaim-type-p element) declaim-type-p)
-      (when (<= 3 (length form))
-        (let ((return-type (third form)))
+      (when (<= 3 (length details))
+        (let ((return-type (third details)))
           (setf (return-type element) return-type)))
-      (when (<= 4 (length form))
-        (let ((keyword-types (fourth form)))
+      (when (<= 4 (length details))
+        (let ((keyword-types (fourth details)))
           (setf (keyword-types element) keyword-types)))
       element)))
 

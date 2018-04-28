@@ -3,7 +3,7 @@
 (in-package #:protest/protocol)
 
 (defclass protocol-class (protocol-data-type)
-  ((%name :accessor name
+  ((%name :reader name
           :initarg :name
           :initform (error "Must provide NAME."))
    (%superclasses :accessor superclasses
@@ -29,9 +29,10 @@ The form for a protocol class consists of the following subforms:
 * OPTIONS - optional, is the tail of the list. Denotes the options that will
   be passed to DEFCLASS."))
 
-(defmethod generate-element ((type (eql :class)) form &optional declaim-type-p)
+(defmethod generate-element
+    ((type (eql :class)) details &optional declaim-type-p)
   (declare (ignore declaim-type-p))
-  (destructuring-bind (name superclasses slots . options) form
+  (destructuring-bind (name superclasses slots . options) details
     (assert (and (not (null name)) (symbolp name))
             () "Wrong thing to be a class name: ~S" name)
     (assert (every #'symbolp superclasses)

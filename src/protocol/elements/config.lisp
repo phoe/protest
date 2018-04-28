@@ -36,28 +36,29 @@ The form for a protocol configuration entry consists of the following subforms:
   if the configuration entry must have a value set in the configuration before
   any client code may be executed. If not provided, defaults to :OPTIONAL.
 * INITIAL-VALUE - optional. Denotes the default value that the configuration
-  entry should have at the moment of defining the protocol. If not passed,
-  the value will not be set."))
+  entry will be bound to at the moment of executing the protocol. If not passed,
+  the value will not be bound.")) ;; TODO declaim-type-p
 
-(defmethod generate-element ((type (eql :config)) form &optional declaim-type-p)
-  (declare (ignore declaim-type-p))
-  (destructuring-bind (name . rest) form
-    (declare (ignore rest))
-    (assert (every #'keywordp name)
-            () "Wrong thing to be a configuration entry name: ~A" name)
-    (let ((element (make-instance 'protocol-config :name name)))
-      (when (<= 2 (length form))
-        (let ((type (second form)))
-          (setf (value-type element) type)))
-      (when (<= 3 (length form))
-        (let ((mandatory (third form)))
-          (assert (member mandatory '(:mandatory :optional))
-                  () "~S must be one of :MANDATORY :OPTIONAL." mandatory)
-          (setf (mandatoryp element) (eq mandatory :mandatory))))
-      (when (<= 4 (length form))
-        (let ((initial-value (fourth form)))
-          (setf (initial-value element) initial-value)))
-      element)))
+  (defmethod generate-element
+      ((type (eql :config)) details &optional declaim-type-p)
+    (declare (ignore declaim-type-p))
+    (destructuring-bind (name . rest) details
+      (declare (ignore rest))
+      (assert (every #'keywordp name)
+              () "Wrong thing to be a configuration entry name: ~A" name)
+      (let ((element (make-instance 'protocol-config :name name)))
+        (when (<= 2 (length details))
+          (let ((type (second details)))
+            (setf (value-type element) type)))
+        (when (<= 3 (length details))
+          (let ((mandatory (third details)))
+            (assert (member mandatory '(:mandatory :optional))
+                    () "~S must be one of :MANDATORY :OPTIONAL." mandatory)
+            (setf (mandatoryp element) (eq mandatory :mandatory))))
+        (when (<= 4 (length details))
+          (let ((initial-value (fourth details)))
+            (setf (initial-value element) initial-value)))
+        element)))
 
 (defmethod generate-forms ((element protocol-config))
   (let* ((name (name element)) (type (value-type element))
@@ -100,3 +101,13 @@ The form for a protocol configuration entry consists of the following subforms:
       (setf (gethash slotd *config-documentation-store*) new-value)
       (remhash slotd *config-documentation-store*))
   new-value)
+
+(defmethod protocol-element-boundp ((element protocol-config))
+  (if (slot-boundp element '%initial-value)
+      (values t t)
+      (values nil t)))
+
+(defmethod protocol-element-makunbound ((element protocol-config))
+  (when (slot-boundp element '%initial-value)
+    (slot-makunbound element '%initial-value))
+  element)

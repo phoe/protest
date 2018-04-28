@@ -32,26 +32,30 @@
    #:config
    ;; ACCESSORS
    #:name
-   #:form
-   #:documentation
+   #:whole
    #:tags
+   #:attachments
    #:dependencies
    #:exports
    #:elements
+   #:docstring
    #:lambda-list
    #:return-type
+   #:keyword-types
+   #:declaim-type-p
    #:superclasses
+   #:supertypes
    #:slots
    #:options
-   #:protocol-type
-   #:default-value
-   #:mandatoryp
-   #:keyword-types
    #:value-type
+   #:initial-value
+   #:mandatoryp
    ;; GENERIC FUNCTIONS
    #:generate-element
    #:generate-forms
    #:generate-code
+   #:protocol-element-boundp
+   #:protocol-element-makunbound
    ;; MACROS
    #:define-protocol
    #:execute-protocol))

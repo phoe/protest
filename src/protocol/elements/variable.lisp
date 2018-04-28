@@ -3,7 +3,7 @@
 (in-package #:protest/protocol)
 
 (defclass protocol-variable (protocol-data-type)
-  ((%name :accessor name
+  ((%name :reader name
           :initarg :name
           :initform (error "Must provide NAME."))
    (%value-type :accessor value-type
@@ -21,26 +21,25 @@ The form for a protocol variable consists of the following subforms:
 * VALUE-TYPE - optional, must be a valid type specifier. Denotes the type of
   the value bound to the variable. If not passed, the variable type will not be
   declaimed.
-* INITIAL-VALUE - optional. Denotes the default value that the variable will
-  have at the moment of defining the protocol. If not passed, the variable will
-  be unbound."))
-
-;; TODO embed https://plaster.tymoon.eu/view/764 somewhere
+* INITIAL-VALUE - optional. Denotes the default value that the variable will be
+  bound to at the moment of executing the protocol. If not passed, the variable
+  will be unbound."))
+;; TODO PROTOCOL-ELEMENT-BOUNDP and PROTOCOL-ELEMEND-MAKUNBOUND
 
 (defmethod generate-element
-    ((type (eql :variable)) form &optional (declaim-type-p t))
-  (destructuring-bind (name . rest) form
+    ((type (eql :variable)) details &optional (declaim-type-p t))
+  (destructuring-bind (name . rest) details
     (declare (ignore rest))
     (assert (and (not (null name)) (symbolp name)) ()
             "Wrong thing to be a variable name: ~S" name)
     (let ((element (make-instance 'protocol-variable :name name)))
       (setf (declaim-type-p element) declaim-type-p)
-      (when (<= 2 (length form))
-        (let ((type (second form)))
+      (when (<= 2 (length details))
+        (let ((type (second details)))
           (setf (value-type element) type)))
-      (when (<= 3 (length form))
-        (let ((initial-value (third form)))
-          (assert (typep initial-value (second form)) ()
+      (when (<= 3 (length details))
+        (let ((initial-value (third details)))
+          (assert (typep initial-value (second details)) ()
                   "The provided initial value, ~S, is not of the provided ~
 type ~S." (value-type element) initial-value) ;; TODO test this
           (setf (initial-value element) initial-value)))
@@ -70,3 +69,13 @@ type ~S." (value-type element) initial-value) ;; TODO test this
             `((declaim (type ,value-type ,name))))
         ,@(when documentation
             `((setf (documentation ',name 'variable) ,documentation)))))))
+
+(defmethod protocol-element-boundp ((element protocol-variable))
+  (if (slot-boundp element '%initial-value)
+      (values t t)
+      (values nil t)))
+
+(defmethod protocol-element-makunbound ((element protocol-variable))
+  (when (slot-boundp element '%initial-value)
+    (slot-makunbound element '%initial-value))
+  element)

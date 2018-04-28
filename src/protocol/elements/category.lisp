@@ -20,9 +20,9 @@ subforms:
   categories must not collide with each other."))
 
 (defmethod generate-element
-    ((type (eql :category)) form &optional declaim-type-p)
+    ((type (eql :category)) details &optional declaim-type-p)
   (declare (ignore declaim-type-p))
-  (destructuring-bind (name) form
+  (destructuring-bind (name) details
     (assert (and (consp name)
                  (every #'keywordp name))
             () "Wrong thing to be a configuration category name: ~A" name)

@@ -200,9 +200,10 @@ its elements based on FORMS."
      (ensure-protocol ',name ',options ',whole)))
 
 (defmacro execute-protocol (name)
-  "Applies all the effects of the protocol with the provided NAME."
+  "Executes all the side effects of the protocol with the provided NAME."
   (check-type name symbol)
   (multiple-value-bind (protocol foundp) (gethash name *protocols*)
     (if foundp
-        (generate-code protocol)
+        (progn (validate-protocol protocol *protocols*)
+               (generate-code protocol))
         (error "Protocol ~S was not found." name))))
