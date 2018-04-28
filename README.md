@@ -17,11 +17,11 @@ The currently implemented modules are:
 
   * [`PROTEST/BASE`](doc/base.md) -
     define protocol classes and protocol condition types
-  * [`PROTEST/PROTOCOL`](doc/protocolmd) -
+  * [`PROTEST/PROTOCOL`](doc/protocol.md) -
     define protocols
   * [`PROTEST/TEST-CASE`](doc/test-case.md) -
     define test cases
-  * [`PROTEST/PARACHUTE`](doc/parachutemd) -
+  * [`PROTEST/PARACHUTE`](doc/parachute.md) -
     integrate test cases with
     [Parachute](https://github.com/Shinmera/parachute/) testing library
 
