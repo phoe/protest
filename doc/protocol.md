@@ -27,6 +27,24 @@ Each element of the protocol is described by a list whose first element is the
 keyword denoting the type of a given element, and the rest contain the arguments
 that will be passed to that element's constructor.
 
+Syntax summary of all options and configuration elements:
+
+```common-lisp
+(define-protocol SYMBOL (:documentation STRING
+                         :tags KEYWORD-LIST
+                         :attachments STRING-LIST
+                         :dependencies PROTOCOL-NAME-LIST
+                         :export SYMBOL-LIST
+                         :declaim-types-p BOOLEAN)
+  (:class NAME SUPERCLASSES SLOTS . OPTIONS)
+  (:condition-type NAME SUPERTYPES SLOTS . OPTIONS)
+  (:function NAME LAMBDA-LIST &optional RETURN-TYPE KEYWORD-TYPES)
+  (:macro NAME LAMBDA-LIST)
+  (:variable NAME &optional VALUE-TYPE INITIAL-VALUE)
+  (:category NAME)
+  (:config NAME &optional VALUE-TYPE MANDATORYP INITIAL-VALUE))
+    ```
+
 ## Internal dependencies
 
   * [`PROTEST-BASE`](base.md)
@@ -272,24 +290,6 @@ that will be passed to that element's constructor.
 
     Defines the protocol named `NAME` with the provided `OPTIONS`, containing
     the provided `ELEMENTS`.
-
-    Syntax summary of all options and configuration elements:
-
-    ```common-lisp
-(define-protocol SYMBOL (:documentation STRING
-                         :tags KEYWORD-LIST
-                         :attachments STRING-LIST
-                         :dependencies PROTOCOL-NAME-LIST
-                         :export SYMBOL-LIST
-                         :declaim-types-p BOOLEAN)
-  (:class NAME SUPERCLASSES SLOTS . OPTIONS)
-  (:condition-type NAME SUPERTYPES SLOTS . OPTIONS)
-  (:function NAME LAMBDA-LIST &optional RETURN-TYPE KEYWORD-TYPES)
-  (:macro NAME LAMBDA-LIST)
-  (:variable NAME &optional VALUE-TYPE INITIAL-VALUE)
-  (:category NAME)
-  (:config NAME &optional VALUE-TYPE MANDATORYP INITIAL-VALUE))
-    ```
 
     For details, see Options and Protocol Elements below.
 
