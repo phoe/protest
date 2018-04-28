@@ -43,7 +43,7 @@ Syntax summary of all options and configuration elements:
   (:variable NAME &optional VALUE-TYPE INITIAL-VALUE)
   (:category NAME)
   (:config NAME &optional VALUE-TYPE MANDATORYP INITIAL-VALUE))
-    ```
+```
 
 ## Internal dependencies
 
