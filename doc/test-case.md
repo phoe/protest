@@ -36,7 +36,7 @@ testing libraries:
 
   * [`PROTEST/BASE`](base.md)
 
-## Exports!
+## Exports
 
 ### Variables
 
