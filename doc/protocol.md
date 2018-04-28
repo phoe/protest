@@ -346,7 +346,7 @@ Syntax summary of all options and configuration elements:
       States if the types and ftypes of the elements should be declaimed when the
       protocol is executed. If not supplied, it defaults to `T`.
 
-    For details, see Options and Protocol Elements below.
+    For element definition, see Protocol Elements below.
 
   * **Macro `EXECUTE-PROTOCOL`**
 
