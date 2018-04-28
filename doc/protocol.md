@@ -51,6 +51,8 @@ Syntax summary of all options and configuration elements:
 
 ## Exports
 
+### Variables
+
 * **Variable `*PROTOCOLS*`**
 
     Its value is a hash-table mapping from symbols naming the protocols to the
@@ -82,6 +84,8 @@ Syntax summary of all options and configuration elements:
     in order for the modified callback to take effect.
 
     By default, the value of `*CATEGORY-CALLBACK*` is `(CONSTANTLY NIL)`.
+
+### Classes
 
   * **Class `PROTOCOL`**
 
@@ -212,6 +216,8 @@ Syntax summary of all options and configuration elements:
       configuration entry will be bound to at the moment of executing the
       protocol.
 
+### Documentation Types
+
   * **Documentation Type `PROTOCOL`**
 
     Names documentation strings belonging to protocol objects.
@@ -223,6 +229,8 @@ Syntax summary of all options and configuration elements:
   * **Documentation Type `CONFIG`**
 
     Names documentation strings belonging to configuration entries.
+
+### Generic Functions
 
   * **Generic Function `GENERATE-ELEMENT`**
 
@@ -283,6 +291,8 @@ Syntax summary of all options and configuration elements:
     If the protocol element contains an initial value and that value is bound,
     this function unbinds that value. Otherwise, it does nothing. In any case,
     the protocol element is returned.
+
+### Macros
 
   * **Macro `DEFINE-PROTOCOL`**
 
