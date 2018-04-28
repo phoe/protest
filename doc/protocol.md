@@ -95,7 +95,7 @@ TODO accessors for each protocol element class
 
 Syntax summary of all configuration elements:
 
-```
+```common-lisp
 (:class NAME SUPERCLASSES SLOTS . OPTIONS)
 (:condition-type NAME SUPERTYPES SLOTS . OPTIONS)
 (:function NAME LAMBDA-LIST &optional RETURN-TYPE KEYWORD-TYPES)
@@ -113,7 +113,7 @@ These elements are represented by instances of class `PROTOCOL-CLASS`.
 
 The form for obeys the following grammar:
 
-```
+```common-lisp
 (:class NAME SUPERCLASSES SLOTS . OPTIONS)
 ```
 
@@ -137,7 +137,7 @@ These elements are represented by instances of class `PROTOCOL-CONDITION-TYPE`.
 
 The form for obeys the following grammar:
 
-```
+```common-lisp
 (:condition-type NAME SUPERTYPES SLOTS . OPTIONS)
 ```
 
@@ -161,7 +161,7 @@ These elements are represented by instances of class `PROTOCOL-FUNCTION`.
 
 The form obeys the following grammar:
 
-```
+```common-lisp
 (:function NAME LAMBDA-LIST &optional RETURN-TYPE KEYWORD-TYPES)
 ```
 
@@ -189,7 +189,7 @@ These elements are represented by instances of class `PROTOCOL-MACRO`.
 
 The form obeys the following grammar:
 
-```
+```common-lisp
 (:macro NAME LAMBDA-LIST)
 ```
 
@@ -206,7 +206,7 @@ These elements are represented by instances of class `PROTOCOL-VARIABLE`.
 
 The form obeys the following grammar:
 
-```
+```common-lisp
 (:variable NAME &optional VALUE-TYPE INITIAL-VALUE)
 ```
 
@@ -229,7 +229,7 @@ These elements are represented by instances of class `PROTOCOL-CATEGORY`.
 
 The form obeys the following grammar:
 
-```
+```common-lisp
 (:category NAME)
 ```
 
@@ -248,7 +248,7 @@ These elements are represented by instances of class `PROTOCOL-CONFIG`.
 
 The form obeys the following grammar:
 
-```
+```common-lisp
 (:config NAME &optional VALUE-TYPE MANDATORYP INITIAL-VALUE)
 ```
 
