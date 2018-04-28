@@ -3,10 +3,10 @@
 (in-package #:protest/protocol)
 
 (defclass protocol-function (protocol-operation)
-  ((%name :accessor name
+  ((%name :reader name
           :initarg :name
           :initform (error "Must provide NAME."))
-   (%lambda-list :accessor lambda-list
+   (%lambda-list :reader lambda-list
                  :initarg :lambda-list
                  :initform (error "Must provide LAMBDA-LIST."))
    (%return-type :accessor return-type
@@ -63,7 +63,7 @@ The form for a protocol function consists of the following subforms:
       element
     (let ((ftype-args (ftype-args lambda-list keyword-types))
           (documentation (docstring element)))
-      `((defgeneric? ,name ,(strip-specializers lambda-list)
+      `((defgeneric? ,name ,(c2mop:extract-lambda-list lambda-list)
           ,@(when documentation `((:documentation ,documentation))))
         ,@(when (declaim-type-p element)
             `((declaim (ftype (function ,ftype-args ,return-type) ,name))))))))
@@ -73,17 +73,6 @@ The form for a protocol function consists of the following subforms:
           (not (typep (fdefinition name) 'generic-function)))
       `(defgeneric ,name ,lambda-list ,@options)
       `(progn)))
-
-(defun strip-specializers (lambda-list)
-  (loop for sublist on lambda-list
-        for element = (car sublist)
-        if (member element lambda-list-keywords)
-          return (nconc elements (list element) (cdr sublist))
-        else if (symbolp element)
-               collect element into elements
-        else if (listp element)
-               collect (car element) into elements
-        finally (return elements)))
 
 (defun ftype-args (lambda-list keyword-types)
   (loop with keyword = nil

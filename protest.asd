@@ -35,6 +35,7 @@
   :license "LLGPL"
   :serial t
   :depends-on (#:alexandria
+               #:closer-mop
                #:protest/base)
   :components ((:file "src/protocol/package")
                (:file "src/protocol/elements")

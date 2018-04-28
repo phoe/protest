@@ -33,17 +33,134 @@ that will be passed to that element's constructor.
 
 ## Exports
 
+* **Variable `*PROTOCOLS*`**
+
+    Its value is a hash-table mapping from symbols naming the protocols to the
+    protocol objects themselves.
+
+    By default, the value of `*PROTOCOLS*` is an empty hash-table.
+
+  * **Variable `*CONFIG-CALLBACK*`**
+
+    Its value is a function of two arguments used as a callback for declaring
+    configuration values. The first argument to that function is the
+    configuration entry name, the second is the type that the value of the
+    configuration entry is allowed to take, the third is a boolean stating if
+    the configuration entry is mandatory to be set, and the fourth is the
+    initial value that was passed in the protocol. If no optional value was
+    provided, this argument is not passed.
+
+    This variable is expected to be rebound around calls to `EXECUTE-PROTOCOL`
+    in order for the modified callback to take effect.
+
+    By default, the value of `*CONFIG-CALLBACK*` is `(CONSTANTLY NIL)`.
+
+  * **Variable `*CATEGORY-CALLBACK*`**
+
+    Its value is a function of one argument used as a callback for declaring
+    categories. The only argument to that function is the category name.
+
+    This variable is expected to be rebound around calls to `EXECUTE-PROTOCOL`
+    in order for the modified callback to take effect.
+
+    By default, the value of `*CATEGORY-CALLBACK*` is `(CONSTANTLY NIL)`.
+
   * **Class `PROTOCOL`**
 
+    Describes a protocol understood as a relation between data types and
+    operations on these types.
 
+    Accessors:
+    * **Reader `NAME`** - returns the symbol that names the protocol.
+    * **Accessor `WHOLE`** - accesses the `DEFINE-PROTOCOL` form that the
+      protocol was defined with.
+    * **Accessor `TAGS`** - accesses the list of tags of the protocol.
+    * **Accessor `ATTACHMENTS`** - accesses the list of attachments of the
+      protocol.
+    * **Reader `DEPENDENCIES`** - returns the list of symbols which name
+      protocols that this protocol depends on.
+    * **Accessor `EXPORTS`** - accesses the list of symbols exported by the
+      protocol.
+    * **Accessor `ELEMENTS`** - accesses the list of protocol elements of the
+    protocol.
 
-  * **Macro `DEFINE-PROTOCOL`**
+  * **Protocol Class `PROTOCOL-ELEMENT`**
 
-    ```
-    (define-protocol NAME (&rest OPTIONS) . ELEMENTS-AND-DOCSTRINGS)
-    ```
+    Describes an abstract protocol element.
 
-    TODO documentation strings
+    Each protocol element must be a subclass this class.
+
+    Accessors:
+    * **Reader `NAME`** - returns the name of the element.
+    * **Accessor `DOCSTRING`** - returns the documentation string attached
+      to the element during protocol definition.
+
+  * **Protocol Class `PROTOCOL-OPERATION`**
+    Subclass of `PROTOCOL-ELEMENT` that describes an operation belonging to a
+    protocol.
+
+  * **Protocol Class `PROTOCOL-DATA-TYPE`**
+
+    Subclass of `PROTOCOL-ELEMENT` that describes a data-type belonging to a
+    protocol.
+
+  * **Class `PROTOCOL-FUNCTION`**
+
+    Subclass of `PROTOCOL-OPERATION` that describes a generic function belonging
+    to a protocol. See protocol element `:FUNCTION` below.
+
+    Accessors:
+    * **Reader `NAME`** - returns the symbol naming the function.
+    * **Reader `LAMBDA-LIST`** - returns the typed lambda-list of the function.
+    * **Accessor `RETURN-TYPE`** - accesses the return type of the function.
+    * **Accessor `KEYWORD-TYPES`** - accesses the plist mapping from some or all
+      of the keyword arguments used in `LAMBDA-LIST` to the types of their
+      arguments.
+    * **Accessor `DECLAIM-TYPE-P`** - accesses the boolean value stating if this
+      function's ftype should be proclaimed via `DECLAIM FTYPE`.
+
+  * **Class `PROTOCOL-MACRO`**
+
+    Subclass of `PROTOCOL-OPERATION` that describes a macro belonging to a
+    protocol. See protocol element `:MACRO` below.
+
+  * **Class `PROTOCOL-CLASS`**
+
+    Subclass of `PROTOCOL-DATA-TYPE` that describes a class belonging to a
+    protocol. See protocol element `:CLASS` below.
+
+  * **Class `PROTOCOL-CONDITION-TYPE`**
+
+    Subclass of `PROTOCOL-DATA-TYPE` that describes a condition type belonging
+    to a protocol. See protocol element `:CONDITION-TYPE` below.
+
+  * **Class `PROTOCOL-VARIABLE`**
+
+    Subclass of `PROTOCOL-DATA-TYPE` that describes a variable belonging to a
+    protocol. See protocol element `:VARIABLE` below.
+
+  * **Class `PROTOCOL-CATEGORY`**
+
+    Subclass of `PROTOCOL-DATA-TYPE` that describes a configuration category
+    belonging to a protocol. See protocol element `:CATEGORY` below.
+
+  * **Class `PROTOCOL-CONFIG`**
+
+    Subclass of `PROTOCOL-DATA-TYPE` that describes a configuration entry
+    belonging to a protocol. See protocol element `:CONFIG` below.
+
+  * **Documentation Type `PROTOCOL`**
+
+    Names documentation strings belonging to protocol objects.
+
+  * **Documentation Type `CATEGORY`**
+
+    Names documentation strings belonging to configuration categories.
+
+  * **Documentation Type `CONFIG`**
+
+    Names documentation strings belonging to configuration entries.
+
 
 ## Options
 
@@ -105,54 +222,6 @@ Syntax summary of all configuration elements:
 (:config NAME &optional VALUE-TYPE MANDATORYP INITIAL-VALUE)
 ```
 
-### :CLASS
-
-Describes a protocol class that is a part of a protocol.
-
-These elements are represented by instances of class `PROTOCOL-CLASS`.
-
-The form for obeys the following grammar:
-
-```common-lisp
-(:class NAME SUPERCLASSES SLOTS . OPTIONS)
-```
-
-  * **`NAME`** - must be a symbol. Denotes the name of the class.
-  * **`SUPERCLASSES`** - must be a list of symbols. Denotes the superclasses of
-    the class.
-  * **`SLOTS`** - must be a list of slot definitions. Denotes the slots of the
-    class. It is discouraged to create slots in protocol classes; client code
-    should instead create slots in concrete classes which subclass the protocol
-    classes.
-  * **`OPTIONS`** - denotes the options that will be passed to
-    `DEFINE-PROTOCOL-CLASS`.
-
-This element expands into `DEFINE-PROTOCOL-CLASS`.
-
-### :CONDITION-TYPE
-
-Describes a protocol condition type that is a part of a protocol.
-
-These elements are represented by instances of class `PROTOCOL-CONDITION-TYPE`.
-
-The form for obeys the following grammar:
-
-```common-lisp
-(:condition-type NAME SUPERTYPES SLOTS . OPTIONS)
-```
-
-  * **`NAME`** - must be a symbol. Denotes the name of the condition type.
-  * **`SUPERTYPES`** - must be a list of symbols. Denotes the supertypes of the
-    condition type.
-  * **`SLOTS`** - must be a list of slot definitions. Denotes the slots of the
-    condition type. It is discouraged to create slots in protocol condition
-    types; client code should instead create slots in concrete condition types
-    which subtype the protocol condition types.
-  * **`OPTIONS`** - denotes the options that will be passed to
-    `DEFINE-PROTOCOL-CONDITION-TYPE`.
-
-This element expands into `DEFINE-PROTOCOL-CONDITION-TYPE`.
-
 ### :FUNCTION
 
 Describes a generic function that is a part of a protocol.
@@ -181,6 +250,9 @@ from `LAMBDA-LIST`, `RETURN-TYPE` and `KEYWORD-TYPES` will be passed to a
 `DECLAIM FTYPE` call if the protocol is defined with `:DECLAIM-TYPES-P` being
 true.
 
+If a documentation string is provided, it is attached to the resulting
+`DEFGENERIC` form.
+
 ### :MACRO
 
 Describes a macro that is a part of a protocol.
@@ -197,6 +269,63 @@ The form obeys the following grammar:
   * **`LAMBDA-LIST`** - must be a valid macro lambda list.
 
 This element does not expand into anything.
+
+If a documentation string is provided, it is set via `SETF DOCUMENTATION` of
+documentation type `FUNCTION`.
+
+### :CLASS
+
+Describes a protocol class that is a part of a protocol.
+
+These elements are represented by instances of class `PROTOCOL-CLASS`.
+
+The form for obeys the following grammar:
+
+```common-lisp
+(:class NAME SUPERCLASSES SLOTS . OPTIONS)
+```
+
+  * **`NAME`** - must be a symbol. Denotes the name of the class.
+  * **`SUPERCLASSES`** - must be a list of symbols. Denotes the superclasses of
+    the class.
+  * **`SLOTS`** - must be a list of slot definitions. Denotes the slots of the
+    class. It is discouraged to create slots in protocol classes; client code
+    should instead create slots in concrete classes which subclass the protocol
+    classes.
+  * **`OPTIONS`** - denotes the options that will be passed to
+    `DEFINE-PROTOCOL-CLASS`.
+
+This element expands into `DEFINE-PROTOCOL-CLASS`.
+
+If a documentation string is provided, it is attached to the resulting
+`DEFCLASS` form.
+
+### :CONDITION-TYPE
+
+Describes a protocol condition type that is a part of a protocol.
+
+These elements are represented by instances of class `PROTOCOL-CONDITION-TYPE`.
+
+The form for obeys the following grammar:
+
+```common-lisp
+(:condition-type NAME SUPERTYPES SLOTS . OPTIONS)
+```
+
+  * **`NAME`** - must be a symbol. Denotes the name of the condition type.
+  * **`SUPERTYPES`** - must be a list of symbols. Denotes the supertypes of the
+    condition type.
+  * **`SLOTS`** - must be a list of slot definitions. Denotes the slots of the
+    condition type. It is discouraged to create slots in protocol condition
+    types; client code should instead create slots in concrete condition types
+    which subtype the protocol condition types.
+  * **`OPTIONS`** - denotes the options that will be passed to
+    `DEFINE-PROTOCOL-CONDITION-TYPE`.
+
+This element expands into `DEFINE-PROTOCOL-CONDITION-TYPE`.
+
+If a documentation string is provided, it is attached to the resulting
+`DEFINE-CONDITION` form.
 
 ### :VARIABLE
 
@@ -221,6 +350,9 @@ This element expands into `DEFVAR`. The type information from `VALUE-TYPE` will
 be passed to a `DECLAIM TYPE` call if the protocol is defined with
 `:DECLAIM-TYPES-P` being true.
 
+If a documentation string is provided, it is set via `SETF DOCUMENTATION` of
+documentation type `VARIABLE`.
+
 ### :CATEGORY
 
 Describes a configuration category that is a part of a protocol.
@@ -239,6 +371,9 @@ The form obeys the following grammar:
 
 This element expands into a call to the value of `*CATEGORY-CALLBACK*` with the
 category's name being the argument to that function.
+
+If a documentation string is provided, it is set via `SETF DOCUMENTATION` of
+documentation type `CATEGORY`.
 
 ### :CONFIG
 
@@ -268,6 +403,9 @@ The form obeys the following grammar:
 This element expands into a call to the value of `*CONFIG-CALLBACK*` with the
 configuration entry's `NAME`, `VALUE-TYPE`, `MANDATORYP` as required parameters
 and `INITIAL-VALUE` as an optional parameter.
+
+If a documentation string is provided, it is set via `SETF DOCUMENTATION` of
+documentation type `CONFIG`.
 
 ## Example
 

@@ -48,6 +48,10 @@
    #:mandatoryp
    #:keyword-types
    #:value-type
+   ;; GENERIC FUNCTIONS
+   #:generate-element
+   #:generate-forms
+   #:generate-code
    ;; MACROS
    #:define-protocol
    #:execute-protocol))
