@@ -301,6 +301,51 @@ Syntax summary of all options and configuration elements:
     Defines the protocol named `NAME` with the provided `OPTIONS`, containing
     the provided `ELEMENTS`.
 
+    `OPTIONS` is a plist containing the options selected for the protocol. The
+    following options are defined:
+
+    * **`:DOCUMENTATION`**
+
+      Expects a string that will be attached to the protocol's name as a
+      documentation string of documentation type `PROTOCOL`.
+
+    * **`:TAGS`**
+
+      Expects a list of keywords which name tags attached to this protocol.
+
+      This information is currently not processed, but will be utilized in the
+      future when this library supports HTML generation.
+
+    * **`:ATTACHMENTS`**
+
+      Expects a list of strings naming files attached to this protocol.
+
+      This information is currently not processed, but will be utilized in the
+      future when this library supports HTML generation.
+
+    * **`:DEPENDENCIES`**
+
+      Expects a list of symbols that name other protocols. These protocols are
+      declared dependencies of the current protocol. Defining a protocol whose
+      dependencies are not defined is an error.
+
+      An error is signaled if the protocols have colliding elements, such as a
+      pair of generic functions with the same name. Errors are also signaled in
+      case of erroneous dependency definition, such as circular dependencies.
+
+    * **`:EXPORT`**
+
+      Expects a list of all symbols that are meant to be exported when the
+      protocol is executed, or the symbol `T`, meaning that the names of all
+      protocol elements are going to be exported. This includes names of `SETF`
+      functions but does not include names which are lists of keywords, such as
+      the names for configuration entries and categories.
+
+    * **`:DECLAIM-TYPES-P`**
+
+      States if the types and ftypes of the elements should be declaimed when the
+      protocol is executed. If not supplied, it defaults to `T`.
+
     For details, see Options and Protocol Elements below.
 
   * **Macro `EXECUTE-PROTOCOL`**
@@ -309,53 +354,7 @@ Syntax summary of all options and configuration elements:
 
     Executes all the side effects of the protocol with the provided `NAME`.
 
-## Options
-
-  * **Option `:DOCUMENTATION`**
-
-    Expects a string that will be attached to the protocol's name as a
-    documentation string of documentation type `PROTOCOL`.
-
-  * **Option `:TAGS`**
-
-    Expects a list of keywords which name tags attached to this protocol.
-
-    This information is currently not processed, but will be utilized in the
-    future when this library supports HTML generation.
-
-  * **Option `:ATTACHMENTS`**
-
-    Expects a list of strings naming files attached to this protocol.
-
-    This information is currently not processed, but will be utilized in the
-    future when this library supports HTML generation.
-
-  * **Option `:DEPENDENCIES`**
-
-    Expects a list of symbols that name other protocols. These protocols are
-    declared dependencies of the current protocol. Defining a protocol whose
-    dependencies are not defined is an error.
-
-    An error is signaled if the protocols have colliding elements, such as a
-    pair of generic functions with the same name. Errors are also signaled in
-    case of erroneous dependency definition, such as circular dependencies.
-
-  * **Option `:EXPORT`**
-
-    Expects a list of all symbols that are meant to be exported when the
-    protocol is executed, or the symbol `T`, meaning that the names of all
-    protocol elements are going to be exported. This includes names of `SETF`
-    functions but does not include names which are lists of keywords, such as
-    the names for configuration entries and categories.
-
-  * **Option `:DECLAIM-TYPES-P`**
-
-    States if the types and ftypes of the elements should be declaimed when the
-    protocol is executed. If not supplied, it defaults to `T`.
-
 ## Protocol Elements
-
-TODO accessors for each protocol element class
 
 ### :FUNCTION
 
