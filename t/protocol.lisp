@@ -181,8 +181,9 @@
 (define-protest-test test-protocol-define-config
   (with-fresh-state
     (let* ((variable nil)
-           (*configuration-callback*
-             (lambda (x y) (declare (ignore x y)) (setf variable t))))
+           (*config-callback*
+             (lambda (w x y &optional z)
+               (declare (ignore w x y z)) (setf variable t))))
       (unwind-protect
            (progn (define-protocol #3=#.(gensym) ()
                     (:config #1=(:foo :bar) string :mandatory "a")

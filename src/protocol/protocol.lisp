@@ -9,11 +9,9 @@
   "A hash-table mapping from protocol names to protocol objects, used for
 compile-time constraint checking.")
 
-(defvar *declaim-types* t
-  "States if protocols should declaim function and variable types.")
-
 (defclass protocol ()
   ((%name :reader name
+          :initarg :name
           :initform (error "Must provide NAME."))
    (%whole :accessor whole
            :initarg :whole)
@@ -47,7 +45,8 @@ operations on these types."))
 
 (defmethod initialize-instance :after
     ((protocol protocol)
-     &key name dependencies export (declaim-type-p t) documentation)
+     &key name dependencies export (declaim-types-p t) documentation)
+  ;; TODO test for DECLAIM TYPE and DECLAIM FTYPE
   (when (or (null name) (not (symbolp name)))
     (protocol-error "NAME must be a non-null symbol, not ~S." name))
   (when documentation
@@ -56,12 +55,12 @@ operations on these types."))
                       documentation))
     (setf (documentation protocol 'protocol) documentation))
   (setf (slot-value protocol '%name) name
-        (dependencies protocol) dependencies
+        (slot-value protocol '%dependencies) dependencies
         (exports protocol)
         (if (eq export 't) (compute-exports protocol) export))
   (let ((element-forms (cdddr (whole protocol))))
     (setf (elements protocol)
-          (generate-elements element-forms declaim-type-p))))
+          (generate-elements element-forms declaim-types-p))))
 
 (defvar *protocol-documentation-store* (make-hash-table))
 
@@ -84,14 +83,14 @@ operations on these types."))
           (export ',(exports protocol))
           (values)))
 
-(defun generate-elements (elements declaim-type-p)
+(defun generate-elements (elements declaim-types-p)
   (loop for sublist on elements
         for form = (first sublist)
         for string = (second sublist)
         for element = nil
         if (listp form)
           do (setf element
-                   (generate-element (car form) (cdr form) declaim-type-p))
+                   (generate-element (car form) (cdr form) declaim-types-p))
           and collect element
         if (and (listp form) (stringp string))
           do (setf (docstring element) string)))
@@ -106,6 +105,9 @@ operations on these types."))
   (check-duplicate-element-forms protocol)
   (check-duplicate-effective-elements protocol hash-table)
   (check-exports protocol))
+;; TODO after redefining a protocol it is possible that it now has collisions
+;; with protocols that depend on it. Make sure that this does not happen and
+;; write a test for it.
 
 (defun check-dependencies-valid (protocol hash-table)
   (let ((name (name protocol))

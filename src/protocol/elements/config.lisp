@@ -2,12 +2,13 @@
 
 (in-package #:protest/protocol)
 
-(defvar *configuration-callback* (constantly nil)
+(defvar *config-callback* (constantly nil)
   "A function of two arguments used as a callback for declaring configuration
-values. The first argument is the configuration entry name and the second is
-the initial value that was passed in the protocol.")
-
-;; TODO configuration getter or something
+values. The first argument is the configuration entry name, the second is the
+type that the value of the configuration entry is allowed to take, the third is
+a boolean stating if the configuration entry is mandatory to be set, and the
+fourth is the initial value that was passed in the protocol. If no optional
+value was provided, this argument is not passed.")
 
 (defclass protocol-config (protocol-data-type)
   ((%name :accessor name
@@ -78,8 +79,12 @@ The form for a protocol configuration entry consists of the following subforms:
 (defmethod generate-code ((element protocol-config))
   (let ((documentation (docstring element)))
     `(,@(when (slot-boundp element '%initial-value)
-          `((funcall *configuration-callback*
-                     ',(name element) ,(initial-value element))))
+          `((funcall *config-callback*
+                     ',(name element)
+                     ',(value-type element)
+                     ,(mandatoryp element)
+                     ,@(when (slot-boundp element '%initial-value)
+                         (list (initial-value element))))))
       ,@(when documentation
           `((setf (documentation ',(name element) 'config) ,documentation))))))
 

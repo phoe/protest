@@ -10,8 +10,7 @@
   (:export
    ;; SPECIAL VARIABLES
    #:*protocols*
-   #:*declaim-types*
-   #:*configuration-callback*
+   #:*config-callback*
    #:*category-callback*
    ;; CLASSES
    #:protocol

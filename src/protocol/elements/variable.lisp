@@ -42,7 +42,7 @@ The form for a protocol variable consists of the following subforms:
         (let ((initial-value (third form)))
           (assert (typep initial-value (second form)) ()
                   "The provided initial value, ~S, is not of the provided ~
-type ~S." (value-type element) initial-value)
+type ~S." (value-type element) initial-value) ;; TODO test this
           (setf (initial-value element) initial-value)))
       element)))
 

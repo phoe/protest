@@ -11,10 +11,11 @@ list of symbols."))
 
 (defgeneric generate-element (type form &optional declaim-type-p)
   (:documentation
-   "Given the element type and the rest of the form, attempts to generate and
-return a matching protocol element. Signals PROTOCOL-ERROR if the generation
-fails. The argument DECLAIM-TYPE-P states if the types of functions and
-variables should be declaimed; it may be ignored by the method."))
+   "Given the keyword representing the element type and the rest of that
+element's list representation, attempts to generate and return a matching
+protocol element. Signals PROTOCOL-ERROR if the generation fails. The argument
+DECLAIM-TYPE-P states if the types of functions and variables should be
+declaimed; it may be ignored by the method."))
 
 (defgeneric generate-forms (element)
   (:documentation
