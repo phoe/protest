@@ -1,7 +1,7 @@
 ;;;; package.lisp
 
 (uiop:define-package #:protest
-  (:use #:common-lisp
+  (:use #:cl
         #:protest/base
         #:protest/protocol
         #:protest/test-case

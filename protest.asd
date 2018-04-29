@@ -8,10 +8,11 @@
   :depends-on (#:protest/base
                #:protest/protocol
                #:protest/test-case
-               #:protest/parachute
                ;; #:protest/web
+               ;; #:protest/parachute
                ;; #:protest/5am
                ;; #:protest/prove
+               ;; #:protest/1am
                )
   :components ((:file "src/package")))
 
@@ -60,13 +61,14 @@
                (:file "src/test-case/test-case")))
 
 (asdf:defsystem #:protest/parachute
-  :description "PROTEST integration with Parachute library"
+  :description "PROTEST integration with Parachute testing library"
   :author "Michał \"phoe\" Herda <phoe@openmailbox.org>"
   :license "Artistic"
   :serial t
   :depends-on (#:alexandria
                #:named-readtables
                #:parachute
+               #:protest/base
                #:protest/test-case)
   :components ((:file "src/parachute/package")
                (:file "src/parachute/base")
@@ -74,8 +76,22 @@
                (:file "src/parachute/parachute-modification")
                (:file "src/parachute/test")))
 
+(asdf:defsystem #:protest/1am
+  :description "PROTEST integration with 1AM testing library"
+  :author "Michał \"phoe\" Herda <phoe@openmailbox.org>"
+  :license "LLGPL"
+  :serial t
+  :depends-on (#:alexandria
+               #:named-readtables
+               #:1am
+               #:protest/base
+               #:protest/test-case)
+  :components ((:file "src/1am/package")
+               (:file "src/1am/formatter")
+               (:file "src/1am/macro")))
+
 (asdf:defsystem #:protest/test
-  :description "PROTEST test package"
+  :description "Tests for PROTEST"
   :author "Michał \"phoe\" Herda <phoe@openmailbox.org>"
   :license "LLGPL"
   :serial t

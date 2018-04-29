@@ -16,7 +16,9 @@
    #:test-case-finishing-result
    #:true #:false #:is #:isnt #:is-values #:isnt-values
    #:fail #:of-type #:finish
-   #:protest/parachute))
+   #:protest/parachute ;; document this as readtable
+   ;; #:self-test ;; document this function, but we do not want to export it
+   ))
 
 (uiop:define-package #:protest/parachute
   (:use)
