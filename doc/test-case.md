@@ -38,16 +38,6 @@ testing libraries:
 
 ## Exports
 
-### Variables
-
-  * **Variable `*TEST-CASES*`**
-
-  Its value is a hash-table mapping from strings naming the test cases to the
-  test case object themselves.
-
-  By default, the value of `*TEST-CASES*` is an empty, `EQUAL`-tested
-  hash-table.
-
 ### Classes
 
   * **Class `TEST-CASE`**
@@ -55,8 +45,11 @@ testing libraries:
     Describes a test case understood as a metaobject describing the metadata,
     steps and phases of a particular test.
 
+    Each test case is uniquely identified by
+
     Accessors:
     * **Reader `NAME`** - returns the string that names the test case.
+    * **Reader `PACKAGE-OF`** - returns the package the test case belongs to.
     * **Accessor `WHOLE`** - accesses the `DEFINE-TEST-CASE` form that the test
       case was defined with.
     * **Accessor `TAGS`** - accesses the list of tags of the test case.
@@ -84,7 +77,21 @@ testing libraries:
 
   * **Documentation Type `TEST-CASE`**
 
-    Names documentation strings belonging to test case objects.
+### Functions
+
+  * **Function `FIND-TEST-CASE`**
+
+    Syntax: `(find-test-case NAME &optional (PACKAGE *PACKAGE*))`
+
+    Returns a test case object matching the provided NAME and PACKAGE. If no
+    such test case was found, returns NIL.
+
+  * **Function `(SETF FIND-TEST-CASE)`**
+
+    Syntax: `(setf (find-test-case NAME &optional (PACKAGE *PACKAGE*))
+                   new-value)`
+
+    Sets the test case object matching the provided NAME and PACKAGE.
 
 ### Macros
 

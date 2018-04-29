@@ -10,14 +10,14 @@
 (register-test-package)
 
 (defmacro with-fresh-state (&body body)
-  `(let ((*test-cases* (make-hash-table)))
+  `(let ((*test-cases* (make-hash-table :test #'equal)))
      ,@body
      (values)))
 
 (define-protest-test test-test-case-define-empty
   (with-fresh-state
     (define-test-case #1=#.(gensym) ())
-    (let ((test-case (gethash '#1# *test-cases*)))
+    (let ((test-case (find-test-case '#1#)))
       (is (null (documentation test-case 'test-case)))
       (is (null (tags test-case)))
       (is (null (attachments test-case)))
@@ -32,7 +32,7 @@
     (define-test-case #1=#.(gensym) (:attachments (#2="haha")
                                      :tags (#3=#.(gensym))
                                      :documentation "asdf"))
-    (let ((test-case (gethash '#1# *test-cases*)))
+    (let ((test-case (find-test-case '#1#)))
       (is (string= "asdf" (documentation test-case 'test-case)))
       (is (equal '(#3#) (tags test-case)))
       (is (= 1 (length (attachments test-case))))
@@ -78,7 +78,7 @@
       20 "twenty"
       #3=#.(gensym)
       30 "thirty")
-    (let* ((test-case (gethash '#1# *test-cases*))
+    (let* ((test-case (find-test-case '#1#))
            (steps (steps-list test-case))
            (first (first steps))
            (second (second steps))

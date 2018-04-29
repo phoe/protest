@@ -5,10 +5,22 @@
 (defvar *test-cases* (make-hash-table :test #'equal)
   "A mapping from test case names to test cases.")
 
+(defun find-test-case (name &optional (package *package*))
+  "Returns the test case with the provided name from the provided package."
+  (values (gethash (cons (string name) package) *test-cases*)))
+
+(defun (setf find-test-case) (new-value name &optional (package *package*))
+  "Sets the test case with the provided name with the provided package."
+  (check-type new-value test-case)
+  (setf (gethash (cons (string name) package) *test-cases*) new-value))
+
 (defclass test-case ()
   ((%name :reader name
           :initarg :name
           :initform (error "Must provide NAME."))
+   (%package :reader package-of
+             :initarg :package
+             :initform *package*)
    (%whole :accessor whole
            :initarg :whole)
    (%tags :accessor tags
@@ -123,14 +135,15 @@ describing each part of the test."))
         else do (protocol-error "Test step IDs not in order: ~D came after ~D."
                                 previous-number number)))
 
-(defun ensure-test-case (name options whole)
+(defun ensure-test-case (name options whole &optional (package *package*))
+  (unless (stringp name) (setf name (string name)))
   (let ((test-case (apply #'make-instance 'test-case
                           :name name :whole whole options)))
     (validate-test-case test-case)
-    (multiple-value-bind (value foundp) (gethash name *test-cases*)
-      (when (and foundp (not (equalp (whole value) (whole test-case))))
+    (let ((value (find-test-case name package)))
+      (when (and value (not (equalp (whole value) (whole test-case))))
         (warn "Redefining ~A in DEFINE-PROTOCOL" name)))
-    (setf (gethash name *test-cases*) test-case)
+    (setf (find-test-case name package) test-case)
     name))
 
 (defmacro define-test-case (&whole whole name (&rest options) &body steps)

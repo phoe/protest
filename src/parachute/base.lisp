@@ -37,7 +37,7 @@ DEFINE-TEST. Must NEVER be proclaimed special.")
   (declare (ignore subchar))
   (let ((form (read stream t nil t))
         (name *define-test-closure-symbol*))
-    `(let* ((*current-test-case* (gethash ,name *test-cases*))
+    `(let* ((*current-test-case* (find-test-case ,name))
             (*current-test-step*
               (when *current-test-case*
                 (gethash ,arg (steps *current-test-case*)))))
@@ -48,7 +48,7 @@ DEFINE-TEST. Must NEVER be proclaimed special.")
   (:dispatch-macro-char #\# #\? 'test-step-macro-reader))
 
 (defmacro define-test (name &body arguments-and-body)
-  (unless (gethash name *test-cases*)
+  (unless (find-test-case name)
     (protocol-error "Test case named ~S was not found. ~
 Use DEFINE-TEST-CASE first." name))
   `(let ((,*define-test-closure-symbol* ',name))

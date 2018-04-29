@@ -8,8 +8,6 @@
    #:protest/common)
   (:shadow #:of-type)
   (:export
-   ;; VARIABLES
-   #:*test-cases*
    ;; CLASSES
    #:test-step
    #:test-case
@@ -17,6 +15,7 @@
    #:test-case
    ;; ACCESSORS
    #:name
+   #:package-of
    #:whole
    #:tags
    #:attachments
@@ -25,5 +24,7 @@
    #:id
    #:description
    #:test-phase
+   ;; FUNCTIONS
+   #:find-test-case
    ;; MACROS
    #:define-test-case))
