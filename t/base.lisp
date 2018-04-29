@@ -3,8 +3,7 @@
 (defpackage #:protest/test/base
   (:use #:cl
         #:protest
-        #:protest/test
-        #:protest/1am))
+        #:protest/test))
 
 (in-package #:protest/test/base)
 

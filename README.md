@@ -57,6 +57,11 @@ The modules planned for development are:
     for integrating test cases with [1AM](https://github.com/lmj/1am/) testing
     library
 
+### Testing PROTEST
+
+Load the ASDF system `PROTEST/TEST` and run `(PROTEST/TEST:RUN-ALL-TESTS)`, or
+perform ASDF's `TEST-OP` on the `PROTEST` module.
+
 ### License
 
 All of PROTEST is licensed under GNU Lisp Lesser General Public License,

@@ -80,8 +80,8 @@
   :license "LLGPL"
   :serial t
   :depends-on (#:protest)
-  :components ((:file "t/1am")
-               (:file "t/test")
+  :components ((:file "t/test")
+               (:file "t/framework")
                (:file "t/base")
                (:file "t/protocol")
                (:file "t/test-case")))

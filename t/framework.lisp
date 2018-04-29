@@ -20,11 +20,7 @@
 ;;; OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 ;;; DEALINGS IN THE SOFTWARE.
 
-(defpackage #:protest/1am ;; TODO this package will have to be repurposed,
-  (:use #:cl) ;; move all of this code to package PROTEST/TEST or something
-  (:export #:define-protest-test #:is #:signals #:run #:*tests*))
-
-(in-package #:protest/1am)
+(in-package #:protest/test)
 
 (defvar *tests* nil "A list of tests; the default argument to `run'.")
 (defvar *pass-count* nil)

@@ -4,8 +4,7 @@
 (defpackage #:protest/test/protocol
   (:use #:cl
         #:protest
-        #:protest/test
-        #:protest/1am))
+        #:protest/test))
 
 (in-package #:protest/test/protocol)
 

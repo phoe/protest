@@ -2,12 +2,13 @@
 
 (defpackage #:protest/test
   (:use
-   #:cl
-   #:protest/1am)
+   #:cl)
   (:export
    #:*test-packages*
    #:register-test-package
-   #:run-all-tests))
+   #:run-all-tests
+   ;; 1AM
+   #:define-protest-test #:is #:signals #:run #:*tests*))
 
 (in-package #:protest/test)
 
