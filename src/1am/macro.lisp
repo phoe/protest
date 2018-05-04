@@ -20,7 +20,7 @@
 
 (defun make-test-function (test-case-name package test-body)
   (let ((package-name (package-name (find-package package))))
-    `(let* ((test-case (find-test-case name ,package-name))
+    `(let* ((test-case (find-test-case ,test-case-name ,package-name))
             (*current-step-id* 0))
        (assert test-case ()
                "Test case with name ~S was not found." ,test-case-name)
@@ -46,7 +46,7 @@
               "Test case with name ~S was not found. ~
 Use DEFINE-TEST-CASE first." string)
       (let ((symbol (intern string *package*)))
-        `(1am:test ,symbol ,(make-test-function *package* string body)))))
+        `(1am:test ,symbol ,(make-test-function string *package* body)))))
   (setf (macro-function 'define-test) (macro-function 'test)))
 
 ;; TODO document this
