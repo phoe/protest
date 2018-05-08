@@ -88,7 +88,8 @@
                #:protest/test-case)
   :components ((:file "src/1am/package")
                (:file "src/1am/formatter")
-               (:file "src/1am/macro")))
+               (:file "src/1am/macro")
+               (:file "src/1am/test")))
 
 (asdf:defsystem #:protest/test
   :description "Tests for PROTEST"

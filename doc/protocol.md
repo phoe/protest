@@ -354,6 +354,24 @@ Syntax summary of all options and configuration elements:
 
     Executes all the side effects of the protocol with the provided `NAME`.
 
+### Reader Macros
+
+  * **Reader Macro `#?`**
+
+    Syntax: `#N?test-step-implementation`
+
+    This reader macro denotes a form that implements a particular test step. For
+    instance, `#2?(= 4 (+ 2 2))` means a test step number 2 whose purpose is
+    checking whether trivial addition works.
+
+    This macro is defined to work only inside test definitions. The means of
+    defining tests are left to the particular test library module, and using
+    this macro outside of such test definition forms is an error.
+
+    *Note: This reader macro is not exported from this module, but the
+    documentation for it is nonetheless attached here for consistency. For
+    implementations of this reader macro, please see the test library modules.*
+
 ## Protocol Elements
 
 ### :FUNCTION
