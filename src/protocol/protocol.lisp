@@ -5,6 +5,8 @@
 (defvar *protocols* (make-hash-table)
   "A hash-table mapping from protocol names to protocol objects.")
 
+;; TODO FIND-PROTOCOL and (SETF FIND-PROTOCOL)
+
 (defclass protocol ()
   ((%name :reader name
           :initarg :name
@@ -28,8 +30,6 @@
   (:documentation
    "Describes a protocol understood as a relation between data types and
 operations on these types."))
-
-;; TODO compute effective protocol
 
 (defmethod print-object ((protocol protocol) stream)
   (print-unreadable-object (protocol stream :type t)
@@ -206,3 +206,7 @@ its elements based on FORMS."
         (progn (validate-protocol protocol *protocols*)
                (generate-code protocol))
         (error "Protocol ~S was not found." name))))
+
+;; TODO compute effective protocol elements
+
+;; TODO check that all exported symbols are documented
