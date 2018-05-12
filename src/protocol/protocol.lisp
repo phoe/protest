@@ -11,7 +11,10 @@
 
 (defun (setf find-protocol) (new-value name)
   "Sets the protocol with the provided name."
-  (setf (gethash name *protocols*) new-value))
+  (check-type new-value (or protocol null))
+  (if new-value
+      (setf (gethash name *protocols*) new-value)
+      (remhash name *protocols*)))
 
 (defclass protocol ()
   ((%name :reader name

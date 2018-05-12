@@ -11,9 +11,11 @@
 
 (defun (setf find-test-case) (new-value name &optional (package *package*))
   "Sets the test case with the provided name with the provided package."
-  (check-type new-value test-case)
-  (setf (gethash (cons (string name) (find-package package)) *test-cases*)
-        new-value))
+  (check-type new-value (or test-case null))
+  (if new-value
+      (setf (gethash (cons (string name) (find-package package)) *test-cases*)
+            new-value)
+      (remhash (cons (string name) (find-package package)) *test-cases*)))
 
 (defclass test-case ()
   ((%name :reader name
