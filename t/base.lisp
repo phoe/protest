@@ -1,4 +1,4 @@
-;;;; base/test.lisp
+;;;; t/base.lisp
 
 (defpackage #:protest/test/base
   (:use #:cl

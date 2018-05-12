@@ -1,4 +1,4 @@
-;;;; protocol/elements/category.lisp
+;;;; src/protocol/elements/category.lisp
 
 (in-package #:protest/protocol)
 

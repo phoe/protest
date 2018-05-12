@@ -1,4 +1,4 @@
-;;;; protocol/elements/macro.lisp
+;;;; src/protocol/elements/macro.lisp
 
 (in-package #:protest/protocol)
 

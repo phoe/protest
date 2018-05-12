@@ -1,4 +1,4 @@
-;;;; base/base.lisp
+;;;; src/base/base.lisp
 
 (in-package #:protest/base)
 

@@ -1,4 +1,4 @@
-;;;; parachute/package.lisp
+;;;; src/parachute/package.lisp
 
 (defpackage #:protest/for-parachute
   (:use #:cl

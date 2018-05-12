@@ -9,10 +9,6 @@
                #:protest/protocol
                #:protest/test-case
                ;; #:protest/web
-               ;; #:protest/parachute
-               ;; #:protest/5am
-               ;; #:protest/prove
-               ;; #:protest/1am
                )
   :components ((:file "src/package")))
 

@@ -1,4 +1,4 @@
-;;;; parachute/test.lisp
+;;;; src/parachute/test.lisp
 
 (in-package #:protest/for-parachute)
 

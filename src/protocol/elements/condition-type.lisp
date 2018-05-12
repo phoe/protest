@@ -1,4 +1,4 @@
-;;;; protocol/elements/condition-type.lisp
+;;;; src/protocol/elements/condition-type.lisp
 
 (in-package #:protest/protocol)
 

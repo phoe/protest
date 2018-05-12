@@ -1,4 +1,4 @@
-;;;; package.lisp
+;;;; src/package.lisp
 
 (uiop:define-package #:protest
   (:use #:cl

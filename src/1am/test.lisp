@@ -1,4 +1,4 @@
-;;;; 1am/test.lisp
+;;;; src/1am/test.lisp
 
 (in-package #:protest/1am)
 

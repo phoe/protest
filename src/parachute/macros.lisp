@@ -1,4 +1,4 @@
-;;;; parachute/macros.lisp
+;;;; src/parachute/macros.lisp
 
 (in-package #:protest/for-parachute)
 

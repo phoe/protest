@@ -1,4 +1,4 @@
-;;;; src/1am/1am.lisp
+;;;; src/1am/macro.lisp
 
 (in-package #:protest/1am)
 

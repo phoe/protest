@@ -1,5 +1,4 @@
-;;;; protocol/test.lisp
-;; TODO update these comments
+;;;; t/protocol.lisp
 
 (defpackage #:protest/test/protocol
   (:use #:cl

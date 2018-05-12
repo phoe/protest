@@ -1,4 +1,4 @@
-;;;; protocol/elements/class.lisp
+;;;; src/protocol/elements/class.lisp
 
 (in-package #:protest/protocol)
 

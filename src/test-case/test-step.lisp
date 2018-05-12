@@ -1,4 +1,4 @@
-;;;; test-case/test-step.lisp
+;;;; src/test-case/test-step.lisp
 
 (in-package #:protest/test-case)
 
