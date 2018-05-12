@@ -2,6 +2,10 @@
 
 (in-package #:protest/protocol)
 
+(defun retain-duplicates (list)
+  (loop with r = '() for i in list
+        if (find i r) collect i else do (push i r)))
+
 (defvar *protocols* (make-hash-table)
   "A hash-table mapping from protocol names to protocol objects.")
 
@@ -105,34 +109,7 @@ operations on these types."))
         for name = (name element)
         when (symbolp name) collect name))
 
-(defun validate-protocol (protocol)
-  (check-dependencies-valid protocol)
-  (check-duplicate-element-forms protocol)
-  (check-duplicate-effective-elements protocol)
-  (check-exports protocol))
-
-(defun validate-all-protocols ()
-  (let ((protocols (hash-table-values *protocols*)))
-    (mapcar #'validate-protocol protocols)))
-
-(defun check-dependencies-valid (protocol)
-  (let ((name (name protocol))
-        (dependencies (dependencies protocol)))
-    (unless (every (conjoin #'identity #'symbolp) dependencies)
-      (protocol-error "Dependency is not a non-null symbol: ~A"
-                      (find-if-not #'symbolp dependencies)))
-    (when (member name dependencies)
-      (protocol-error "Protocol ~A must not depend on itself." name))
-    (loop for dependency in dependencies
-          unless (find-protocol dependency)
-            do (protocol-error "Unknown protocol ~A passed as a dependency."
-                               dependency))
-    (unless (setp dependencies)
-      (protocol-error "Duplicate protocol dependencies detected: ~A"
-                      (retain-duplicates dependencies)))
-    (traverse-dependencies protocol)))
-
-(defun traverse-dependencies (protocol)
+(defun protocol-effective-dependencies (protocol)
   (loop with name = (name protocol)
         with dependencies = (dependencies protocol)
         with visited = (make-hash-table)
@@ -149,92 +126,11 @@ operations on these types."))
                (dolist (new-name new-names) (push new-name stack)))
         finally (return (hash-table-keys visited))))
 
-(defun retain-duplicates (list)
-  (loop with r = '() for i in list
-        if (find i r) collect i else do (push i r)))
-
-(defun check-duplicate-element-forms (protocol)
-  (let ((forms (cdddr (whole protocol))))
-    (setf forms (remove-if #'stringp forms))
-    (loop with hash-table = (make-hash-table :test #'equal)
-          for form in forms
-          for type = (first form)
-          for name = (second form)
-          for list = (list type name)
-          when (member type '(:category :config))
-            do (setf (first list) :category-or-config)
-          if (gethash list hash-table)
-            do (protocol-error "Duplicate element form for ~{~S ~S~}." list)
-          else do (setf (gethash list hash-table) t))))
-
-(defun check-duplicate-effective-elements (protocol)
-  (let* ((symbols (traverse-dependencies protocol))
-         (protocols (mapcar #'find-protocol symbols))
-         (protocols (cons protocol protocols))
-         (hash-table (make-hash-table :test #'equal)))
-    (dolist (protocol protocols)
-      (dolist (form (mapcar (compose #'first #'generate-forms)
-                            (elements protocol)))
-        (let* ((type (first form)) (name (second form)) (list (list type name)))
-          (setf (first list)
-                (case type
-                  ((:class :condition-type) :class-or-condiiton-type)
-                  ((:function :macro) :function-or-macro)
-                  ((:category :config) :category-or-config)
-                  (t (first list))))
-          (if (gethash list hash-table)
-              (protocol-error "Duplicate element form for ~{~S ~S~} found ~
-in protocol ~A." list (name protocol))
-              (setf (gethash list hash-table) t)))))))
-
-(defun check-exports (protocol)
-  (let ((exports (exports protocol)))
-    (assert (or (eq exports t) (and (listp exports) (every #'symbolp exports)))
-            () "Incorrect export list: ~S" exports)
-    (unless (eq exports t)
-      (loop for export in exports
-            for element = (find export (elements protocol) :key #'name)
-            unless element do (error "Export not found: ~S" export)))))
-
-(defun ensure-protocol (name options whole)
-  (let* ((protocol (apply #'make-instance 'protocol
-                          :name name :whole whole options)))
-    (validate-protocol protocol)
-    (let ((value (find-protocol name)))
-      (when (and (find-protocol name)
-                 (not (equalp (whole value) (whole protocol))))
-        (warn "Redefining ~A in DEFINE-PROTOCOL" name)))
-    (let ((okp nil)
-          (old-protocol (find-protocol name)))
-      (unwind-protect
-           (progn (setf (find-protocol name) protocol)
-                  (validate-all-protocols)
-                  (setf okp t))
-        (unless okp (setf (find-protocol name) old-protocol))))
-    name))
-
-(defmacro define-protocol (&whole whole name (&rest options) &body forms)
-  "Defines the protocol with the provided NAME and OPTIONS, instantiating all
-its elements based on FORMS."
-  (declare (ignore forms))
-  `(eval-when (:compile-toplevel :load-toplevel :execute)
-     (ensure-protocol ',name ',options ',whole)))
-
-(defmacro execute-protocol (name)
-  "Executes all the side effects of the protocol with the provided NAME."
-  (check-type name symbol)
-  (let ((protocol (find-protocol name)))
-    (if protocol
-        (progn (validate-protocol protocol)
-               (generate-code protocol))
-        (error "Protocol ~S was not found." name))))
-
 (defun compute-effective-protocol-elements (protocol)
   "Returns a fresh list of all protocol elements that occur inside the provided
 protocol and all of its dependencies, including transitive ones."
   (check-type protocol protocol)
-  (let* ((symbols (cons (name protocol) (traverse-dependencies protocol)))
+  (let* ((symbols (cons (name protocol)
+                        (protocol-effective-dependencies protocol)))
          (protocols (mapcar #'find-protocol symbols)))
     (mappend #'elements protocols)))
-
-;; TODO check that all exported symbols are documented

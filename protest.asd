@@ -43,7 +43,9 @@
                (:file "src/protocol/elements/variable")
                (:file "src/protocol/elements/category")
                (:file "src/protocol/elements/config")
-               (:file "src/protocol/protocol")))
+               (:file "src/protocol/definition")
+               (:file "src/protocol/validation")
+               (:file "src/protocol/macro")))
 
 (asdf:defsystem #:protest/test-case
   :description "Test case defining utilities for PROTEST"
