@@ -15,7 +15,8 @@
   (if new-value
       (setf (gethash (cons (string name) (find-package package)) *test-cases*)
             new-value)
-      (remhash (cons (string name) (find-package package)) *test-cases*)))
+      (remhash (cons (string name) (find-package package)) *test-cases*))
+  new-value)
 
 (defclass test-case ()
   ((%name :reader name

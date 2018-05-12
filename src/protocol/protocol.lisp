@@ -14,7 +14,8 @@
   (check-type new-value (or protocol null))
   (if new-value
       (setf (gethash name *protocols*) new-value)
-      (remhash name *protocols*)))
+      (remhash name *protocols*))
+  new-value)
 
 (defclass protocol ()
   ((%name :reader name
