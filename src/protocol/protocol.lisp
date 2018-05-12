@@ -187,9 +187,10 @@ in protocol ~A." list (name protocol))
   (let ((exports (exports protocol)))
     (assert (or (eq exports t) (and (listp exports) (every #'symbolp exports)))
             () "Incorrect export list: ~S" exports)
-    (loop for export in exports
-          for element = (find export (elements protocol) :key #'name)
-          unless element do (error "Export not found: ~S" export))))
+    (unless (eq exports t)
+      (loop for export in exports
+            for element = (find export (elements protocol) :key #'name)
+            unless element do (error "Export not found: ~S" export)))))
 
 (defun ensure-protocol (name options whole)
   (let* ((protocol (apply #'make-instance 'protocol
