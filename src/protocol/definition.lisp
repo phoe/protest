@@ -1,4 +1,4 @@
-;;;; src/protocol/protocol.lisp
+;;;; src/protocol/definition.lisp
 
 (in-package #:protest/protocol)
 
