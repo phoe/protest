@@ -110,9 +110,10 @@ operations on these types."))
   (check-duplicate-element-forms protocol)
   (check-duplicate-effective-elements protocol)
   (check-exports protocol))
-;; TODO after redefining a protocol it is possible that it now has collisions
-;; with protocols that depend on it. Make sure that this does not happen and
-;; write a test for it.
+
+(defun validate-all-protocols ()
+  (let ((protocols (hash-table-values *protocols*)))
+    (mapcar #'validate-protocol protocols)))
 
 (defun check-dependencies-valid (protocol)
   (let ((name (name protocol))
@@ -203,7 +204,13 @@ in protocol ~A." list (name protocol))
       (when (and (find-protocol name)
                  (not (equalp (whole value) (whole protocol))))
         (warn "Redefining ~A in DEFINE-PROTOCOL" name)))
-    (setf (find-protocol name) protocol)
+    (let ((okp nil)
+          (old-protocol (find-protocol name)))
+      (unwind-protect
+           (progn (setf (find-protocol name) protocol)
+                  (validate-all-protocols)
+                  (setf okp t))
+        (unless okp (setf (find-protocol name) old-protocol))))
     name))
 
 (defmacro define-protocol (&whole whole name (&rest options) &body forms)

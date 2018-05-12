@@ -120,6 +120,17 @@
       (define-protocol #.(gensym) (:dependencies (#1#))
         (:variable #2#)))))
 
+(define-protest-test test-protocol-invalid-redefinition
+  (with-fresh-state
+    (define-protocol #1=#.(gensym) ())
+    (define-protocol #2=#.(gensym) (:dependencies (#1#))
+      (:variable #3=#.(gensym)))
+    (signals protocol-error
+      (handler-bind ((warning (lambda (c) (declare (ignore c))
+                                (muffle-warning))))
+        (define-protocol #1# ()
+          (:variable #3#))))))
+
 (define-protest-test test-protocol-define-category
   (with-fresh-state
     (let* ((variable nil)

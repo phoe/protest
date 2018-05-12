@@ -37,15 +37,18 @@ The form for a protocol configuration entry consists of the following subforms:
   any client code may be executed. If not provided, defaults to :OPTIONAL.
 * INITIAL-VALUE - optional. Denotes the default value that the configuration
   entry will be bound to at the moment of executing the protocol. If not passed,
-  the value will not be bound.")) ;; TODO declaim-type-p
+  the value will not be bound."))
 
 (defmethod generate-element
     ((type (eql :config)) details &optional declaim-type-p)
   (declare (ignore declaim-type-p))
+  ;; Maybe add a callback for declaiming config type in the future.
+  ;; I see no possibility for an implementation to optimize based on
+  ;; configuration value types, though.
   (destructuring-bind (name . rest) details
     (declare (ignore rest))
-    (assert (every #'keywordp name)
-            () "Wrong thing to be a configuration entry name: ~A" name)
+    (assert (every #'keywordp name) ()
+            "Wrong thing to be a configuration entry name: ~A" name)
     (let ((element (make-instance 'protocol-config :name name)))
       (when (<= 2 (length details))
         (let ((type (second details)))
