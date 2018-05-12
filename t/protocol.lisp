@@ -17,7 +17,7 @@
 (define-protest-test test-protocol-define-empty
   (with-fresh-state
     (define-protocol #1=#.(gensym) ())
-    (let ((protocol (gethash '#1# *protocols*)))
+    (let ((protocol (find-protocol '#1#)))
       (is (null (documentation protocol 'protocol)))
       (is (null (tags protocol)))
       (is (null (dependencies protocol)))
@@ -32,7 +32,7 @@
                                     :attachments (#4="haha")
                                     :documentation "asdf"
                                     :export t))
-    (let ((protocol (gethash '#2# *protocols*)))
+    (let ((protocol (find-protocol '#2#)))
       (is (string= "asdf"
                    (documentation protocol 'protocol)))
       (is (equal '(#3#) (tags protocol)))
@@ -196,7 +196,7 @@
   (with-fresh-state
     (define-protocol #2=#.(gensym) ()
       (:config #1=(:foo :bar) t :mandatory 42))
-    (let* ((protocol (gethash '#2# *protocols*))
+    (let* ((protocol (find-protocol '#2#))
            (elements (elements protocol))
            (element (find '#1# elements :key #'name :test #'equal)))
       (is (protocol-element-boundp element))
@@ -259,7 +259,7 @@
   (with-fresh-state
     (define-protocol #2=#.(gensym) ()
       (:variable #1=#.(gensym) t 42))
-    (let* ((protocol (gethash '#2# *protocols*))
+    (let* ((protocol (find-protocol '#2#))
            (elements (elements protocol))
            (element (find '#1# elements :key #'name)))
       (is (protocol-element-boundp element))

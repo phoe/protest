@@ -55,6 +55,8 @@
    #:generate-code
    #:protocol-element-boundp
    #:protocol-element-makunbound
+   ;; FUNCTIONS
+   #:find-protocol
    ;; MACROS
    #:define-protocol
    #:execute-protocol))

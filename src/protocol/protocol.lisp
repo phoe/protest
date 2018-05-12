@@ -5,7 +5,13 @@
 (defvar *protocols* (make-hash-table)
   "A hash-table mapping from protocol names to protocol objects.")
 
-;; TODO FIND-PROTOCOL and (SETF FIND-PROTOCOL)
+(defun find-protocol (name)
+  "Returns the protocol with the provided name."
+  (values (gethash name *protocols*)))
+
+(defun (setf find-protocol) (new-value name)
+  "Sets the protocol with the provided name."
+  (setf (gethash name *protocols*) new-value))
 
 (defclass protocol ()
   ((%name :reader name
@@ -185,10 +191,11 @@ in protocol ~A." list (name protocol))
   (let* ((protocol (apply #'make-instance 'protocol
                           :name name :whole whole options)))
     (validate-protocol protocol *protocols*)
-    (multiple-value-bind (value foundp) (gethash name *protocols*)
-      (when (and foundp (not (equalp (whole value) (whole protocol))))
+    (let ((value (find-protocol name)))
+      (when (and (find-protocol name)
+                 (not (equalp (whole value) (whole protocol))))
         (warn "Redefining ~A in DEFINE-PROTOCOL" name)))
-    (setf (gethash name *protocols*) protocol)
+    (setf (find-protocol name) protocol)
     name))
 
 (defmacro define-protocol (&whole whole name (&rest options) &body forms)
@@ -201,8 +208,8 @@ its elements based on FORMS."
 (defmacro execute-protocol (name)
   "Executes all the side effects of the protocol with the provided NAME."
   (check-type name symbol)
-  (multiple-value-bind (protocol foundp) (gethash name *protocols*)
-    (if foundp
+  (let ((protocol (find-protocol name)))
+    (if protocol
         (progn (validate-protocol protocol *protocols*)
                (generate-code protocol))
         (error "Protocol ~S was not found." name))))

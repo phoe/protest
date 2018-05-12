@@ -292,6 +292,22 @@ Syntax summary of all options and configuration elements:
     this function unbinds that value. Otherwise, it does nothing. In any case,
     the protocol element is returned.
 
+
+### Functions
+
+  * **Function `FIND-PROTOCOL`**
+
+    Syntax: `(find-protocol NAME)`
+
+    Returns a protocol object matching the provided NAME. If no such protocol
+    was found, returns NIL.
+
+  * **Function `(SETF FIND-PROTOCOL)`**
+
+    Syntax: `(setf (find-protocol NAME) NEW-VALUE)`
+
+    Sets the protocol object matching the provided NAME.
+
 ### Macros
 
   * **Macro `DEFINE-PROTOCOL`**

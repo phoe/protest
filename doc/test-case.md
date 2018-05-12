@@ -89,7 +89,7 @@ testing libraries:
   * **Function `(SETF FIND-TEST-CASE)`**
 
     Syntax: `(setf (find-test-case NAME &optional (PACKAGE *PACKAGE*))
-                   new-value)`
+                   NEW-VALUE)`
 
     Sets the test case object matching the provided NAME and PACKAGE.
 
