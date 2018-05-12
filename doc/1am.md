@@ -39,5 +39,4 @@ To run the example test, load the PROTEST/1AM system and evaluate
 ```common-lisp
 PROTEST/1AM::SELF-TEST..
 Success: 1 test, 2 checks.
-; No value
 ```
