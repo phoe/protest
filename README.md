@@ -19,14 +19,14 @@ Common Lisp, featuring integration with ~~multiple~~ one testing framework.
 (ql:quickload :protest/parachute)
 (use-package :protest/parachute)
 
+(ql:quickload :protest/1am)
+(use-package :protest/1am)
+
 ;; (ql:quickload :protest/5am) ;; TODO
 ;; (use-package :protest/5am) ;; TODO
 
 ;; (ql:quickload :protest/prove) ;; TODO
 ;; (use-package :protest/prove) ;; TODO
-
-;; (ql:quickload :protest/1am) ;; TODO
-;; (use-package :protest/1am) ;; TODO
 ```
 
 ## Modules
@@ -42,8 +42,11 @@ The currently implemented modules are:
   * [`PROTEST/PARACHUTE`](doc/parachute.md) -
     for integrating test cases with
     [Parachute](https://github.com/Shinmera/parachute/) testing library
+  * [`PROTEST/1AM`](doc/1am.md) -
+    for integrating test cases with [1AM](https://github.com/lmj/1am/) testing
+    library
 
-The modules planned for development are:
+The modules planned for development (someday) are:
 
   * [`PROTEST/WEB`](doc/web.md) -
     output test cases and protocols to HTML
@@ -53,14 +56,15 @@ The modules planned for development are:
   * [`PROTEST/PROVE`](doc/prove.md) -
     for integrating test cases with [Prove](https://github.com/fukamachi/prove)
     testing library
-  * [`PROTEST/1AM`](doc/1am.md) -
-    for integrating test cases with [1AM](https://github.com/lmj/1am/) testing
-    library
 
 ### Testing PROTEST
 
 Load the ASDF system `PROTEST/TEST` and run `(PROTEST/TEST:RUN-ALL-TESTS)`, or
 perform ASDF's `TEST-OP` on the `PROTEST` module.
+
+Please note that this does not invoke tests for the modules integrating
+PROTEST with testing libraries; see the manual for each such module to find
+the means of testing it.
 
 ### License
 
