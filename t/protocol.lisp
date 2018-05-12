@@ -193,6 +193,28 @@
         (setf (documentation '#1# 'config) nil)
         (is (null (documentation '#1# 'config)))))))
 
+(define-protest-test test-protocol-define-config-boundp
+  (with-fresh-state
+    (define-protocol #2=#.(gensym) ()
+      (:config #1=(:foo :bar) t :mandatory 42))
+    (let* ((protocol (gethash '#2# *protocols*))
+           (elements (elements protocol))
+           (element (find '#1# elements :key #'name :test #'equal)))
+      (is (protocol-element-boundp element))
+      (is (= 42 (initial-value element)))
+      (protocol-element-makunbound element)
+      (is (not (protocol-element-boundp element))))))
+
+(define-protest-test test-protocol-define-config-wrong-type
+  (with-fresh-state
+    (signals protocol-error
+      (define-protocol #.(gensym) ()
+        (:config (:foo :bar) number :mandatory "42"))))
+  (with-fresh-state
+    (signals protocol-error
+      (define-protocol #.(gensym) ()
+        (:config (:foo :bar) string :mandatory 42)))))
+
 (define-protest-test test-protocol-define-function
   (with-fresh-state
     (unwind-protect
@@ -233,6 +255,28 @@
       (is (not (boundp '#1#)))
       (setf (documentation '#1# 'variable) nil)
       (is (null (documentation '#1# 'variable))))))
+
+(define-protest-test test-protocol-define-variable-boundp
+  (with-fresh-state
+    (define-protocol #2=#.(gensym) ()
+      (:variable #1=#.(gensym) t 42))
+    (let* ((protocol (gethash '#2# *protocols*))
+           (elements (elements protocol))
+           (element (find '#1# elements :key #'name)))
+      (is (protocol-element-boundp element))
+      (is (= 42 (initial-value element)))
+      (protocol-element-makunbound element)
+      (is (not (protocol-element-boundp element))))))
+
+(define-protest-test test-protocol-define-variable-wrong-type
+  (with-fresh-state
+    (signals protocol-error
+      (define-protocol #.(gensym) ()
+        (:variable #1=#.(gensym) number "42"))))
+  (with-fresh-state
+    (signals protocol-error
+      (define-protocol #.(gensym) ()
+        (:variable #2=#.(gensym) string 42)))))
 
 (define-protest-test test-protocol-define-complex
   (with-fresh-state

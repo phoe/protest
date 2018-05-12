@@ -1,6 +1,5 @@
 ;;;; protocol/package.lisp
 
-;; TODO check these
 (defpackage #:protest/protocol
   (:use
    #:common-lisp

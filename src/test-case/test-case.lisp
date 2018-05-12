@@ -137,6 +137,8 @@ describing each part of the test."))
                                 previous-number number)))
 
 (defun ensure-test-case (name options whole &optional (package *package*))
+  (unless (and name (typep name 'string-designator))
+    (protocol-error "Wrong thing to be a test case name: ~A" name))
   (unless (stringp name) (setf name (string name)))
   (let ((test-case (apply #'make-instance 'test-case
                           :name name :whole whole options)))

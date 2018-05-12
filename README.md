@@ -50,8 +50,8 @@ The modules planned for development (someday) are:
 
   * [`PROTEST/WEB`](doc/web.md) -
     output test cases and protocols to HTML
-  * [`PROTEST/5AM`](doc/5am.md) -
-    for integratingtest cases with [5AM](https://github.com/sionescu/fiveam)
+  * [`PROTEST/FIVEAM`](doc/fiveam.md) -
+    for integratingtest cases with [FIVEAM](https://github.com/sionescu/fiveam)
     testing library
   * [`PROTEST/PROVE`](doc/prove.md) -
     for integrating test cases with [Prove](https://github.com/fukamachi/prove)

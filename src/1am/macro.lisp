@@ -48,5 +48,3 @@ Use DEFINE-TEST-CASE first." string)
       (let ((symbol (intern string *package*)))
         `(1am:test ,symbol ,(make-test-function string *package* body)))))
   (setf (macro-function 'define-test) (macro-function 'test)))
-
-;; TODO document this

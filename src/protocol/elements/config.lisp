@@ -39,26 +39,29 @@ The form for a protocol configuration entry consists of the following subforms:
   entry will be bound to at the moment of executing the protocol. If not passed,
   the value will not be bound.")) ;; TODO declaim-type-p
 
-  (defmethod generate-element
-      ((type (eql :config)) details &optional declaim-type-p)
-    (declare (ignore declaim-type-p))
-    (destructuring-bind (name . rest) details
-      (declare (ignore rest))
-      (assert (every #'keywordp name)
-              () "Wrong thing to be a configuration entry name: ~A" name)
-      (let ((element (make-instance 'protocol-config :name name)))
-        (when (<= 2 (length details))
-          (let ((type (second details)))
-            (setf (value-type element) type)))
-        (when (<= 3 (length details))
-          (let ((mandatory (third details)))
-            (assert (member mandatory '(:mandatory :optional))
-                    () "~S must be one of :MANDATORY :OPTIONAL." mandatory)
-            (setf (mandatoryp element) (eq mandatory :mandatory))))
-        (when (<= 4 (length details))
-          (let ((initial-value (fourth details)))
-            (setf (initial-value element) initial-value)))
-        element)))
+(defmethod generate-element
+    ((type (eql :config)) details &optional declaim-type-p)
+  (declare (ignore declaim-type-p))
+  (destructuring-bind (name . rest) details
+    (declare (ignore rest))
+    (assert (every #'keywordp name)
+            () "Wrong thing to be a configuration entry name: ~A" name)
+    (let ((element (make-instance 'protocol-config :name name)))
+      (when (<= 2 (length details))
+        (let ((type (second details)))
+          (setf (value-type element) type)))
+      (when (<= 3 (length details))
+        (let ((mandatory (third details)))
+          (assert (member mandatory '(:mandatory :optional))
+                  () "~S must be one of :MANDATORY :OPTIONAL." mandatory)
+          (setf (mandatoryp element) (eq mandatory :mandatory))))
+      (when (<= 4 (length details))
+        (let ((initial-value (fourth details)))
+          (unless (typep initial-value (second details))
+            (protocol-error "The provided initial value, ~S, is not of the ~
+provided type ~S." (value-type element)) initial-value)
+          (setf (initial-value element) initial-value)))
+      element)))
 
 (defmethod generate-forms ((element protocol-config))
   (let* ((name (name element)) (type (value-type element))

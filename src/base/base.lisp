@@ -16,7 +16,6 @@ directly."
 (defmacro define-protocol-object (symbol string name supers slots options)
   `(progn
      (,symbol ,name ,supers ,slots ,@options)
-     ;; TODO test this, especially on SBCL
      (defmethod initialize-instance :before ((object ,name) &key)
        (when (eq (class-of object) (find-class ',name))
          (error (make-condition 'protocol-object-instantiation

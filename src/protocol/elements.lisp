@@ -56,7 +56,6 @@ forms to generate a protocol body."))
 forms to generate the Lisp code that is meant to come into effect when the
 protocol is defined."))
 
-;; TODO test
 (defgeneric protocol-element-boundp (protocol-element)
   (:documentation
    "Checks if the initial value of the protocol element is bound.
@@ -70,7 +69,6 @@ If the protocol element does not contain an initial value, this function returns
   (:method ((protocol-element protocol-element))
     (values nil nil)))
 
-;; TODO test
 (defgeneric protocol-element-makunbound (protocol-element)
   (:documentation
    "Attempts to unbind the initial value of the protocol element.

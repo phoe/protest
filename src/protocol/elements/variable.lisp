@@ -24,7 +24,6 @@ The form for a protocol variable consists of the following subforms:
 * INITIAL-VALUE - optional. Denotes the default value that the variable will be
   bound to at the moment of executing the protocol. If not passed, the variable
   will be unbound."))
-;; TODO PROTOCOL-ELEMENT-BOUNDP and PROTOCOL-ELEMEND-MAKUNBOUND
 
 (defmethod generate-element
     ((type (eql :variable)) details &optional (declaim-type-p t))
@@ -39,9 +38,9 @@ The form for a protocol variable consists of the following subforms:
           (setf (value-type element) type)))
       (when (<= 3 (length details))
         (let ((initial-value (third details)))
-          (assert (typep initial-value (second details)) ()
-                  "The provided initial value, ~S, is not of the provided ~
-type ~S." (value-type element) initial-value) ;; TODO test this
+          (unless (typep initial-value (second details))
+            (protocol-error "The provided initial value, ~S, is not of the ~
+provided type ~S." (value-type element)) initial-value)
           (setf (initial-value element) initial-value)))
       element)))
 
