@@ -99,6 +99,16 @@
   (with-fresh-state
     (signals protocol-error
       (define-protocol #.(gensym) ()
+        (:function #2=#.(gensym) ())
+        (:macro #2# ()))))
+  (with-fresh-state
+    (signals protocol-error
+      (define-protocol #.(gensym) ()
+        (:class #3=#.(gensym) () ())
+        (:condition-type #3# () ()))))
+  (with-fresh-state
+    (signals protocol-error
+      (define-protocol #.(gensym) ()
         (:category (:category))
         (:config (:category))))))
 
