@@ -307,3 +307,19 @@
             (find-class '#3#) nil)
       (fmakunbound '#5#)
       (makunbound '#7#))))
+
+(define-protest-test test-protocol-compute-effective-protocol-elements
+  (with-fresh-state
+    (define-protocol #1=#.(gensym) ()
+      (:variable #2=#.(gensym)))
+    (define-protocol #3=#.(gensym) (:dependencies (#1#))
+      (:variable #4=#.(gensym)))
+    (define-protocol #5=#.(gensym) (:dependencies (#1#))
+      (:variable #6=#.(gensym)))
+    (define-protocol #7=#.(gensym) (:dependencies (#3# #5#))
+      (:variable #8=#.(gensym)))
+    (let ((elements (compute-effective-protocol-elements (find-protocol '#7#))))
+      (is (find '#2# elements :key #'name))
+      (is (find '#4# elements :key #'name))
+      (is (find '#6# elements :key #'name))
+      (is (find '#8# elements :key #'name)))))
