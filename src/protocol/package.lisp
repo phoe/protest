@@ -57,6 +57,7 @@
    #:protocol-element-makunbound
    ;; FUNCTIONS
    #:find-protocol
+   #:compute-effective-protocol-elements
    ;; MACROS
    #:define-protocol
    #:execute-protocol))

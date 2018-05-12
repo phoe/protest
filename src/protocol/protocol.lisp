@@ -105,16 +105,16 @@ operations on these types."))
         for name = (name element)
         when (symbolp name) collect name))
 
-(defun validate-protocol (protocol hash-table)
-  (check-dependencies-valid protocol hash-table)
+(defun validate-protocol (protocol)
+  (check-dependencies-valid protocol)
   (check-duplicate-element-forms protocol)
-  (check-duplicate-effective-elements protocol hash-table)
+  (check-duplicate-effective-elements protocol)
   (check-exports protocol))
 ;; TODO after redefining a protocol it is possible that it now has collisions
 ;; with protocols that depend on it. Make sure that this does not happen and
 ;; write a test for it.
 
-(defun check-dependencies-valid (protocol hash-table)
+(defun check-dependencies-valid (protocol)
   (let ((name (name protocol))
         (dependencies (dependencies protocol)))
     (unless (every (conjoin #'identity #'symbolp) dependencies)
@@ -123,17 +123,19 @@ operations on these types."))
     (when (member name dependencies)
       (protocol-error "Protocol ~A must not depend on itself." name))
     (loop for dependency in dependencies
-          unless (gethash dependency hash-table)
+          unless (find-protocol dependency)
             do (protocol-error "Unknown protocol ~A passed as a dependency."
                                dependency))
     (unless (setp dependencies)
       (protocol-error "Duplicate protocol dependencies detected: ~A"
                       (retain-duplicates dependencies)))
-    (traverse-dependencies name dependencies hash-table)))
+    (traverse-dependencies protocol)))
 
-(defun traverse-dependencies (name dependencies hash-table)
-  (loop with stack = dependencies
+(defun traverse-dependencies (protocol)
+  (loop with name = (name protocol)
+        with dependencies = (dependencies protocol)
         with visited = (make-hash-table)
+        with stack = dependencies
         for dependency = (pop stack)
         while dependency
         if (eq dependency name)
@@ -141,10 +143,10 @@ operations on these types."))
                              name)
         if (not (gethash dependency visited))
           do (setf (gethash dependency visited) t)
-             (let* ((new-protocol (gethash dependency hash-table))
+             (let* ((new-protocol (find-protocol dependency))
                     (new-names (dependencies new-protocol)))
                (dolist (new-name new-names) (push new-name stack)))
-        finally (return visited)))
+        finally (return (hash-table-keys visited))))
 
 (defun retain-duplicates (list)
   (loop with r = '() for i in list
@@ -164,12 +166,9 @@ operations on these types."))
             do (protocol-error "Duplicate element form for ~{~S ~S~}." list)
           else do (setf (gethash list hash-table) t))))
 
-(defun check-duplicate-effective-elements (protocol hash-table)
-  (let* ((name (name protocol))
-         (dependencies (dependencies protocol))
-         (symbols (traverse-dependencies name dependencies hash-table))
-         (protocols (mapcar (rcurry #'gethash hash-table)
-                            (hash-table-keys symbols)))
+(defun check-duplicate-effective-elements (protocol)
+  (let* ((symbols (traverse-dependencies protocol))
+         (protocols (mapcar #'find-protocol symbols))
          (protocols (cons protocol protocols))
          (hash-table (make-hash-table :test #'equal)))
     (dolist (protocol protocols)
@@ -199,7 +198,7 @@ in protocol ~A." list (name protocol))
 (defun ensure-protocol (name options whole)
   (let* ((protocol (apply #'make-instance 'protocol
                           :name name :whole whole options)))
-    (validate-protocol protocol *protocols*)
+    (validate-protocol protocol)
     (let ((value (find-protocol name)))
       (when (and (find-protocol name)
                  (not (equalp (whole value) (whole protocol))))
@@ -219,10 +218,16 @@ its elements based on FORMS."
   (check-type name symbol)
   (let ((protocol (find-protocol name)))
     (if protocol
-        (progn (validate-protocol protocol *protocols*)
+        (progn (validate-protocol protocol)
                (generate-code protocol))
         (error "Protocol ~S was not found." name))))
 
-;; TODO compute effective protocol elements
+(defun compute-effective-protocol-elements (protocol)
+  "Returns a fresh list of all protocol elements that occur inside the provided
+protocol and all of its dependencies, including transitive ones."
+  (check-type protocol protocol)
+  (let* ((symbols (cons (name protocol) (traverse-dependencies protocol)))
+         (protocols (mapcar #'find-protocol symbols)))
+    (mappend #'elements protocols)))
 
 ;; TODO check that all exported symbols are documented
