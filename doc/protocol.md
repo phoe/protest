@@ -302,18 +302,18 @@ Syntax summary of all options and configuration elements:
     Returns a protocol object matching the provided NAME. If no such protocol
     was found, returns NIL.
 
+  * **Function `(SETF FIND-PROTOCOL)`**
+
+    Syntax: `(setf (find-protocol NAME) NEW-VALUE)`
+
+    Sets the protocol object matching the provided NAME.
+
   * **Function `COMPUTE-EFFECTIVE-PROTOCOL-ELEMENTS`**
 
     Syntax: `(compute-effective-protocol-elements PROTOCOL)`
 
     Returns a fresh list of all protocol elements that occur inside the provided
     protocol and all of its dependencies, including transitive ones.
-
-  * **Function `(SETF FIND-PROTOCOL)`**
-
-    Syntax: `(setf (find-protocol NAME) NEW-VALUE)`
-
-    Sets the protocol object matching the provided NAME.
 
 ### Macros
 
