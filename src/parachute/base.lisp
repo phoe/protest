@@ -18,11 +18,11 @@ DEFINE-TEST. Must NEVER be proclaimed special.")
    (id :initarg :id :accessor id)
    (test-phase :initarg :test-phase :accessor test-phase))
   (:default-initargs
-   :test-case-name (if *current-test-case* (name *current-test-case*) "unknown")
-   :id (if *current-test-step* (id *current-test-step*) "unknown")
+   :test-case-name (if *current-test-case* (name *current-test-case*) "????")
+   :id (if *current-test-step* (id *current-test-step*) "????")
    :description (if *current-test-step* (description *current-test-step*) nil)
    :test-phase (if *current-test-step* (test-phase *current-test-step*)
-                   "unknown")))
+                   "????")))
 
 (defclass test-case-comparison-result
     (test-case-result parachute:comparison-result) ())
@@ -36,8 +36,8 @@ DEFINE-TEST. Must NEVER be proclaimed special.")
 (defun test-step-macro-reader (stream subchar arg)
   (declare (ignore subchar))
   (let ((form (read stream t nil t))
-        (name *define-test-closure-symbol*))
-    `(let* ((*current-test-case* (find-test-case ,name))
+        (symbol *define-test-closure-symbol*))
+    `(let* ((*current-test-case* (find-test-case (car ,symbol) (cdr ,symbol)))
             (*current-test-step*
               (when *current-test-case*
                 (gethash ,arg (steps *current-test-case*)))))
@@ -51,6 +51,7 @@ DEFINE-TEST. Must NEVER be proclaimed special.")
   (unless (find-test-case name)
     (protocol-error "Test case named ~S was not found. ~
 Use DEFINE-TEST-CASE first." name))
-  `(let ((,*define-test-closure-symbol* ',name))
+  `(let ((,*define-test-closure-symbol*
+           ',(cons name (package-name *package*))))
      (declare (ignorable ,*define-test-closure-symbol*))
      (parachute:define-test ,name ,@arguments-and-body)))

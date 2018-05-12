@@ -20,8 +20,16 @@ we want tests without test cases)
 
 ## Exports
 
-Same as 1AM. For convenience, the macro `DEFINE-TEST` is additionally exported;
-it is functionally equivalent to the macro `TEST`.
+Same as 1AM, except:
+
+  * **Macro `DEFINE-TEST`**
+
+  Convenience macro, functionally equivalent to the macro `TEST`.
+
+  * **Readtable `PROTEST/1AM`**
+
+  This readtable implements the `#?` reader macro. It is required to be in this
+  readtable to use this macro to define test step implementations.
 
 ## Example
 
