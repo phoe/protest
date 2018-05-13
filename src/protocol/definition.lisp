@@ -64,12 +64,12 @@ operations on these types."))
                       documentation))
     (setf (documentation protocol 'protocol) documentation))
   (setf (slot-value protocol '%name) name
-        (slot-value protocol '%dependencies) dependencies
-        (exports protocol)
-        (if (eq export 't) (compute-exports protocol) export))
+        (slot-value protocol '%dependencies) dependencies)
   (let ((element-forms (cdddr (whole protocol))))
     (setf (elements protocol)
-          (generate-elements element-forms declaim-types-p))))
+          (generate-elements element-forms declaim-types-p)
+          (exports protocol)
+          (if (eq export 't) (compute-exports protocol) export))))
 
 (defvar *protocol-documentation-store* (make-hash-table))
 
