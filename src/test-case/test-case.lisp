@@ -60,7 +60,7 @@ describing each part of the test."))
     (unless (typep documentation 'string)
       (protocol-error "DOCUMENTATION must be a string, not ~A."
                       documentation))
-    (setf (documentation test-case'test-case) documentation))
+    (setf (documentation test-case'test-case) (format nil documentation)))
   (let ((step-forms (cdddr (whole test-case))))
     (setf (steps test-case)
           (generate-steps step-forms))))

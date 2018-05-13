@@ -77,13 +77,13 @@ The form for a protocol function consists of the following subforms:
 
 (defun ftype-args (lambda-list keyword-types)
   ;; TODO test the hell out of this
+  ;; TODO this shit is broken
   (loop with keyword = nil
         with repeatp = t
         for elt = (pop lambda-list)
         while repeatp
         if (null lambda-list)
           do (setf repeatp nil)
-             (loop-finish)
         if (eq elt '&key)
           collect elt
           and do (setf keyword '&key)
@@ -91,7 +91,7 @@ The form for a protocol function consists of the following subforms:
           collect elt
         else if (eq elt '&rest)
                collect '&rest
-               and collect 't
+        ;;and collect 't
                and do (pop lambda-list)
         else if (eq elt '&optional)
                collect '&optional

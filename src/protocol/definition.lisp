@@ -62,7 +62,7 @@ operations on these types."))
     (unless (typep documentation 'string)
       (protocol-error "DOCUMENTATION must be a string, not ~A."
                       documentation))
-    (setf (documentation protocol 'protocol) documentation))
+    (setf (documentation protocol 'protocol) (format nil documentation)))
   (setf (slot-value protocol '%name) name
         (slot-value protocol '%dependencies) dependencies)
   (let ((element-forms (cdddr (whole protocol))))
