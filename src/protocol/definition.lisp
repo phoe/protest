@@ -102,7 +102,7 @@ operations on these types."))
                    (generate-element (car form) (cdr form) declaim-types-p))
           and collect element
         if (and (listp form) (stringp string))
-          do (setf (docstring element) string)))
+          do (setf (docstring element) (format nil string))))
 
 (defun compute-exports (protocol)
   (loop for element in (elements protocol)

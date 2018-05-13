@@ -62,7 +62,7 @@ The form for a protocol configuration entry consists of the following subforms:
         (let ((initial-value (fourth details)))
           (unless (typep initial-value (second details))
             (protocol-error "The provided initial value, ~S, is not of the ~
-provided type ~S." (value-type element)) initial-value)
+provided type ~S." (value-type element) initial-value))
           (setf (initial-value element) initial-value)))
       element)))
 
