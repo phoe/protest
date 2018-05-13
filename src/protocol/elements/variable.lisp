@@ -62,10 +62,10 @@ provided type ~S." (value-type element)) initial-value)
          (initial-value initial-value))
       element
     (let ((documentation (docstring element)))
-      `((defvar ,name ,@(when (slot-boundp element '%initial-value)
-                          `(,(initial-value element))))
-        ,@(when (and (declaim-type-p element) (not (eq value-type 't)))
+      `(,@(when (and (declaim-type-p element) (not (eq value-type 't)))
             `((declaim (type ,value-type ,name))))
+        (defvar ,name ,@(when (slot-boundp element '%initial-value)
+                          `(,(initial-value element))))
         ,@(when documentation
             `((setf (documentation ',name 'variable) ,documentation)))))))
 

@@ -63,10 +63,10 @@ The form for a protocol function consists of the following subforms:
       element
     (let ((ftype-args (ftype-args lambda-list keyword-types))
           (documentation (docstring element)))
-      `((defgeneric? ,name ,(c2mop:extract-lambda-list lambda-list)
-          ,@(when documentation `((:documentation ,documentation))))
-        ,@(when (declaim-type-p element)
-            `((declaim (ftype (function ,ftype-args ,return-type) ,name))))))))
+      `(,@(when (declaim-type-p element)
+            `((declaim (ftype (function ,ftype-args ,return-type) ,name))))
+        (defgeneric? ,name ,(c2mop:extract-lambda-list lambda-list)
+          ,@(when documentation `((:documentation ,documentation))))))))
 
 (defmacro defgeneric? (name lambda-list &body options)
   (if (or (not (fboundp name))
