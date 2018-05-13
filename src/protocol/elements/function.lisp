@@ -27,6 +27,7 @@ The form for a protocol function consists of the following subforms:
   specified, defaults to the symbol CL:*.
 * KEYWORD-TYPES - optional, must be a valid plist containing some or all of the
   &KEY arguments used in LAMBDA-LIST along with their respective types."))
+;;; TODO maybe add means of passing default methods/arguments to DEFGENERIC
 
 (defmethod generate-element
     ((type (eql :function)) details &optional (declaim-type-p t))
@@ -82,6 +83,7 @@ The form for a protocol function consists of the following subforms:
         while repeatp
         if (null lambda-list)
           do (setf repeatp nil)
+             (loop-finish)
         if (eq elt '&key)
           collect elt
           and do (setf keyword '&key)
