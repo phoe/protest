@@ -29,16 +29,20 @@ The form for a protocol function consists of the following subforms:
   &KEY arguments used in LAMBDA-LIST along with their respective types."))
 ;;; TODO maybe add means of passing default methods/arguments to DEFGENERIC
 
-(defmethod generate-element
-    ((type (eql :function)) details &optional (declaim-type-p t))
+(defmethod keyword-element-class ((keyword (eql :function)))
+  (find-class 'protocol-function))
+
+(defmethod generate-element-using-class
+    ((class (eql (find-class 'protocol-function)))
+     details &optional (declaim-type-p t))
   (destructuring-bind (name lambda-list . rest) details
     (declare (ignore rest))
     (assert (or (and (not (null name)) (symbolp name))
                 (and (listp name) (= (length name) 2) (eq (first name) 'setf)))
             () "Wrong thing to be a function name: ~S" name)
     (parse-ordinary-lambda-list lambda-list :allow-specializers t)
-    (let ((element (make-instance 'protocol-function :name name
-                                                     :lambda-list lambda-list)))
+    (let ((element (make-instance class :name name
+                                        :lambda-list lambda-list)))
       (setf (declaim-type-p element) declaim-type-p)
       (when (<= 3 (length details))
         (let ((return-type (third details)))

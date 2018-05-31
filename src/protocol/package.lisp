@@ -50,12 +50,14 @@
    #:initial-value
    #:mandatoryp
    ;; GENERIC FUNCTIONS
-   #:generate-element
+   #:keyword-element-class
+   #:generate-element-using-class
    #:generate-forms
    #:generate-code
    #:protocol-element-boundp
    #:protocol-element-makunbound
    ;; FUNCTIONS
+   #:generate-element
    #:find-protocol
    #:compute-effective-protocol-elements
    ;; MACROS

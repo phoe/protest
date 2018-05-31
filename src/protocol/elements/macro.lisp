@@ -16,14 +16,19 @@ The form of a protocol macro consists of the following subforms:
 * NAME - mandatory, must be a symbol. Denotes the name of the macro.
 * LAMBDA-LIST - mandatory, must be a valid macro lambda list."))
 
-(defmethod generate-element ((type (eql :macro)) details &optional declaim-type-p)
+(defmethod keyword-element-class ((keyword (eql :macro)))
+  (find-class 'protocol-macro))
+
+(defmethod generate-element-using-class
+    ((class (eql (find-class 'protocol-macro)))
+     details &optional declaim-type-p)
   (declare (ignore declaim-type-p))
   (destructuring-bind (name lambda-list . rest) details
     (declare (ignore rest))
     (assert (and (not (null name)) (symbolp name))
             () "Wrong thing to be a macro name: ~S" name)
-    (let ((element (make-instance 'protocol-macro :name name
-                                                  :lambda-list lambda-list)))
+    (let ((element (make-instance class :name name
+                                        :lambda-list lambda-list)))
       element)))
 
 (defmethod embed-documentation ((element protocol-macro) (string string))

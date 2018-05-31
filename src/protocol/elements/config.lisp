@@ -39,8 +39,12 @@ The form for a protocol configuration entry consists of the following subforms:
   entry will be bound to at the moment of executing the protocol. If not passed,
   the value will not be bound."))
 
-(defmethod generate-element
-    ((type (eql :config)) details &optional declaim-type-p)
+(defmethod keyword-element-class ((keyword (eql :config)))
+  (find-class 'protocol-config))
+
+(defmethod generate-element-using-class
+    ((class (eql (find-class 'protocol-config)))
+     details &optional declaim-type-p)
   (declare (ignore declaim-type-p))
   ;; Maybe add a callback for declaiming config type in the future.
   ;; I see no possibility for an implementation to optimize based on
@@ -49,7 +53,7 @@ The form for a protocol configuration entry consists of the following subforms:
     (declare (ignore rest))
     (assert (every #'keywordp name) ()
             "Wrong thing to be a configuration entry name: ~A" name)
-    (let ((element (make-instance 'protocol-config :name name)))
+    (let ((element (make-instance class :name name)))
       (when (<= 2 (length details))
         (let ((type (second details)))
           (setf (value-type element) type)))

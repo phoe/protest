@@ -29,15 +29,19 @@ The form for a protocol condition type consists of the following subforms:
 * OPTIONS - optional, is the tail of the list. Denotes the options that will
   be passed to DEFINE-CONDITION."))
 
-(defmethod generate-element
-    ((type (eql :condition-type)) details &optional declaim-type-p)
+(defmethod keyword-element-class ((keyword (eql :condition-type)))
+  (find-class 'protocol-condition-type))
+
+(defmethod generate-element-using-class
+    ((class (eql (find-class 'protocol-condition-type)))
+     details &optional declaim-type-p)
   (declare (ignore declaim-type-p))
   (destructuring-bind (name supertypes slots . options) details
     (assert (and (not (null name)) (symbolp name))
             () "Wrong thing to be a condition type name: ~S" name)
     (assert (every #'symbolp supertypes)
             () "Incorrect supertype list: ~S" supertypes)
-    (let ((element (make-instance 'protocol-condition-type
+    (let ((element (make-instance class
                                   :name name :supertypes supertypes
                                   :slots slots :options options)))
       element)))

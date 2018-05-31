@@ -25,13 +25,17 @@ The form for a protocol variable consists of the following subforms:
   bound to at the moment of executing the protocol. If not passed, the variable
   will be unbound."))
 
-(defmethod generate-element
-    ((type (eql :variable)) details &optional (declaim-type-p t))
+(defmethod keyword-element-class ((keyword (eql :variable)))
+  (find-class 'protocol-variable))
+
+(defmethod generate-element-using-class
+    ((class (eql (find-class 'protocol-variable)))
+     details &optional (declaim-type-p t))
   (destructuring-bind (name . rest) details
     (declare (ignore rest))
     (assert (and (not (null name)) (symbolp name)) ()
             "Wrong thing to be a variable name: ~S" name)
-    (let ((element (make-instance 'protocol-variable :name name)))
+    (let ((element (make-instance class :name name)))
       (setf (declaim-type-p element) declaim-type-p)
       (when (<= 2 (length details))
         (let ((type (second details)))

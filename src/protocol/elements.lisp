@@ -37,13 +37,28 @@ This class is a protocol class and must not be instantiated directly."))
    "Returns the name of the protocol element. The name might be a symbol or a
 list of symbols."))
 
-(defgeneric generate-element (type details &optional declaim-type-p)
+(defgeneric keyword-element-class (keyword)
   (:documentation
-   "Given the keyword representing the element type and the rest of that
+   "Given the keyword representing the element type, returns the class object
+representing the concrete element type."))
+
+(defgeneric generate-element-using-class
+    (class details &optional declaim-type-p)
+  (:documentation
+   "Given the concrete class of the element type and the list representing that
 element's list representation, attempts to generate and return a matching
 protocol element. Signals PROTOCOL-ERROR if the generation fails. The argument
 DECLAIM-TYPE-P states if the types of functions and variables should be
 declaimed; it may be ignored by the method."))
+
+(defun generate-element (type details &optional declaim-type-p)
+  "Given the keyword representing the element type and the rest of that
+element's list representation, attempts to generate and return a matching
+protocol element. Signals PROTOCOL-ERROR if the generation fails. The argument
+DECLAIM-TYPE-P states if the types of functions and variables should be
+declaimed; it may be ignored by the method."
+  (let ((class (keyword-element-class type)))
+    (generate-element-using-class class details declaim-type-p)))
 
 (defgeneric generate-forms (element)
   (:documentation

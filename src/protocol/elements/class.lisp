@@ -29,15 +29,18 @@ The form for a protocol class consists of the following subforms:
 * OPTIONS - optional, is the tail of the list. Denotes the options that will
   be passed to DEFCLASS."))
 
-(defmethod generate-element
-    ((type (eql :class)) details &optional declaim-type-p)
+(defmethod keyword-element-class ((keyword (eql :class)))
+  (find-class 'protocol-class))
+
+(defmethod generate-element-using-class
+    ((class (eql (find-class 'protocol-class))) details &optional declaim-type-p)
   (declare (ignore declaim-type-p))
   (destructuring-bind (name superclasses slots . options) details
     (assert (and (not (null name)) (symbolp name))
             () "Wrong thing to be a class name: ~S" name)
     (assert (every #'symbolp superclasses)
             () "Incorrect superclass list: ~S" superclasses)
-    (let ((element (make-instance 'protocol-class
+    (let ((element (make-instance class
                                   :name name :superclasses superclasses
                                   :slots slots :options options)))
       element)))

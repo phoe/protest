@@ -235,6 +235,17 @@
       (define-protocol #.(gensym) ()
         (:config (:foo :bar) string :mandatory 42)))))
 
+;; TODO examine the following warning
+#|
+CL-USER> (protest/test/protocol::test-protocol-define-function)
+PROTEST/TEST/PROTOCOL::TEST-PROTOCOL-DEFINE-FUNCTION
+STYLE-WARNING:
+Generic function #:G50 clobbers an earlier FTYPE proclamation
+(FUNCTION (T T) (VALUES &OPTIONAL (QUOTE STRING) &REST T)) for the same name
+with (FUNCTION (T T) *).
+....
+Success: 1 test, 4 checks.
+|#
 (define-protest-test test-protocol-define-function
   (with-fresh-state
     (unwind-protect

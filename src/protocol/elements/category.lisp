@@ -19,14 +19,18 @@ subforms:
   configuration category. The name of configuration entries and configuration
   categories must not collide with each other."))
 
-(defmethod generate-element
-    ((type (eql :category)) details &optional declaim-type-p)
+(defmethod keyword-element-class ((keyword (eql :category)))
+  (find-class 'protocol-category))
+
+(defmethod generate-element-using-class
+    ((class (eql (find-class 'protocol-category)))
+     details &optional declaim-type-p)
   (declare (ignore declaim-type-p))
   (destructuring-bind (name) details
     (assert (and (consp name)
                  (every #'keywordp name))
             () "Wrong thing to be a configuration category name: ~A" name)
-    (let ((element (make-instance 'protocol-category :name name)))
+    (let ((element (make-instance class :name name)))
       element)))
 
 (defmethod generate-forms ((element protocol-category))

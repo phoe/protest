@@ -232,15 +232,38 @@ Syntax summary of all options and configuration elements:
 
 ### Generic Functions
 
-  * **Generic Function `GENERATE-ELEMENT`**
+  * **Generic Function `KEYWORD-ELEMENT-TYPE`**
+
+    Syntax: `(keyword-element-type keyword)`
+
+    Returns the concrete element type class object for the provided keyword.
+
+  * **Generic Function `GENERATE-ELEMENT-USING-CLASS`**
+
+    Syntax: `(generate-element-using-class CLASS DETAILS
+    &OPTIONAL DECLAIM-TYPE-P)`
+
+    Generates the protocol element based on its class and the details of the
+    element, based on their list representation.
+
+    `CLASS` is meant to be the resulting
+    concrete protocol element class and `DETAILS` is a list describing the
+    protocol element. The parameter `DECLAIM-TYPE-P` states
+    whether the element is meant to declaim any types; an element which has no
+    types to declaim may ignore this argument.
+
+    This function can be freely called by the user to manually create new
+    protocol elements that can later be attached to protocols.
+
+  * **Function `GENERATE-ELEMENT`**
 
     Syntax: `(generate-element TYPE DETAILS &OPTIONAL DECLAIM-TYPE-P)`
 
     Generates the protocol element based on its list representation.
 
-    This function is called by `DEFINE-PROTOCOL` for each element it encounters
-    in the protocol definition form. `TYPE` is bound to the head of the form and
-    `DETAILS` is bound to its tail. The parameter `DECLAIM-TYPE-P` states
+    This function is called by `DEFINE-PROTOCOL` for each list it encounters
+    in the protocol definition form. `TYPE` is bound to the head of that list
+    and `DETAILS` is bound to its tail. The parameter `DECLAIM-TYPE-P` states
     whether the element is meant to declaim any types; an element which has no
     types to declaim may ignore this argument.
 
