@@ -10,7 +10,6 @@ a form suitable for usage inside FTYPE declarations."
              ,result-type))
 
 (defun lambda-list-argument-types (lambda-list keyword-types)
-  ;; TODO test the hell out of this
   (loop with keyword = nil
         with temp = nil
         with repeatp = t
