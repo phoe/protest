@@ -5,6 +5,7 @@
    #:common-lisp
    #:alexandria
    #:protest/base
+   #:protest/ftype
    #:protest/common)
   (:export
    ;; VARIABLES

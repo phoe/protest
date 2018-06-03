@@ -26,6 +26,15 @@
   :components ((:file "src/base/package")
                (:file "src/base/base")))
 
+(asdf:defsystem #:protest/ftype
+  :description "FTYPE generation for PROTEST"
+  :author "Michał \"phoe\" Herda <phoe@openmailbox.org>"
+  :license "LLGPL"
+  :serial t
+  :depends-on (#:alexandria)
+  :components ((:file "src/ftype/package")
+               (:file "src/ftype/ftype")))
+
 (asdf:defsystem #:protest/protocol
   :description "Protocol defining utilities for PROTEST"
   :author "Michał \"phoe\" Herda <phoe@openmailbox.org>"
@@ -33,7 +42,8 @@
   :serial t
   :depends-on (#:alexandria
                #:closer-mop
-               #:protest/base)
+               #:protest/base
+               #:protest/ftype)
   :components ((:file "src/protocol/package")
                (:file "src/protocol/elements")
                (:file "src/protocol/elements/function")
@@ -98,5 +108,6 @@
   :components ((:file "t/test")
                (:file "t/framework")
                (:file "t/base")
+               (:file "t/ftype")
                (:file "t/protocol")
                (:file "t/test-case")))

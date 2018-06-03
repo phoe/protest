@@ -66,10 +66,11 @@ The form for a protocol function consists of the following subforms:
         ((name name) (lambda-list lambda-list)
          (return-type return-type) (keyword-types keyword-types))
       element
-    (let ((ftype-args (ftype-args lambda-list keyword-types))
+    (let ((ftype-form (function-ftype-declaration-form
+                       lambda-list return-type keyword-types))
           (documentation (docstring element)))
       `(,@(when (declaim-type-p element)
-            `((declaim (ftype (function ,ftype-args ,return-type) ,name))))
+            `((declaim (ftype ,ftype-form ,name))))
         (defgeneric? ,name ,(c2mop:extract-lambda-list lambda-list)
           ,@(when documentation `((:documentation ,documentation))))))))
 
@@ -78,38 +79,3 @@ The form for a protocol function consists of the following subforms:
           (not (typep (fdefinition name) 'generic-function)))
       `(defgeneric ,name ,lambda-list ,@options)
       `(progn)))
-
-(defun ftype-args (lambda-list keyword-types)
-  ;; TODO test the hell out of this
-  ;; TODO this shit is broken
-  (loop with keyword = nil
-        with repeatp = t
-        for elt = (pop lambda-list)
-        while repeatp
-        if (null lambda-list)
-          do (setf repeatp nil)
-        if (eq elt '&key)
-          collect elt
-          and do (setf keyword '&key)
-        if (eq elt '&allow-other-keys)
-          collect elt
-        else if (eq elt '&rest)
-               collect '&rest
-        ;;and collect 't
-               and do (pop lambda-list)
-        else if (eq elt '&optional)
-               collect '&optional
-               and do (setf keyword '&optional)
-        else if (member elt lambda-list-keywords)
-               do (setf keyword elt)
-        else if (eq keyword '&key)
-               collect (let* ((keyword (make-keyword elt)))
-                         (multiple-value-bind (key value tail)
-                             (get-properties keyword-types (list keyword))
-                           (declare (ignore key))
-                           (list keyword (if tail value 't))))
-        else if (symbolp elt)
-               collect 't
-        else if (listp elt)
-               collect (second elt)
-        else do (protocol-error "ftype-args internal error")))

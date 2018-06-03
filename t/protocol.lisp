@@ -250,7 +250,7 @@ Success: 1 test, 4 checks.
   (with-fresh-state
     (unwind-protect
          (progn (define-protocol #5=#.(gensym) ()
-                  (:function #1=#.(gensym) (#.(gensym) #.(gensym)) 'string)
+                  (:function #1=#.(gensym) (#.(gensym) #.(gensym)) string)
                   #4="qwer")
                 (eval '(execute-protocol #5#))
                 (is (typep (fdefinition '#1#) 'generic-function))
