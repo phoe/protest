@@ -32,6 +32,7 @@
    #:config
    ;; ACCESSORS
    #:name
+   #:bindings
    #:whole
    #:tags
    #:attachments

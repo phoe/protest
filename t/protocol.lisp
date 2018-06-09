@@ -143,7 +143,23 @@
                   (is (string= #2# (documentation '#1# 'category)))
                   (is (eq variable t)))
         (setf (documentation '#1# 'category) nil)
-        (is (null (documentation '#1# 'category)))))))
+        (is (null (documentation '#1# 'category))))))
+  (with-fresh-state
+    (let* ((*variable* nil))
+      (declare (special *variable*))
+      (unwind-protect
+           (progn (define-protocol #6=#.(gensym)
+                    (:bindings ((*category-callback*
+                                 (lambda (x)
+                                   (declare (ignore x)
+                                            (special *variable*))
+                                   (setf *variable* t)))))
+                    (:category #4=(:foo :bar)) #5="qwer")
+                  (eval '(execute-protocol #6#))
+                  (is (string= #5# (documentation '#4# 'category)))
+                  (is (eq *variable* t)))
+        (setf (documentation '#4# 'category) nil)
+        (is (null (documentation '#4# 'category)))))))
 
 (define-protest-test test-protocol-define-class
   (with-fresh-state
@@ -211,7 +227,24 @@
                   (is (string= #2# (documentation '#1# 'config)))
                   (is (eq variable t)))
         (setf (documentation '#1# 'config) nil)
-        (is (null (documentation '#1# 'config)))))))
+        (is (null (documentation '#1# 'config))))))
+  (with-fresh-state
+    (let* ((*variable* nil))
+      (declare (special *variable*))
+      (unwind-protect
+           (progn (define-protocol #6=#.(gensym)
+                    (:bindings ((*config-callback*
+                                 (lambda (w x y &optional z)
+                                   (declare (ignore w x y z)
+                                            (special *variable*))
+                                   (setf *variable* t)))))
+                    (:config #4=(:foo :bar) string :mandatory "a")
+                    #5="qwer")
+                  (eval '(execute-protocol #6#))
+                  (is (string= #5# (documentation '#4# 'config)))
+                  (is (eq *variable* t)))
+        (setf (documentation '#4# 'config) nil)
+        (is (null (documentation '#4# 'config)))))))
 
 (define-protest-test test-protocol-define-config-boundp
   (with-fresh-state

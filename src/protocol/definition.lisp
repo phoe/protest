@@ -38,6 +38,9 @@
    (%exports :accessor exports
              :initarg :exports
              :initform '())
+   (%bindings :accessor bindings
+              :initform :bindings
+              :initform '())
    (%elements :accessor elements
               :initarg :elements
               :initform '()))
@@ -88,9 +91,14 @@ operations on these types."))
   (setf (gethash (name slotd) *protocol-documentation-store*) new-value))
 
 (defmethod generate-code ((protocol protocol))
-  `(progn ,@(mappend #'generate-code (elements protocol))
-          (export ',(exports protocol))
-          (values)))
+  (let ((contents `((progn)
+                    ,@(mappend #'generate-code (elements protocol))
+                    (export ',(exports protocol))
+                    (values)))
+        (bindings (bindings protocol)))
+    (if (null bindings)
+        `(progn ,@contents)
+        `(let ,bindings ,@contents))))
 
 (defun generate-elements (elements declaim-types-p)
   (loop for sublist on elements

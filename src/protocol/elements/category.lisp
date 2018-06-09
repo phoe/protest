@@ -40,9 +40,9 @@ subforms:
       ,@(when documentation `(,documentation)))))
 
 (defmethod generate-code ((element protocol-category))
-  (when-let ((documentation (docstring element)))
-    `((funcall *category-callback* ',(name element))
-      (setf (documentation ',(name element) 'category) ,documentation))))
+  `((funcall *category-callback* ',(name element))
+    ,@(when-let ((documentation (docstring element)))
+        `((setf (documentation ',(name element) 'category) ,documentation)))))
 
 (defvar *category-documentation-store*
   (make-hash-table :test #'equal))
