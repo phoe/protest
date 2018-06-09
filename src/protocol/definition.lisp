@@ -39,7 +39,7 @@
              :initarg :exports
              :initform '())
    (%bindings :accessor bindings
-              :initform :bindings
+              :initarg :bindings
               :initform '())
    (%elements :accessor elements
               :initarg :elements
