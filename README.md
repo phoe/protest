@@ -35,6 +35,8 @@ The currently implemented modules are:
 
   * [`PROTEST/BASE`](doc/base.md) -
     for defining protocol classes and protocol condition types
+  * [`PROTEST/FTYPE`](doc/ftype.md) -
+    for producing FTYPE forms from typed lambda lists
   * [`PROTEST/PROTOCOL`](doc/protocol.md) -
     for defining and executing protocols
   * [`PROTEST/TEST-CASE`](doc/test-case.md) -

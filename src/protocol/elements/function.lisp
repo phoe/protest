@@ -27,7 +27,6 @@ The form for a protocol function consists of the following subforms:
   specified, defaults to the symbol CL:*.
 * KEYWORD-TYPES - optional, must be a valid plist containing some or all of the
   &KEY arguments used in LAMBDA-LIST along with their respective types."))
-;;; TODO maybe add means of passing default methods/arguments to DEFGENERIC
 
 (defmethod keyword-element-class ((keyword (eql :function)))
   (find-class 'protocol-function))

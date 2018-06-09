@@ -49,6 +49,7 @@ Syntax summary of all options and configuration elements:
 ## Internal Dependencies
 
   * [`PROTEST/BASE`](base.md)
+  * [`PROTEST/FTYPE`](ftype.md)
 
 ## Exports
 
