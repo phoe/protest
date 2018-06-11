@@ -1,5 +1,7 @@
 ;;;; src/ftype/ftype.lisp
 
+(in-package #:protest/ftype)
+
 (defun function-ftype-declaration-form
     (typed-lambda-list &optional (result-type t) (keyword-types '()))
   "Given a lambda list annotated with types and a function result type, produces
