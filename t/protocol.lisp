@@ -110,7 +110,12 @@
     (signals protocol-error
       (define-protocol #.(gensym) ()
         (:category (:category))
-        (:config (:category))))))
+        (:config (:category)))))
+  (with-fresh-state
+    (signals protocol-error
+      (define-protocol #.(gensym) ()
+        (:category (:category #1#))
+        (:config (:category #1#))))))
 
 (define-protest-test test-protocol-define-duplicate-elements-inheritance
   (with-fresh-state
@@ -138,10 +143,12 @@
              (lambda (x) (declare (ignore x)) (setf variable t))))
       (unwind-protect
            (progn (define-protocol #3=#.(gensym) ()
-                    (:category #1=(:foo :bar)) #2="qwer")
+                    (:category #1=(:foo :bar #3#)) #2="qwer")
                   (eval '(execute-protocol #3#))
                   (is (string= #2# (documentation '#1# 'category)))
-                  (is (eq variable t)))
+                  (is (eq variable t))
+                  (let ((category (first (elements (find-protocol '#3#)))))
+                    (is (equal (canonical-name category) '(:foo :bar nil)))))
         (setf (documentation '#1# 'category) nil)
         (is (null (documentation '#1# 'category))))))
   (with-fresh-state
@@ -221,11 +228,13 @@
                (declare (ignore w x y z)) (setf variable t))))
       (unwind-protect
            (progn (define-protocol #3=#.(gensym) ()
-                    (:config #1=(:foo :bar) string :mandatory "a")
+                    (:config #1=(:foo :bar #3#) string :mandatory "a")
                     #2="qwer")
                   (eval '(execute-protocol #3#))
                   (is (string= #2# (documentation '#1# 'config)))
-                  (is (eq variable t)))
+                  (is (eq variable t))
+                  (let ((config (first (elements (find-protocol '#3#)))))
+                    (is (equal (canonical-name config) '(:foo :bar nil)))))
         (setf (documentation '#1# 'config) nil)
         (is (null (documentation '#1# 'config))))))
   (with-fresh-state

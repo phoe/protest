@@ -26,9 +26,10 @@ value was provided, this argument is not passed.")
    "Describes a protocol configuration entry that is a part of a protocol.
 \
 The form for a protocol configuration entry consists of the following subforms:
-* NAME - mandatory, must be a list of keywords. Denotes the name of the
-  configuration entry. The name of configuration entries and configuration
-  categories must not collide with each other.
+* NAME - mandatory, must be a list of keywords and symbols. Denotes the name of
+  the configuration entry. The canonical names (with non-keyword symbols
+  replaced by NIL) of configuration entries and configuration categories must
+  not collide with each other.
 * VALUE-TYPE - optional, must be a valid type specifier. Denotes the type of the
   value bound to the configuration entry. If not specified, the configuration
   type will default to T.
@@ -51,8 +52,8 @@ The form for a protocol configuration entry consists of the following subforms:
   ;; configuration value types, though.
   (destructuring-bind (name . rest) details
     (declare (ignore rest))
-    (assert (every #'keywordp name) ()
-            "Wrong thing to be a configuration entry name: ~A" name)
+    (assert (and (consp name) (every #'symbolp name)) ()
+            "Wrong thing to be a configuration entry name: ~S" name)
     (let ((element (make-instance class :name name)))
       (when (<= 2 (length details))
         (let ((type (second details)))
@@ -121,3 +122,6 @@ provided type ~S." (value-type element) initial-value))
   (when (slot-boundp element '%initial-value)
     (slot-makunbound element '%initial-value))
   element)
+
+(defmethod canonical-name ((config protocol-config))
+  (canonicalize-name (name config)))

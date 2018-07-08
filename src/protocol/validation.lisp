@@ -48,6 +48,11 @@
             do (protocol-error "Duplicate element form for ~{~S ~S~}." list)
           else do (setf (gethash list hash-table) t))))
 
+(defun canonicalize-name (name)
+  (if (listp name)
+      (loop for i in name if (keywordp i) collect i else collect nil)
+      name))
+
 (defun check-duplicate-effective-elements (protocol)
   (let* ((symbols (protocol-effective-dependencies protocol))
          (protocols (mapcar #'find-protocol symbols))
@@ -56,7 +61,8 @@
     (dolist (protocol protocols)
       (dolist (form (mapcar (compose #'first #'generate-forms)
                             (elements protocol)))
-        (let* ((type (first form)) (name (second form)) (list (list type name)))
+        (let* ((type (first form)) (name (canonicalize-name (second form)))
+               (list (list type name)))
           (setf (first list)
                 (case type
                   ((:class :condition-type) :class-or-condiiton-type)
@@ -74,5 +80,6 @@ in protocol ~A." list (name protocol))
             () "Incorrect export list: ~S" exports)
     (unless (eq exports t)
       (loop for export in exports
-            for element = (find export (elements protocol) :key #'name)
+            for element = (find export (elements protocol)
+                                :key #'canonical-name)
             unless element do (error "Export not found: ~S" export)))))

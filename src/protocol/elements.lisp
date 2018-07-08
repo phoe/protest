@@ -93,3 +93,13 @@ this function unbinds that value. Otherwise, it does nothing.
 In any case, the protocol element is returned.")
   (:method ((protocol-element protocol-element))
     protocol-element))
+
+(defgeneric canonical-name (protocol-element)
+  (:documentation "Returns the canonical name of the protocol element.
+\
+If a protocol element has a name that is a list, a canonical name of that
+element is a copy of that element's name, in which non-keyword symbols have
+been replaced by NIL. Otherwise, the canonical name is the name of the
+element.")
+  (:method ((protocol-element protocol-element))
+    (name protocol-element)))

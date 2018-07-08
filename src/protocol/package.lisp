@@ -32,6 +32,7 @@
    #:config
    ;; ACCESSORS
    #:name
+   #:canonical-name
    #:bindings
    #:whole
    #:tags

@@ -15,9 +15,10 @@ only argument is the category name.")
 \
 The form for a protocol configuration category consits of the following
 subforms:
-* NAME - mandatory, must be a list of keywords. Denotes the name of the
-  configuration category. The name of configuration entries and configuration
-  categories must not collide with each other."))
+* NAME - mandatory, must be a list of keywords and symbols. Denotes the name of
+  the configuration category. The canonical names (with non-keyword symbols
+  replaced by NIL) of configuration entries and configuration categories must
+  not collide with each other."))
 
 (defmethod keyword-element-class ((keyword (eql :category)))
   (find-class 'protocol-category))
@@ -27,9 +28,8 @@ subforms:
      details &optional declaim-type-p)
   (declare (ignore declaim-type-p))
   (destructuring-bind (name) details
-    (assert (and (consp name)
-                 (every #'keywordp name))
-            () "Wrong thing to be a configuration category name: ~A" name)
+    (assert (and (consp name) (every #'symbolp name)) ()
+            "Wrong thing to be a configuration category name: ~A" name)
     (let ((element (make-instance class :name name)))
       element)))
 
@@ -56,3 +56,6 @@ subforms:
       (setf (gethash slotd *category-documentation-store*) new-value)
       (remhash slotd *category-documentation-store*))
   new-value)
+
+(defmethod canonical-name ((category protocol-category))
+  (canonicalize-name (name category)))

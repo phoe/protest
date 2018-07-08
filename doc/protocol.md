@@ -200,7 +200,10 @@ Syntax summary of all options and configuration elements:
     belonging to a protocol. See protocol element `:CATEGORY` below.
 
     Accessors:
-    * **Reader `NAME`** - returns the list of keywords naming the category.
+    * **Reader `NAME`** - returns the list of symbols naming the category.
+    * **Reader `CANONICAL-NAME`** - returns the canonical name of the
+      category. A canonical name is the same as name, except all non-keyword
+      symbols are replaced by `NIL`.
 
   * **Class `PROTOCOL-CONFIG`**
 
@@ -208,7 +211,10 @@ Syntax summary of all options and configuration elements:
     belonging to a protocol. See protocol element `:CONFIG` below.
 
     Accessors:
-    * **Reader `NAME`** - returns the list of keywords naming the category.
+    * **Reader `NAME`** - returns the list of symbols naming the category.
+    * **Reader `CANONICAL-NAME`** - returns the canonical name of the
+      configuration entry. A canonical name is the same as name, except all
+      non-keyword symbols are replaced by `NIL`.
     * **Accessor `VALUE-TYPE`** - accesses the type of the value bound to the
       configuration entry.
     * **Accessor `MANDATORYP`** - accesses the boolean stating whether this
