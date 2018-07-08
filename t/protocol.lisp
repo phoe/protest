@@ -302,6 +302,29 @@ Success: 1 test, 4 checks.
       (setf (documentation '#1# 'function) nil)
       (is (null (documentation '#1# 'function))))))
 
+(define-protest-test test-protocol-define-function-setf
+  (with-fresh-state
+    (unwind-protect
+         (progn (define-protocol #5=#.(gensym) ()
+                  (:function #1=(setf #.(gensym)) (#.(gensym) #.(gensym))
+                             string)
+                  #4="qwer"
+                  (:function #2=(setf #.(gensym)) (#.(gensym) #.(gensym))
+                             string)
+                  #6="asdf")
+                (eval '(execute-protocol #5#))
+                (is (typep (fdefinition '#1#) 'generic-function))
+                (is (string= #4# (documentation '#1# 'function)))
+                (is (typep (fdefinition '#2#) 'generic-function))
+                (is (string= #6# (documentation '#2# 'function)))
+                (let ((function (first (elements (find-protocol '#5#)))))
+                  (is (equal (name function) (print (canonical-name function))))
+                  (is (equal (name function) '#1#))))
+      (fmakunbound '#1#)
+      (is (not (fboundp'#1#)))
+      (setf (documentation '#1# 'function) nil)
+      (is (null (documentation '#1# 'function))))))
+
 (define-protest-test test-protocol-define-macro
   (with-fresh-state
     (unwind-protect

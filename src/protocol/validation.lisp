@@ -59,20 +59,21 @@
          (protocols (cons protocol protocols))
          (hash-table (make-hash-table :test #'equal)))
     (dolist (protocol protocols)
-      (dolist (form (mapcar (compose #'first #'generate-forms)
-                            (elements protocol)))
-        (let* ((type (first form)) (name (canonicalize-name (second form)))
-               (list (list type name)))
-          (setf (first list)
-                (case type
-                  ((:class :condition-type) :class-or-condiiton-type)
-                  ((:function :macro) :function-or-macro)
-                  ((:category :config) :category-or-config)
-                  (t (first list))))
-          (if (gethash list hash-table)
-              (protocol-error "Duplicate element form for ~{~S ~S~} found ~
+      (loop for element in (elements protocol)
+            for form = (first (generate-forms element))
+            for type = (first form)
+            for name = (canonical-name element)
+            for list = (list type name)
+            do (setf (first list)
+                     (case type
+                       ((:class :condition-type) :class-or-condiiton-type)
+                       ((:function :macro) :function-or-macro)
+                       ((:category :config) :category-or-config)
+                       (t (first list))))
+            if (gethash list hash-table)
+              do (protocol-error "Duplicate element form for ~{~S ~S~} found ~
 in protocol ~A." list (name protocol))
-              (setf (gethash list hash-table) t)))))))
+            else do (setf (gethash list hash-table) t)))))
 
 (defun check-exports (protocol)
   (let ((exports (exports protocol)))
