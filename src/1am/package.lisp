@@ -6,4 +6,4 @@
         #:protest/base
         #:protest/test-case)
   (:import-from #:1am #:is #:signals #:run #:*tests*)
-  (:export #:define-test #:test #:is #:signals #:run #:*tests*))
+  (:export #:define-test #:test #:is #:signals #:run #:*tests* #:protest/1am))

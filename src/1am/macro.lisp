@@ -6,7 +6,7 @@
 
 (defun test-step-macro-reader (stream subchar arg)
   (declare (ignore subchar))
-  (let ((form (read stream)))
+  (let ((form (read stream t nil t)))
     `(progn
        (assert *current-step-id* ()
                "The #? macro must be used inside a test definition.")
