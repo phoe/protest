@@ -1,5 +1,7 @@
 ;;;; src/1am/test.lisp
 
+;;; TODO move into PROTEST/TEST/1AM
+
 (in-package #:protest/1am)
 
 (in-readtable protest/1am)
