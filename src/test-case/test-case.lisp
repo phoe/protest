@@ -101,7 +101,7 @@ describing each part of the test."))
                (unless (typep string 'string)
                  (protocol-error "Wrong thing in a test case definition: ~S"
                                  string))
-               (setf (gethash elt result) (make elt string))))
+               (setf (gethash elt result) (make elt (format nil string)))))
             (symbol (setf current-phase elt))
             (t (protocol-error "Wrong thing in a test case definition: ~S"
                                elt)))))
