@@ -124,6 +124,12 @@ testing libraries:
       This information is currently not processed, but will be utilized in the
       future when this library supports HTML generation.
 
+### Variables
+
+  * **Variable `*WARN-ON-TEST-CASE-REDEFINITION-P*`**
+
+    If true, then test case redefinitions will signal warnings.
+
 ## Example
 
 An example test case and a test written in

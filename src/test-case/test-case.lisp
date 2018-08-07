@@ -139,6 +139,9 @@ describing each part of the test."))
         else do (protocol-error "Test step IDs not in order: ~D came after ~D."
                                 previous-number number)))
 
+(defvar *warn-on-test-case-redefinition-p* nil
+  "If true, then test case redefinitions will signal warnings.")
+
 (defun ensure-test-case (name options whole &optional (package *package*))
   (unless (and name (typep name 'string-designator))
     (protocol-error "Wrong thing to be a test case name: ~A" name))
@@ -147,7 +150,8 @@ describing each part of the test."))
                           :name name :whole whole options)))
     (validate-test-case test-case)
     (let ((value (find-test-case name package)))
-      (when (and value (not (equalp (whole value) (whole test-case))))
+      (when (and value *warn-on-test-case-redefinition-p*
+                 (not (equalp (whole value) (whole test-case))))
         (warn "Redefining ~A in DEFINE-PROTOCOL" name)))
     (setf (find-test-case name package) test-case)
     name))
