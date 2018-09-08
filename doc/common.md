@@ -3,7 +3,8 @@
 ## Summary
 
 The package `PROTEST/COMMON` is the package for common PROTEST protocols. These
-protocols may serve as examples and
+protocols may serve as examples of `PROTEST/PROTOCOL` syntax, but are also
+functional and usable as imports by other systems.
 
 Currently available protocols:
   * [`ADDRESSED`](../src/common/mixin/addressed.lisp) -
