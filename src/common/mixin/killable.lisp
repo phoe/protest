@@ -1,6 +1,12 @@
 ;;;; src/common/killable.lisp
 
-(in-package #:protest/common)
+(defpackage #:protest/common/killable
+  (:use #:common-lisp)
+  (:import-from #:protest/protocol
+                #:define-protocol
+                #:execute-protocol))
+
+(in-package #:protest/common/killable)
 
 (define-protocol killable
     (:documentation "The KILLABLE protocol describes objects which have two ~

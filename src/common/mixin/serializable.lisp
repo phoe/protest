@@ -1,6 +1,12 @@
 ;;;; src/common/serializable.lisp
 
-(in-package #:protest/common)
+(defpackage #:protest/common/serializable
+  (:use #:common-lisp)
+  (:import-from #:protest/protocol
+                #:define-protocol
+                #:execute-protocol))
+
+(in-package #:protest/common/serializable)
 
 (define-protocol serializable
     (:documentation "The SERIALIZABLE protocol describes objects which are ~

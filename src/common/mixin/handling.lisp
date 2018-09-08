@@ -1,6 +1,12 @@
 ;;;; src/common/handling.lisp
 
-(in-package #:protest/common)
+(defpackage #:protest/common/handling
+  (:use #:common-lisp)
+  (:import-from #:protest/protocol
+                #:define-protocol
+                #:execute-protocol))
+
+(in-package #:protest/common/handling)
 
 (define-protocol handling
     (:documentation "The HANDLING protocol describes objects which have a

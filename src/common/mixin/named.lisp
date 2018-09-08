@@ -1,6 +1,12 @@
 ;;;; src/common/named.lisp
 
-(in-package #:protest/common)
+(defpackage #:protest/common/named
+  (:use #:common-lisp)
+  (:import-from #:protest/protocol
+                #:define-protocol
+                #:execute-protocol))
+
+(in-package #:protest/common/named)
 
 (define-protocol named
     (:documentation "The NAMED protocol describes objects which have a name - ~

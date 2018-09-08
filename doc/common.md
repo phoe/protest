@@ -2,8 +2,8 @@
 
 ## Summary
 
-The package `PROTEST/COMMON` is the package for common PROTEST protocols. These
-protocols may serve as examples of `PROTEST/PROTOCOL` syntax, but are also
+The packages `PROTEST/COMMON/*` are the packages for common PROTEST protocols.
+These protocols may serve as examples of `PROTEST/PROTOCOL` syntax, but are also
 functional and usable as imports by other systems.
 
 Currently available protocols:
@@ -23,10 +23,10 @@ Currently available protocols:
 All of the common protocols may be loaded by loading the `PROTEST/COMMON` ASDF
 system. Individual protocols may be loaded by loading a system named
 `PROTEST/COMMON/FOO`, replacing `FOO` with the name of the particular common
-protocol.
+protocol. Each package exports its symbol into a package following the same
+naming convention.
 
-Each common protocol exports all symbols mentioned in its definition. See each
-protocol's code file for the description and details of that protocol.
+See each protocol's code file for the description and details of that protocol.
 
 ## Internal dependencies
 

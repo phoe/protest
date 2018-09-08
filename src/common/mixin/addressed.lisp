@@ -1,6 +1,12 @@
 ;;;; src/common/addressed.lisp
 
-(in-package #:protest/common)
+(defpackage #:protest/common/addressed
+  (:use #:common-lisp)
+  (:import-from #:protest/protocol
+                #:define-protocol
+                #:execute-protocol))
+
+(in-package #:protest/common/addressed)
 
 (define-protocol addressed
     (:documentation "The ADDRESSED protocol describes objects which have a ~

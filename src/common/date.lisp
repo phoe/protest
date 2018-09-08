@@ -1,6 +1,14 @@
 ;;;; src/common/date.lisp
 
-(in-package #:protest/common)
+(defpackage #:protest/common/date
+  (:use #:common-lisp)
+  (:import-from #:protest/protocol
+                #:define-protocol
+                #:execute-protocol)
+  (:import-from #:protest/common/serializable
+                #:serializable))
+
+(in-package #:protest/common/date)
 
 (define-protocol date
     (:documentation "The DATE protocol describes a timestamp object, ~
