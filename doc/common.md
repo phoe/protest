@@ -22,7 +22,8 @@ Currently available protocols:
 
 All of the common protocols may be loaded by loading the `PROTEST/COMMON` ASDF
 system. Individual protocols may be loaded by loading a system named
-`PROTEST/COMMON/FOO`, replacing `FOO` with the system name
+`PROTEST/COMMON/FOO`, replacing `FOO` with the name of the particular common
+protocol.
 
 Each common protocol exports all symbols mentioned in its definition. See each
 protocol's code file for the description and details of that protocol.
