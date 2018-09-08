@@ -2,7 +2,7 @@
 
 (asdf:defsystem #:protest
   :description "Common Lisp PROtocol and TESTcase Manager"
-  :author "Michał \"phoe\" Herda <phoe@openmailbox.org>"
+  :author "Michał \"phoe\" Herda <phoe@disroot.org>"
   :license "LLGPL"
   :serial t
   :depends-on (#:protest/base
@@ -18,7 +18,7 @@
 
 (asdf:defsystem #:protest/base
   :description "Base macros and utilities for PROTEST"
-  :author "Michał \"phoe\" Herda <phoe@openmailbox.org>"
+  :author "Michał \"phoe\" Herda <phoe@disroot.org>"
   :license "LLGPL"
   :serial t
   :depends-on (#:alexandria
@@ -28,7 +28,7 @@
 
 (asdf:defsystem #:protest/ftype
   :description "FTYPE generation for PROTEST"
-  :author "Michał \"phoe\" Herda <phoe@openmailbox.org>"
+  :author "Michał \"phoe\" Herda <phoe@disroot.org>"
   :license "LLGPL"
   :serial t
   :depends-on (#:alexandria)
@@ -37,7 +37,7 @@
 
 (asdf:defsystem #:protest/protocol
   :description "Protocol defining utilities for PROTEST"
-  :author "Michał \"phoe\" Herda <phoe@openmailbox.org>"
+  :author "Michał \"phoe\" Herda <phoe@disroot.org>"
   :license "LLGPL"
   :serial t
   :depends-on (#:alexandria
@@ -59,7 +59,7 @@
 
 (asdf:defsystem #:protest/test-case
   :description "Test case defining utilities for PROTEST"
-  :author "Michał \"phoe\" Herda <phoe@openmailbox.org>"
+  :author "Michał \"phoe\" Herda <phoe@disroot.org>"
   :license "LLGPL"
   :serial t
   :depends-on (#:alexandria
@@ -70,7 +70,7 @@
 
 (asdf:defsystem #:protest/parachute
   :description "PROTEST integration with Parachute testing library"
-  :author "Michał \"phoe\" Herda <phoe@openmailbox.org>"
+  :author "Michał \"phoe\" Herda <phoe@disroot.org>"
   :license "Artistic"
   :serial t
   :depends-on (#:alexandria
@@ -86,7 +86,7 @@
 
 (asdf:defsystem #:protest/1am
   :description "PROTEST integration with 1AM testing library"
-  :author "Michał \"phoe\" Herda <phoe@openmailbox.org>"
+  :author "Michał \"phoe\" Herda <phoe@disroot.org>"
   :license "LLGPL"
   :serial t
   :depends-on (#:alexandria
@@ -101,7 +101,7 @@
 
 (asdf:defsystem #:protest/test
   :description "Tests for PROTEST"
-  :author "Michał \"phoe\" Herda <phoe@openmailbox.org>"
+  :author "Michał \"phoe\" Herda <phoe@disroot.org>"
   :license "LLGPL"
   :serial t
   :depends-on (#:protest)
@@ -111,3 +111,59 @@
                (:file "t/ftype")
                (:file "t/protocol")
                (:file "t/test-case")))
+
+;;; PROTEST common protocols
+
+(asdf:defsystem #:protest/common/package
+  :description "Package for PROTEST commons"
+  :author "Michał \"phoe\" Herda <phoe@disroot.org>"
+  :license "LLGPL"
+  :serial t
+  :depends-on (#:protest/protocol)
+  :components ((:file "src/common/package")))
+
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (defvar *%protest-commons* '()))
+
+(defmacro define-protest-common (name description &key (subdirectory ""))
+  (let ((filename (string-downcase (string name)))
+        (symbol (make-symbol (uiop:strcat (string '#:protest/common/)
+                                          (string name)))))
+    `(progn
+       (asdf:defsystem ,symbol
+         :description ,description
+         :author "Michał \"phoe\" Herda <phoe@disroot.org>"
+         :license "LLGPL"
+         :serial t
+         :depends-on
+         (#:protest/protocol
+          #:protest/common/package)
+         :components
+         ((:file ,(uiop:strcat "src/common/" subdirectory filename))))
+       (eval-when (:compile-toplevel :load-toplevel :execute)
+         (pushnew ',symbol *%protest-commons*)))))
+
+(define-protest-common #:date
+    "Date protocol from PROTEST")
+(define-protest-common #:addressed
+    "Addressed protocol from PROTEST"
+    :subdirectory "mixin/")
+(define-protest-common #:handling
+    "Handling protocol from PROTEST"
+    :subdirectory "mixin/")
+(define-protest-common #:killable
+    "Killable protocol from PROTEST"
+    :subdirectory "mixin/")
+(define-protest-common #:named
+    "Named protocol from PROTEST"
+    :subdirectory "mixin/")
+(define-protest-common #:serializable
+    "Serializable protocol from PROTEST"
+    :subdirectory "mixin/")
+
+(asdf:defsystem #:protest/common
+  :description "Common protocols and examples of PROTEST"
+  :author "Michał \"phoe\" Herda <phoe@disroot.org>"
+  :license "LLGPL"
+  :serial t
+  :depends-on #.*%protest-commons*)

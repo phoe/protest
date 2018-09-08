@@ -39,6 +39,8 @@ The currently implemented modules are:
     for producing FTYPE forms from typed lambda lists
   * [`PROTEST/PROTOCOL`](doc/protocol.md) -
     for defining and executing protocols
+  * [`PROTEST/COMMON`](doc/common.md) -
+    containing common and example protocols
   * [`PROTEST/TEST-CASE`](doc/test-case.md) -
     for defining test cases
   * [`PROTEST/PARACHUTE`](doc/parachute.md) -
