@@ -125,7 +125,8 @@
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (defvar *%protest-commons* '()))
 
-(defmacro define-protest-common (name description &key (subdirectory ""))
+(defmacro define-protest-common
+    (name description &key (subdirectory "") depends-on)
   (let ((filename (string-downcase (string name)))
         (symbol (make-symbol (uiop:strcat (string '#:protest/common/)
                                           (string name)))))
@@ -137,14 +138,16 @@
          :serial t
          :depends-on
          (#:protest/protocol
-          #:protest/common/package)
+          #:protest/common/package
+          ,@depends-on)
          :components
          ((:file ,(uiop:strcat "src/common/" subdirectory filename))))
        (eval-when (:compile-toplevel :load-toplevel :execute)
          (pushnew ',symbol *%protest-commons*)))))
 
 (define-protest-common #:date
-    "Date protocol from PROTEST")
+    "Date protocol from PROTEST"
+    :depends-on (#:protest/common/serializable))
 (define-protest-common #:addressed
     "Addressed protocol from PROTEST"
     :subdirectory "mixin/")
