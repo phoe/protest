@@ -114,14 +114,6 @@
 
 ;;; PROTEST common protocols
 
-(asdf:defsystem #:protest/common/package
-  :description "Package for PROTEST commons"
-  :author "Michał \"phoe\" Herda <phoe@disroot.org>"
-  :license "LLGPL"
-  :serial t
-  :depends-on (#:protest/protocol)
-  :components ((:file "src/common/package")))
-
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (defvar *%protest-commons* '()))
 
@@ -138,7 +130,6 @@
          :serial t
          :depends-on
          (#:protest/protocol
-          #:protest/common/package
           ,@depends-on)
          :components
          ((:file ,(uiop:strcat "src/common/" subdirectory filename))))
