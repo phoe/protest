@@ -1,7 +1,8 @@
 ;;;; src/common/named.lisp
 
 (defpackage #:protest/common/named
-  (:use #:common-lisp)
+  (:use #:common-lisp
+        #:protest/common)
   (:import-from #:protest/protocol
                 #:define-protocol
                 #:execute-protocol))
