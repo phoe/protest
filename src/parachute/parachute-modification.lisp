@@ -23,7 +23,8 @@
     ((result test-case-result) (report parachute:plain))
   (when *printing-protest-report*
     (alexandria:when-let ((phase (test-phase result)))
-      (unless (eq phase *last-printed-phase*)
+      (unless (and (boundp '*last-printed-phase*)
+                   (eq phase *last-printed-phase*))
         (setf *last-printed-phase* phase)
         (format (parachute:output report)
                 "             #~v@{  ~} Phase ~S~%"

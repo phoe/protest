@@ -35,16 +35,17 @@ This macro is meant for being used inside functions passed to BT:MAKE-THREAD.")
 
 (execute-protocol killable)
 
+(defun %restartability-string (killable-name)
+  (format nil "Abort the current iteration and send the ~A back to its loop."
+          (string-downcase (string (or killable-name "thread")))))
+
 (defmacro with-restartability ((&optional killable) &body body)
-  (flet ((report (killable-name)
-           `(lambda (stream)
-              (format
-               stream
-               "Abort the current iteration and send the ~A back to its loop."
-               (string-downcase (string (or ',killable-name "thread")))))))
-    `(unwind-protect
-          (tagbody :start
-             (restart-case (progn ,@body)
-               (retry () :report ,(report killable)
-                 (go :start))))
-       ,(when killable `(uiop:symbol-call :gateway/protocol :kill ,killable)))))
+  (let ((string (%restartability-string killable)))
+    (flet ((report (killable-name) (declare (ignore killable-name))
+             `(lambda (stream) (format stream ,string))))
+      `(unwind-protect
+            (tagbody :start
+               (restart-case (progn ,@body)
+                 (retry () :report ,(report killable)
+                   (go :start))))
+         ,@(when killable `((kill ,killable)))))))
