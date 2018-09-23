@@ -29,6 +29,18 @@
                 parachute::*level* phase)))
     (format (parachute:output report) "~4D " (id result))))
 
+(defmethod parachute:report-on :before
+    ((result parachute:result) (report parachute:plain))
+  (format (parachute:output report)
+          " ~:[      ~;~:*~6,3f~] ~a~v@{  ~} "
+          (parachute:duration result)
+          (case (parachute:status result)
+            (:passed  #+asdf-unicode "✔" #-asdf-unicode "o")
+            (:failed  #+asdf-unicode "✘" #-asdf-unicode "x")
+            (:skipped #+asdf-unicode "ー" #-asdf-unicode "-")
+            (T        #+asdf-unicode "？" #-asdf-unicode "?"))
+          parachute::*level* T))
+
 (defmethod parachute:report-on :around
     ((result parachute:result) (report parachute:plain))
   (when *printing-protest-report*
