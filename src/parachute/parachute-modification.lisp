@@ -13,10 +13,11 @@
 
 (defmethod parachute:eval-in-context :around
     ((report parachute:plain) (result parachute:parent-result))
-  (let* ((*printing-protest-report* t))
+  (let* ((*printing-protest-report* t)
+         (*last-printed-phase* nil))
     (call-next-method)))
 
-(defvar *last-printed-phase* nil)
+(defvar *last-printed-phase*)
 
 (defmethod parachute:report-on :before
     ((result test-case-result) (report parachute:plain))
