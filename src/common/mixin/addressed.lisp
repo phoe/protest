@@ -9,18 +9,18 @@
 (in-package #:protest/common/addressed)
 
 (define-protocol addressed
-    (:documentation "The ADDRESSED protocol describes objects which have a ~
-network address, consisting of a hostname and a port. That address may be ~
-exported as a human-readable string.
-\
-A default method is provided on the ADDRESS function that concatenates the ~
-hostname and the port with a #\: character in between. Classes are free to ~
-implement this method in subclasses.
+    (:documentation "The ADDRESSED protocol describes objects which have at ~
+least one network address, consisting of a hostname and a port. That address ~
+may be exported as a human-readable string.
 \
 All generic functions specified in this protocol specify an optional TYPE ~
 argument. This argument may be used to differentiate between different types ~
 of network addresses. Methods specified on these generic functions may specify ~
-a default type on the keyword."
+a default type on the keyword.
+\
+A default method is provided on the ADDRESS function that concatenates the ~
+hostname and the port with a #\: character in between. Classes are free to ~
+implement this method in subclasses."
      :tags (:addressed)
      :export t)
   (:class addressed () ())
