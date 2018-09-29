@@ -41,8 +41,13 @@ None.
     Like `DEFINE-CONDITION`, but the defined condition type will not be directly
     instantiable.
 
-    *SBCL Note:* This constraint is not enforceable on SBCL. See
-    [this](https://bugs.launchpad.net/sbcl/+bug/1761735) for details.
+    *SBCL Note:* [This SBCL issue](https://bugs.launchpad.net/sbcl/+bug/1761735)
+    prevents this constraint from being enforceable on SBCL for all condition
+    instances instantiated via `MAKE-CONDITION`. If you want to avoid this
+    behavior, make sure that you instantiate your conditions via `MAKE-INSTANCE`
+    instead. While not being compliant with the ANSI CL standard, this method of
+    instantiating conditions works correctly at the time of writing on SBCL,
+    CCL, ECL, ABCL, ACL and LispWorks.
 
   * **Condition Type `PROTOCOL-ERROR`**
 
