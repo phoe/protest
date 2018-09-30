@@ -8,6 +8,7 @@
 
 (in-package #:protest/common/serializable)
 
+;; TODO think of removing this one?
 (define-protocol serializable
     (:documentation "The SERIALIZABLE protocol describes objects which are ~
 convertible between their internal Lisp representation and a readable text ~
