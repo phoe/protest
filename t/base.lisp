@@ -21,6 +21,15 @@
          (signals protocol-error (make-instance '#2#)))
     (setf (find-class '#2#) nil)))
 
+(define-protest-test test-protocol-class-redefine
+  (unwind-protect
+       (progn
+         (define-protocol-class #2=#.(gensym) () ())
+         (signals protocol-error (make-instance '#2#))
+         (defclass #2# () ())
+         (make-instance '#2#))
+    (setf (find-class '#2#) nil)))
+
 (define-protest-test #1=test-protocol-condition-type-define
   ;; https://bugs.launchpad.net/sbcl/+bug/1761950
   #+sbcl (format t "~&~A broken on SBCL; skipping.~&" '#1#)
@@ -39,4 +48,14 @@
          (signals protocol-error (make-condition '#2#)))
     (setf (find-class '#2#) nil)))
 
-;; TODO
+(define-protest-test #1=test-protocol-condition-type-redefine
+  ;; https://bugs.launchpad.net/sbcl/+bug/1761950
+  #+sbcl (format t "~&~A broken on SBCL; skipping.~&" '#1#)
+  #-sbcl
+  (unwind-protect
+       (progn
+         (define-protocol-condition-type #2=#.(gensym) () ())
+         (signals protocol-error (make-instance '#2#))
+         (define-condition #2# () ())
+         (make-instance '#2#))
+    (setf (find-class '#2#) nil)))

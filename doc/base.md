@@ -20,6 +20,11 @@ Additionally, the condition type `PROTOCOL-ERROR` can be handled to handle all
 errors that arise regarding protocol and test-case definition. This condition
 type is later reused in other PROTEST packages.
 
+Protocol classes and protocol condition types may be redefined as normal classes
+and normal condition types, after which they may be normally instantiated. To
+achieve this, redefine them using the standard `DEFCLASS` and `DEFINE-CONDITION`
+macros instead of `DEFINE-PROTOCOL-CLASS` and `DEFINE-PROTOCOL-CONDITION-TYPE`.
+
 ## Internal dependencies
 
 None.

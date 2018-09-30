@@ -33,6 +33,9 @@ directly."
          ((class (eql (find-class ',name))) (name (eql ',name)) &rest args)
        (declare (ignore args))
        (setf (gethash (find-class ',name) *protocol-objects*) nil)
+       (remove-method #'initialize-instance
+                      (find-method #'initialize-instance '(:before)
+                                   (list class)))
        (remove-method #'ensure-class-using-class
                       (find-method #'ensure-class-using-class '()
                                    (list (intern-eql-specializer class)
