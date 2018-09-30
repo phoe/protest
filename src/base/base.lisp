@@ -2,6 +2,14 @@
 
 (in-package #:protest/base)
 
+(defvar *protocol-objects* (tg:make-weak-hash-table :weakness :key))
+
+(defun protocol-object-p (object)
+  "Returns true if CLASS is a protocol class or a protocol condition type,
+and false otherwise."
+  (declare (class object))
+  (values (gethash object *protocol-objects*)))
+
 (defmacro define-protocol-class (name superclasses slots &rest options)
   "Like DEFCLASS, but the defined class may not be instantiated directly."
   `(define-protocol-object defclass "class"
@@ -20,6 +28,15 @@ directly."
        (when (eq (class-of object) (find-class ',name))
          (error (make-condition 'protocol-object-instantiation
                                 :symbol ',name :type ,string))))
+     (setf (gethash (find-class ',name) *protocol-objects*) t)
+     (defmethod ensure-class-using-class
+         ((class (eql (find-class ',name))) (name (eql ',name)) &rest args)
+       (declare (ignore args))
+       (setf (gethash (find-class ',name) *protocol-objects*) nil)
+       (remove-method #'ensure-class-using-class
+                      (find-method #'ensure-class-using-class '()
+                                   (list (intern-eql-specializer class)
+                                         (intern-eql-specializer name)))))
      ',name))
 
 (define-protocol-condition-type protocol-error (error) ()

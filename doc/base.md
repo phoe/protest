@@ -26,6 +26,13 @@ None.
 
 ## Exports
 
+  * **Function `PROTOCOL-OBJECT-P`**
+
+    Syntax: `(protocol-object-p object)`
+
+    Returns true if the given object has been declared as a protocol object or a
+    protocol condition type.
+
   * **Macro `DEFINE-PROTOCOL-CLASS`**
 
     Syntax: `(define-protocol-class name superclasses

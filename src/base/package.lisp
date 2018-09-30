@@ -11,6 +11,8 @@
    #:defmethod
    #:defgeneric)
   (:export
+   ;; FUNCTIONS
+   #:protocol-object-p
    ;; MACROS
    #:define-protocol-class
    #:define-protocol-condition-type

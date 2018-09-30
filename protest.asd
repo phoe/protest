@@ -22,7 +22,8 @@
   :license "LLGPL"
   :serial t
   :depends-on (#:alexandria
-               #:closer-mop)
+               #:closer-mop
+               #:trivial-garbage)
   :components ((:file "src/base/package")
                (:file "src/base/base")))
 

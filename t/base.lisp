@@ -38,3 +38,5 @@
          (define-protocol-condition-type #2=#.(gensym) () ())
          (signals protocol-error (make-condition '#2#)))
     (setf (find-class '#2#) nil)))
+
+;; TODO
