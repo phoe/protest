@@ -4,9 +4,7 @@
   (:use #:common-lisp)
   (:import-from #:protest/protocol
                 #:define-protocol
-                #:execute-protocol)
-  (:import-from #:protest/common/serializable
-                #:serializable))
+                #:execute-protocol))
 
 (in-package #:protest/common/date)
 
@@ -42,22 +40,22 @@ will be equal under :UNIT :MONTH.
              ((class class) (nstimestamp integer)) date)
   "Converts a Unix timestamp with microsecond precision to a date object of ~
 provided class."
-  (:function date= ((date-1 date) (date-2 date) &key) t)
+  (:function date= ((date-1 date) (date-2 date) &key unit) t)
   "Returns true iff the two dates are equal under the provided granularity ~
 unit."
-  (:function date/= ((date-1 date) (date-2 date) &key) t)
+  (:function date/= ((date-1 date) (date-2 date) &key unit) t)
   "Returns true iff the two dates are not equal under the provided granularity ~
 unit."
-  (:function date> ((date-1 date) (date-2 date) &key) t)
+  (:function date> ((date-1 date) (date-2 date) &key unit) t)
   "Returns true iff the first date is greater than the other under the ~
 provided granularity unit."
-  (:function date>= ((date-1 date) (date-2 date) &key) t)
+  (:function date>= ((date-1 date) (date-2 date) &key unit) t)
   "Returns true iff the first date is not less than the other under the ~
 provided granularity unit."
-  (:function date< ((date-1 date) (date-2 date) &key) t)
+  (:function date< ((date-1 date) (date-2 date) &key unit) t)
   "Returns true iff the first date is less than the other under the provided ~
 granularity unit."
-  (:function date<= ((date-1 date) (date-2 date) &key) t)
+  (:function date<= ((date-1 date) (date-2 date) &key unit) t)
   "Returns true iff the first date is not greater than the other under the ~
 provided granularity unit."
   (:function date-min ((date date) &rest other-dates) date)
