@@ -138,23 +138,22 @@
          (pushnew ',symbol *%protest-commons*)))))
 
 (define-protest-common #:date
-    "Date protocol from PROTEST"
-    :depends-on (#:protest/common/serializable))
+  "Date protocol from PROTEST")
 (define-protest-common #:addressed
-    "Addressed protocol from PROTEST"
-    :subdirectory "mixin/")
+  "Addressed protocol from PROTEST"
+  :subdirectory "mixin/")
 (define-protest-common #:handling
-    "Handling protocol from PROTEST"
-    :subdirectory "mixin/")
+  "Handling protocol from PROTEST"
+  :subdirectory "mixin/")
 (define-protest-common #:killable
-    "Killable protocol from PROTEST"
-    :subdirectory "mixin/")
+  "Killable protocol from PROTEST"
+  :subdirectory "mixin/")
 (define-protest-common #:named
-    "Named protocol from PROTEST"
-    :subdirectory "mixin/")
+  "Named protocol from PROTEST"
+  :subdirectory "mixin/")
 (define-protest-common #:serializable
-    "Serializable protocol from PROTEST"
-    :subdirectory "mixin/")
+  "Serializable protocol from PROTEST"
+  :subdirectory "mixin/")
 
 (asdf:defsystem #:protest/common
   :description "Common protocols and examples of PROTEST"
