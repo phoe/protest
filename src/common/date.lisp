@@ -27,9 +27,9 @@ will be equal under :UNIT :MONTH.
 * 31st July 2017 and 1st August 2017 will not be DATE= under :UNIT :DAY or
 :UNIT :MONTH, but will be equal under :UNIT :YEAR."
      :tags (:date)
-     :dependencies (serializable)
+     :dependencies ()
      :export t)
-  (:class date (serializable) ())
+  (:class date () ())
   "A date object. See protocol DATE for details."
   (:function date-timestamp ((date date)) integer)
   "Converts a date object to a Unix timestamp."
