@@ -1,7 +1,8 @@
 ;;;; src/protocol/package.lisp
 
-(defpackage #:protest/protocol
-  (:use
+(uiop:define-package #:protest/protocol
+  (:mix
+   #:closer-mop
    #:common-lisp
    #:alexandria
    #:protest/base

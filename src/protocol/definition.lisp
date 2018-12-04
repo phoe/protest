@@ -142,3 +142,45 @@ protocol and all of its dependencies, including transitive ones."
                         (protocol-effective-dependencies protocol)))
          (protocols (mapcar #'find-protocol symbols)))
     (mappend #'elements protocols)))
+
+(defgeneric validate-implementations (protocol)
+  (:documentation "Returns true iff all subclasses of protocol classes defined
+in the protocol have appropriate methods defined on protocol functions defined
+in the protocol, and false otherwise. TODO make it return true(?)
+\
+TODO describe secondary value.")) ;; TODO export ;; TODO test
+
+(defmethod validate-implementations ((protocol symbol))
+  (validate-implementations (find-protocol protocol)))
+
+(defmethod validate-implementations ((protocol protocol))
+  (dolist (protocol-function (remove-if-not (rcurry #'typep 'protocol-function)
+                                            (elements protocol)))
+    (let ((function-name (name protocol-function)))
+      (assert (fboundp function-name) ()
+              "Function ~S is undefined. (Has the protocol been executed?)"
+              function-name)
+      (let* ((function (fdefinition function-name))
+             (methods (generic-function-methods function))
+             (specializers (mapcar #'method-specializers methods))
+             (original-lambda-list (lambda-list protocol-function))
+             (lambda-list (standard-specializers-only original-lambda-list))
+             (class-names (extract-specializer-names lambda-list)))
+        (dolist (class-name class-names)
+          (let ((class (find-class class-name)))
+            (when (protocol-object-p class)
+              (let* ((subclasses (remove-if #'protocol-object-p
+                                            (moptilities:subclasses class)))
+                     (n (position class-name class-names)))
+                (dolist (subclass subclasses)
+                  (let ((candidates (mapcar (curry #'nth n) specializers)))
+                    (assert (some (curry #'subtypep subclass) candidates) ()
+                            "There is no method defined on protocol function ~
+~S that accepts concrete class ~S as an argument, but that class is a subtype ~
+of protocol class ~S that is the declared protocol specializer of that ~
+argument." function subclass class)))))))))))
+
+(defun standard-specializers-only (lambda-list)
+  (loop for elt in lambda-list
+        when (and (second elt) (symbolp (second elt)))
+          collect elt))

@@ -3,6 +3,7 @@
 (defpackage #:protest/common/named
   (:use #:common-lisp
         #:protest/common)
+  (:shadow #:name)
   (:import-from #:protest/protocol
                 #:define-protocol
                 #:execute-protocol))
