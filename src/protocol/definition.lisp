@@ -144,11 +144,10 @@ protocol and all of its dependencies, including transitive ones."
     (mappend #'elements protocols)))
 
 (defgeneric validate-implementations (protocol)
-  (:documentation "Returns true iff all subclasses of protocol classes defined
+  (:documentation "Checks if all subclasses of protocol classes defined
 in the protocol have appropriate methods defined on protocol functions defined
-in the protocol, and false otherwise. TODO make it return true(?)
-\
-TODO describe secondary value.")) ;; TODO export ;; TODO test
+in the protocol. Signals an error if the check fails or if any protocol function
+is undefined.")) ;; TODO export ;; TODO test
 
 (defmethod validate-implementations ((protocol symbol))
   (validate-implementations (find-protocol protocol)))
@@ -157,30 +156,67 @@ TODO describe secondary value.")) ;; TODO export ;; TODO test
   (dolist (protocol-function (remove-if-not (rcurry #'typep 'protocol-function)
                                             (elements protocol)))
     (let ((function-name (name protocol-function)))
-      (assert (fboundp function-name) ()
-              "Function ~S is undefined. (Has the protocol been executed?)"
-              function-name)
+      (unless (fboundp function-name)
+        (error 'undefined-protocol-function :name function-name))
       (let* ((function (fdefinition function-name))
              (methods (generic-function-methods function))
              (specializers (mapcar #'method-specializers methods))
              (original-lambda-list (lambda-list protocol-function))
              (lambda-list (standard-specializers-only original-lambda-list))
              (class-names (extract-specializer-names lambda-list)))
-        (dolist (class-name class-names)
-          (let ((class (find-class class-name)))
+        (dotimes (position (length class-names))
+          (let* ((class-name (nth position class-names))
+                 (class (find-class class-name)))
             (when (protocol-object-p class)
-              (let* ((subclasses (remove-if #'protocol-object-p
-                                            (moptilities:subclasses class)))
-                     (n (position class-name class-names)))
-                (dolist (subclass subclasses)
-                  (let ((candidates (mapcar (curry #'nth n) specializers)))
-                    (assert (some (curry #'subtypep subclass) candidates) ()
-                            "There is no method defined on protocol function ~
-~S that accepts concrete class ~S as an argument, but that class is a subtype ~
-of protocol class ~S that is the declared protocol specializer of that ~
-argument." function subclass class)))))))))))
+              (dolist (subclass (remove-if #'protocol-object-p
+                                           (moptilities:subclasses class)))
+                (let ((candidates (mapcar (curry #'nth position)
+                                          specializers)))
+                  (unless (some (curry #'subtypep subclass) candidates)
+                    (error 'protocol-validation-error
+                           :function function :subclass subclass
+                           :position position :class class)))))))
+        (values)))))
 
 (defun standard-specializers-only (lambda-list)
   (loop for elt in lambda-list
         when (and (second elt) (symbolp (second elt)))
           collect elt))
+
+(defvar *undefined-protocol-function-report*
+  "The protocol function ~S is undefined. (Has the protocol been executed?)")
+
+(defun undefined-protocol-function-report (condition stream)
+  (format stream *undefined-protocol-function-report*
+          (cell-error-name condition)))
+
+(define-condition undefined-protocol-function
+    (undefined-function protocol-error) ()
+  (:report undefined-protocol-function-report))
+
+(defvar *protocol-validation-error-report*
+  "There is no method defined on protocol function ~S that accepts concrete ~
+class ~S as its argument on the ~:R position, but that class is a subtype of ~
+protocol class ~S that is the declared protocol specializer of that argument.")
+
+(defun protocol-validation-error-report (condition stream)
+  (format stream *protocol-validation-error-report*
+          (protocol-validation-error-function condition)
+          (protocol-validation-error-subclass condition)
+          (protocol-validation-error-position condition)
+          (protocol-validation-error-class condition)))
+
+(define-condition protocol-validation-error (protocol-error)
+  ((function :reader protocol-validation-error-function
+             :initarg :function
+             :initform (required-argument :function))
+   (subclass :reader protocol-validation-error-subclass
+             :initarg :subclass
+             :initform (required-argument :subclass))
+   (class :reader protocol-validation-error-class
+          :initarg :class
+          :initform (required-argument :class))
+   (position :reader protocol-validation-error-position
+             :initarg :position
+             :initform (required-argument :position)))
+  (:report protocol-validation-error-report))
