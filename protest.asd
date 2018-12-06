@@ -43,6 +43,7 @@
   :serial t
   :depends-on (#:alexandria
                #:closer-mop
+               #:moptilities
                #:protest/base
                #:protest/ftype)
   :components ((:file "src/protocol/package")
