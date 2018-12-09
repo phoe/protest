@@ -323,7 +323,6 @@ Syntax summary of all options and configuration elements:
     this function unbinds that value. Otherwise, it does nothing. In any case,
     the protocol element is returned.
 
-
 ### Functions
 
   * **Function `FIND-PROTOCOL`**
@@ -345,6 +344,15 @@ Syntax summary of all options and configuration elements:
 
     Returns a fresh list of all protocol elements that occur inside the provided
     protocol and all of its dependencies, including transitive ones.
+
+  * **Function `VALIDATE-IMPLEMENTATIONS`**
+
+    Syntax: `(validate-implementations PROTOCOL)`
+
+    Checks if all subclasses of protocol classes definedi n the protocol have
+    appropriate methods defined on protocol functions defined in the protocol.
+    Signals an error if the check fails or if any protocol function is
+    undefined.
 
 ### Macros
 

@@ -64,6 +64,7 @@
    #:generate-element
    #:find-protocol
    #:compute-effective-protocol-elements
+   #:validate-implementations
    ;; MACROS
    #:define-protocol
    #:execute-protocol))

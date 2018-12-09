@@ -39,7 +39,8 @@ directly."
        (remove-method #'ensure-class-using-class
                       (find-method #'ensure-class-using-class '()
                                    (list (intern-eql-specializer class)
-                                         (intern-eql-specializer name)))))
+                                         (intern-eql-specializer name))))
+       (call-next-method))
      ',name))
 
 (define-protocol-condition-type protocol-error (error) ()

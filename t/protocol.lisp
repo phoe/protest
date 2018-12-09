@@ -22,7 +22,8 @@
       (is (null (tags protocol)))
       (is (null (dependencies protocol)))
       (is (null (exports protocol)))
-      (is (null (elements protocol))))))
+      (is (null (elements protocol)))
+      (validate-implementations protocol))))
 
 (define-protest-test test-protocol-define-detailed
   (with-fresh-state
@@ -39,7 +40,8 @@
       (is (equal '(#1#) (dependencies protocol)))
       (is (string= "haha" (first (attachments protocol))))
       (is (null (exports protocol)))
-      (is (null (elements protocol))))))
+      (is (null (elements protocol)))
+      (validate-implementations protocol))))
 
 (define-protest-test test-protocol-define-dependencies
   (with-fresh-state
@@ -135,6 +137,9 @@
                                 (muffle-warning))))
         (define-protocol #1# ()
           (:variable #3#))))))
+
+;; TODO cleanup after protocol execution
+;; TODO REMOVE-PROTOCOL that performs that cleanup
 
 (define-protest-test test-protocol-define-category
   (with-fresh-state
@@ -389,7 +394,8 @@ Success: 1 test, 4 checks.
                 (is (find-class '#2#))
                 (is (find-class '#3#))
                 (is (fdefinition '#5#))
-                (is (string= "asdf" (symbol-value '#7#))))
+                (is (string= "asdf" (symbol-value '#7#)))
+                (validate-implementations '#8#))
       (setf (find-class '#2#) nil
             (find-class '#3#) nil)
       (fmakunbound '#5#)
@@ -410,3 +416,53 @@ Success: 1 test, 4 checks.
       (is (find '#4# elements :key #'name))
       (is (find '#6# elements :key #'name))
       (is (find '#8# elements :key #'name)))))
+
+(define-protest-test test-protocol-validate-implementations-one-arg
+  (with-fresh-state
+    (unwind-protect
+         (progn (define-protocol #1=#.(gensym) ()
+                  (:class #2=#.(gensym) () ())
+                  (:function #3=#.(gensym) ((#2# #2#))))
+                (eval '(execute-protocol #1#))
+                (defclass #4=#.(gensym) (#2#) ())
+                (signals protocol-error
+                  (validate-implementations '#1#))
+                (defmethod #3# ((#2# #4#)))
+                (validate-implementations '#1#)
+                (defclass #5=#.(gensym) (#2#) ())
+                (signals protocol-error
+                  (validate-implementations '#1#))
+                (defmethod #3# ((#2# #5#)))
+                (validate-implementations '#1#)
+                (defclass #6=#.(gensym) (#5#) ())
+                (validate-implementations '#1#))
+      (setf (find-class '#2#) nil
+            (find-class '#4#) nil
+            (find-class '#5#) nil
+            (find-class '#6#) nil)
+      (fmakunbound '#3#))))
+
+(define-protest-test test-protocol-validate-implementations-two-arg
+  (with-fresh-state
+    (unwind-protect
+         (progn (define-protocol #1=#.(gensym) ()
+                  (:class #2=#.(gensym) () ())
+                  (:class #3=#.(gensym) () ())
+                  (:function #4=#.(gensym) ((#2# #2#) (#3# #3#))))
+                (eval '(execute-protocol #1#))
+                (defclass #5=#.(gensym) (#2#) ())
+                (signals protocol-error
+                  (validate-implementations '#1#))
+                (defclass #6=#.(gensym) (#3#) ())
+                (signals protocol-error
+                  (validate-implementations '#1#))
+                (defmethod #4# ((#2# #5#) (#3# #5#)))
+                (signals protocol-error
+                  (validate-implementations '#1#))
+                (defmethod #4# ((#2# #5#) (#3# #6#)))
+                (validate-implementations '#1#))
+      (setf (find-class '#2#) nil
+            (find-class '#3#) nil
+            (find-class '#5#) nil
+            (find-class '#6#) nil)
+      (fmakunbound '#3#))))
