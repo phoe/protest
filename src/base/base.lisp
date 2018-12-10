@@ -53,7 +53,7 @@ directly."
     (remove-protocol-object (find-class class)))
   (:method ((class class))
     (let ((name (class-name class)))
-      (setf (gethash (find-class name) *protocol-objects*) nil)
+      (setf (gethash class *protocol-objects*) nil)
       (remove-method #'initialize-instance
                      (find-method #'initialize-instance '(:before)
                                   (list class)))

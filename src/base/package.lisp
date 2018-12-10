@@ -13,6 +13,7 @@
   (:export
    ;; FUNCTIONS
    #:protocol-object-p
+   #:remove-protocol-function
    ;; MACROS
    #:define-protocol-class
    #:define-protocol-condition-type

@@ -33,22 +33,28 @@ None.
 
   * **Function `PROTOCOL-OBJECT-P`**
 
-    Syntax: `(protocol-object-p object)`
+    Syntax: `(protocol-object-p OBJECT)`
 
     Returns true if the given object has been declared as a protocol object or a
     protocol condition type.
 
+  * **Function `REMOVE-PROTOCOL-OBJECT`**
+
+    Syntax: `(remove-protocol-object OBJECT)`
+
+    Removes the provided protocol object from the Lisp image.
+
   * **Macro `DEFINE-PROTOCOL-CLASS`**
 
-    Syntax: `(define-protocol-class name superclasses
-                                    slots &rest options)`
+    Syntax: `(define-protocol-class NAME SUPERCLASSES
+                                    SLOTS &rest OPTIONS)`
 
     Like `DEFCLASS`, but the defined class will not be directly instantiable.
 
   * **Macro `DEFINE-PROTOCOL-CONDITION-TYPE`**
 
-    Syntax: `(define-protocol-condition-type name supertypes
-                                             slots &rest options)`
+    Syntax: `(define-protocol-condition-type NAME SUPERTYPES
+                                             SLOTS &rest OPTIONS)`
 
     Like `DEFINE-CONDITION`, but the defined condition type will not be directly
     instantiable.
