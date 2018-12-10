@@ -32,36 +32,32 @@ directly."
      (defmethod ensure-class-using-class
          ((class (eql (find-class ',name))) (name (eql ',name)) &rest args)
        (declare (ignore args))
-       (setf (gethash (find-class ',name) *protocol-objects*) nil)
-       (remove-method #'initialize-instance
-                      (find-method #'initialize-instance '(:before)
-                                   (list class)))
-       (remove-method #'ensure-class-using-class
-                      (find-method #'ensure-class-using-class '()
-                                   (list (intern-eql-specializer class)
-                                         (intern-eql-specializer name))))
-       (call-next-method))
-     ',name))
+       (remove-protocol-object class)
+       ;; (setf (gethash (find-class ',name) *protocol-objects*) nil)
+       ;; (remove-method #'initialize-instance
+       ;;                (find-method #'initialize-instance '(:before)
+       ;;                             (list class)))
+       ;; (remove-method #'ensure-class-using-class
+       ;;                (find-method #'ensure-class-using-class '()
+       ;;                             (list (intern-eql-specializer class)
+       ;;                                   (intern-eql-specializer name))))
+       (call-next-method)
+       ',name)))
 
-(define-protocol-condition-type protocol-error (error) ()
-  (:documentation
-   "The parent condition type for all protocol errors.
-\
-This condition type is a protocol condition type and must not be instantiated
-directly."))
-
-(define-condition protocol-object-instantiation (protocol-error)
-  ((symbol :initarg :symbol :reader protocol-object-instantiation-symbol)
-   (type :initarg :type :reader protocol-object-instantiation-type))
-  (:report
-   (lambda (condition stream)
-     (format stream "~S is a protocol ~A and thus cannot be instantiated."
-             (protocol-object-instantiation-symbol condition)
-             (protocol-object-instantiation-type condition)))))
-
-(define-condition simple-protocol-error (protocol-error simple-condition) ())
-
-(defun protocol-error (format-control &rest args)
-  (error (make-instance 'simple-protocol-error
-                        :format-control format-control
-                        :format-arguments args)))
+;; TODO test this function
+;; TODO REMOVE-PROTOCOL
+;; TODO call this function wherever required by REMOVE-PROTOCOL
+(defgeneric remove-protocol-object (object)
+  (:documentation "Removes the provided protocol object from the Lisp image.")
+  (:method ((class symbol))
+    (remove-protocol-object (find-class class)))
+  (:method ((class class))
+    (let ((name (class-name class)))
+      (setf (gethash (find-class name) *protocol-objects*) nil)
+      (remove-method #'initialize-instance
+                     (find-method #'initialize-instance '(:before)
+                                  (list class)))
+      (remove-method #'ensure-class-using-class
+                     (find-method #'ensure-class-using-class '()
+                                  (list (intern-eql-specializer class)
+                                        (intern-eql-specializer name)))))))

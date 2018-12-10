@@ -25,7 +25,8 @@
                #:closer-mop
                #:trivial-garbage)
   :components ((:file "src/base/package")
-               (:file "src/base/base")))
+               (:file "src/base/base")
+               (:file "src/base/protocol-error")))
 
 (asdf:defsystem #:protest/ftype
   :description "FTYPE generation for PROTEST"
