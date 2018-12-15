@@ -64,5 +64,7 @@ The form for a protocol class consists of the following subforms:
 (defmethod remove-protocol-element ((element protocol-class))
   (let ((name (name element)))
     (setf (documentation name 'type) nil)
-    (remove-protocol-object (find-class name))
+    (let ((class (find-class name)))
+      (remove-protocol-object class)
+      (c2mop:remove-direct-subclass (find-class 'standard-object) class))
     (setf (find-class name) nil)))

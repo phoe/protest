@@ -500,6 +500,8 @@ Success: 1 test, 4 checks.
                   (is (find '#8# elements :key #'name))))
       (mapc #'remove-protocol (mapcar #'find-protocol '(#1# #3# #5# #7#))))))
 
+;;; VALIDATE-IMPLEMENTATIONS
+
 (define-protest-test test-protocol-validate-implementations-one-arg
   (with-fresh-state
     (unwind-protect
