@@ -40,14 +40,17 @@
         (setf (find-class '#2#) nil)))))
 
 (define-protest-test test-protocol-class-redefine
-  (unwind-protect
-       (progn
-         (define-protocol-class #2=#.(gensym) () ())
-         (signals protocol-error (make-instance '#2#))
-         (defclass #2# () ())
-         (make-instance '#2#))
-    (remove-protocol-object '#2#)
-    (setf (find-class '#2#) nil)))
+  (flet ((count-methods () (length (c2mop:generic-function-methods
+                                    #'c2mop:ensure-class-using-class))))
+    (let ((method-count (count-methods)))
+      (unwind-protect
+           (progn
+             (define-protocol-class #2=#.(gensym) () ())
+             (signals protocol-error (make-instance '#2#))
+             (defclass #2# () ())
+             (is (= method-count (count-methods)))
+             (make-instance '#2#))
+        (setf (find-class '#2#) nil)))))
 
 (define-protest-test #1=test-protocol-condition-type-define
   (unwind-protect
@@ -82,12 +85,15 @@
         (is (= method-count (count-methods)))
         (setf (find-class '#2#) nil)))))
 
-(define-protest-test #1=test-protocol-condition-type-redefine
-  (unwind-protect
-       (progn
-         (define-protocol-condition-type #2=#.(gensym) () ())
-         (signals protocol-error (make-instance '#2#))
-         (define-condition #2# () ())
-         (make-instance '#2#))
-    (remove-protocol-object '#2#)
-    (setf (find-class '#2#) nil)))
+(define-protest-test test-protocol-condition-type-redefine
+  (flet ((count-methods () (length (c2mop:generic-function-methods
+                                    #'c2mop:ensure-class-using-class))))
+    (let ((method-count (count-methods)))
+      (unwind-protect
+           (progn
+             (define-protocol-condition-type #2=#.(gensym) () ())
+             (signals protocol-error (make-instance '#2#))
+             (define-condition #2# () ())
+             (is (= method-count (count-methods)))
+             (make-instance '#2#))
+        (setf (find-class '#2#) nil)))))
