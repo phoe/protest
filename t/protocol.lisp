@@ -541,3 +541,6 @@ Success: 1 test, 4 checks.
                 (defmethod #4# ((#2# #5#) (#3# #6#)))
                 (validate-implementations '#1#))
       (remove-protocol '#1#))))
+
+;; https://bugs.launchpad.net/sbcl/+bug/1808654
+;; Class objects are not removable at the moment. Wait for SBCL 1.4.15.
