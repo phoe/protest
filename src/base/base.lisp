@@ -33,16 +33,8 @@ directly."
          ((class (eql (find-class ',name))) (name (eql ',name)) &rest args)
        (declare (ignore args))
        (remove-protocol-object class)
-       ;; (setf (gethash (find-class ',name) *protocol-objects*) nil)
-       ;; (remove-method #'initialize-instance
-       ;;                (find-method #'initialize-instance '(:before)
-       ;;                             (list class)))
-       ;; (remove-method #'ensure-class-using-class
-       ;;                (find-method #'ensure-class-using-class '()
-       ;;                             (list (intern-eql-specializer class)
-       ;;                                   (intern-eql-specializer name))))
-       (call-next-method)
-       ',name)))
+       (call-next-method))
+     ',name))
 
 ;; TODO test this function
 ;; TODO REMOVE-PROTOCOL
@@ -54,10 +46,14 @@ directly."
   (:method ((class class))
     (let ((name (class-name class)))
       (setf (gethash class *protocol-objects*) nil)
-      (remove-method #'initialize-instance
-                     (find-method #'initialize-instance '(:before)
-                                  (list class)))
-      (remove-method #'ensure-class-using-class
-                     (find-method #'ensure-class-using-class '()
-                                  (list (intern-eql-specializer class)
-                                        (intern-eql-specializer name)))))))
+      (when-let* ((function #'initialize-instance)
+                  (method (find-method function '(:before)
+                                       (list class) nil)))
+        (remove-method function method))
+      (when-let* ((function #'ensure-class-using-class)
+                  (method (find-method function '()
+                                       (list (intern-eql-specializer class)
+                                             (intern-eql-specializer name))
+                                       nil)))
+        (remove-method function method))
+      nil)))
