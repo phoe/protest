@@ -82,3 +82,8 @@ provided type ~S." (value-type element)) initial-value)
   (when (slot-boundp element '%initial-value)
     (slot-makunbound element '%initial-value))
   element)
+
+(defmethod remove-protocol-element ((element protocol-variable))
+  (let ((name (name element)))
+    (setf (documentation name 'function) nil)
+    (makunbound name)))

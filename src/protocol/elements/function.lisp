@@ -78,3 +78,8 @@ The form for a protocol function consists of the following subforms:
           (not (typep (fdefinition name) 'generic-function)))
       `(defgeneric ,name ,lambda-list ,@options)
       `(progn)))
+
+(defmethod remove-protocol-element ((element protocol-function))
+  (let ((name (name element)))
+    (setf (documentation name 'function) nil)
+    (fmakunbound name)))

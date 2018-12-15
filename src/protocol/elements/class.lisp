@@ -60,3 +60,9 @@ The form for a protocol class consists of the following subforms:
     (let ((documentation (docstring element)))
       `((define-protocol-class ,name ,superclasses ,slots ,@options
           ,@(when documentation `((:documentation ,documentation))))))))
+
+(defmethod remove-protocol-element ((element protocol-class))
+  (let ((name (name element)))
+    (setf (documentation name 'type) nil)
+    (remove-protocol-object (find-class name))
+    (setf (find-class name) nil)))

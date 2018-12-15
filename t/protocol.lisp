@@ -10,58 +10,72 @@
 (register-test-package)
 
 (defmacro with-fresh-state (&body body)
-  `(let ((*protocols* (make-hash-table)))
+  `(let ((*protocols* (make-hash-table))
+         (protest/protocol::*protocol-documentation-store* (make-hash-table)))
      ,@body
      (values)))
 
+;;; BASIC PROTOCOLS
+
 (define-protest-test test-protocol-define-empty
   (with-fresh-state
-    (define-protocol #1=#.(gensym) ())
-    (let ((protocol (find-protocol '#1#)))
-      (is (null (documentation protocol 'protocol)))
-      (is (null (tags protocol)))
-      (is (null (dependencies protocol)))
-      (is (null (exports protocol)))
-      (is (null (elements protocol)))
-      (validate-implementations protocol))))
+    (unwind-protect
+         (progn
+           (define-protocol #1=#.(gensym) ())
+           (let ((protocol (find-protocol '#1#)))
+             (is (null (documentation protocol 'protocol)))
+             (is (null (tags protocol)))
+             (is (null (dependencies protocol)))
+             (is (null (exports protocol)))
+             (is (null (elements protocol)))
+             (validate-implementations protocol)))
+      (remove-protocol '#1#))))
 
 (define-protest-test test-protocol-define-detailed
   (with-fresh-state
-    (define-protocol #1=#.(gensym) (:export ()))
-    (define-protocol #2=#.(gensym) (:dependencies (#1#)
-                                    :tags (#3=#.(gensym))
-                                    :attachments (#4="haha")
-                                    :documentation "asdf"
-                                    :export t))
-    (let ((protocol (find-protocol '#2#)))
-      (is (string= "asdf"
-                   (documentation protocol 'protocol)))
-      (is (equal '(#3#) (tags protocol)))
-      (is (equal '(#1#) (dependencies protocol)))
-      (is (string= "haha" (first (attachments protocol))))
-      (is (null (exports protocol)))
-      (is (null (elements protocol)))
-      (validate-implementations protocol))))
+    (unwind-protect
+         (progn (define-protocol #1=#.(gensym) (:export ()))
+                (define-protocol #2=#.(gensym) (:dependencies (#1#)
+                                                :tags (#3=#.(gensym))
+                                                :attachments (#4="haha")
+                                                :documentation "asdf"
+                                                :export t))
+                (let ((protocol (find-protocol '#2#)))
+                  (is (string= "asdf"
+                               (documentation protocol 'protocol)))
+                  (is (equal '(#3#) (tags protocol)))
+                  (is (equal '(#1#) (dependencies protocol)))
+                  (is (string= "haha" (first (attachments protocol))))
+                  (is (null (exports protocol)))
+                  (is (null (elements protocol)))
+                  (validate-implementations protocol)))
+      (mapc #'remove-protocol '(#1# #2#))
+      (is (null (documentation '#2# 'protocol))))))
 
 (define-protest-test test-protocol-define-dependencies
   (with-fresh-state
-    (define-protocol #1=#.(gensym) ())
-    (define-protocol #2=#.(gensym) (:dependencies (#1#)))
-    (define-protocol #3=#.(gensym) (:dependencies (#1#)))
-    (define-protocol #4=#.(gensym) (:dependencies (#2# #3#)))
-    (define-protocol #5=#.(gensym) (:dependencies (#2#)))
-    (define-protocol #6=#.(gensym) (:dependencies (#3#)))
-    (define-protocol #7=#.(gensym) (:dependencies (#2#)))
-    (define-protocol #.(gensym) (:dependencies (#1# #2# #3# #4# #5# #6# #7#)))))
+    (unwind-protect
+         (progn (define-protocol #1=#.(gensym) ())
+                (define-protocol #2=#.(gensym) (:dependencies (#1#)))
+                (define-protocol #3=#.(gensym) (:dependencies (#1#)))
+                (define-protocol #4=#.(gensym) (:dependencies (#2# #3#)))
+                (define-protocol #5=#.(gensym) (:dependencies (#2#)))
+                (define-protocol #6=#.(gensym) (:dependencies (#3#)))
+                (define-protocol #7=#.(gensym) (:dependencies (#2#)))
+                (define-protocol #8=#.(gensym)
+                  (:dependencies (#1# #2# #3# #4# #5# #6# #7#))))
+      (mapc #'remove-protocol '(#1# #2# #3# #4# #5# #6# #7# #8#)))))
 
 (define-protest-test test-protocol-define-circular-dependency
   (with-fresh-state
-    (define-protocol #1=#.(gensym) ())
-    (define-protocol #2=#.(gensym) (:dependencies (#1#)))
-    (define-protocol #3=#.(gensym) (:dependencies (#2#)))
-    (define-protocol #4=#.(gensym) (:dependencies (#3#)))
-    (signals protocol-error
-      (define-protocol #1# (:dependencies (#4#))))))
+    (unwind-protect
+         (progn (define-protocol #1=#.(gensym) ())
+                (define-protocol #2=#.(gensym) (:dependencies (#1#)))
+                (define-protocol #3=#.(gensym) (:dependencies (#2#)))
+                (define-protocol #4=#.(gensym) (:dependencies (#3#)))
+                (signals protocol-error
+                  (define-protocol #1# (:dependencies (#4#)))))
+      (mapc #'remove-protocol '(#1# #2# #3# #4#)))))
 
 (define-protest-test test-protocol-define-self-dependency
   (with-fresh-state
@@ -75,73 +89,96 @@
     (signals protocol-error (define-protocol '(#.(gensym) #.(gensym)) ()))
     (signals protocol-error (define-protocol nil ()))))
 
-(define-protest-test test-protocol-define-invalid-dependencies
+(define-protest-test test-protocol-define-invalid-dependencies-1
   (with-fresh-state
     (signals protocol-error
-      (define-protocol #.(gensym) (:dependencies (2)))))
+      (define-protocol #.(gensym) (:dependencies (2))))))
+
+(define-protest-test test-protocol-define-invalid-dependencies-2
   (with-fresh-state
     (signals protocol-error
-      (define-protocol #.(gensym) (:dependencies ("ABC")))))
+      (define-protocol #.(gensym) (:dependencies ("ABC"))))))
+
+(define-protest-test test-protocol-define-invalid-dependencies-3
   (with-fresh-state
     (signals protocol-error
-      (define-protocol #.(gensym) (:dependencies ((#.(gensym)))))))
+      (define-protocol #.(gensym) (:dependencies ((#.(gensym))))))))
+
+(define-protest-test test-protocol-define-invalid-dependencies-4
   (with-fresh-state
     (signals protocol-error
-      (define-protocol #.(gensym) (:dependencies ((1 2 3 4))))))
+      (define-protocol #.(gensym) (:dependencies ((1 2 3 4)))))))
+
+(define-protest-test test-protocol-define-invalid-dependencies-5
   (with-fresh-state
     (signals protocol-error
       (define-protocol #.(gensym) (:dependencies (nil))))))
 
-(define-protest-test test-protocol-define-duplicate-elements
+(define-protest-test test-protocol-define-duplicate-elements-1
   (with-fresh-state
     (signals protocol-error
       (define-protocol #.(gensym) ()
         (:variable #1=#.(gensym))
-        (:variable #1#))))
+        (:variable #1#)))))
+
+(define-protest-test test-protocol-define-duplicate-elements-2
   (with-fresh-state
     (signals protocol-error
       (define-protocol #.(gensym) ()
         (:function #2=#.(gensym) ())
-        (:macro #2# ()))))
+        (:macro #2# ())))))
+
+(define-protest-test test-protocol-define-duplicate-elements-3
   (with-fresh-state
     (signals protocol-error
       (define-protocol #.(gensym) ()
         (:class #3=#.(gensym) () ())
-        (:condition-type #3# () ()))))
+        (:condition-type #3# () ())))))
+
+(define-protest-test test-protocol-define-duplicate-elements-4
   (with-fresh-state
     (signals protocol-error
       (define-protocol #.(gensym) ()
         (:category (:category))
-        (:config (:category)))))
+        (:config (:category))))))
+
+(define-protest-test test-protocol-define-duplicate-elements-5
   (with-fresh-state
     (signals protocol-error
-      (define-protocol #.(gensym) ()
+      (define-protocol #1=#.(gensym) ()
         (:category (:category #1#))
         (:config (:category #1#))))))
 
 (define-protest-test test-protocol-define-duplicate-elements-inheritance
   (with-fresh-state
-    (signals protocol-error
-      (define-protocol #1=#.(gensym) ()
-        (:variable #2=#.(gensym)))
-      (define-protocol #.(gensym) (:dependencies (#1#))
-        (:variable #2#)))))
+    (unwind-protect
+         (progn
+           (define-protocol #1=#.(gensym) () (:variable #2=#.(gensym)))
+           (signals protocol-error
+             (define-protocol #.(gensym) (:dependencies (#1#))
+               (:variable #2#))))
+      (remove-protocol '#1#))))
 
 (define-protest-test test-protocol-invalid-redefinition
   (with-fresh-state
-    (define-protocol #1=#.(gensym) ())
-    (define-protocol #2=#.(gensym) (:dependencies (#1#))
-      (:variable #3=#.(gensym)))
-    (signals protocol-error
-      (handler-bind ((warning (lambda (c) (declare (ignore c))
-                                (muffle-warning))))
-        (define-protocol #1# ()
-          (:variable #3#))))))
+    (unwind-protect
+         (progn (define-protocol #1=#.(gensym) ())
+                (define-protocol #2=#.(gensym) (:dependencies (#1#))
+                  (:variable #3=#.(gensym)))
+                (signals protocol-error
+                  (handler-bind ((warning (lambda (c) (declare (ignore c))
+                                            (muffle-warning))))
+                    (define-protocol #1# ()
+                      (:variable #3#)))))
+      (mapc #'remove-protocol '(#1# #2#)))))
+
+;;; ELEMENTS
 
 ;; TODO cleanup after protocol execution
 ;; TODO REMOVE-PROTOCOL that performs that cleanup
+;; TODO REMOVE-PROTOCOL-ELEMENT called by the above on each element
 
-(define-protest-test test-protocol-define-category
+(define-protest-test test-protocol-define-category-1
   (with-fresh-state
     (let* ((variable nil)
            (*category-callback*
@@ -154,8 +191,12 @@
                   (is (eq variable t))
                   (let ((category (first (elements (find-protocol '#3#)))))
                     (is (equal (canonical-name category) '(:foo :bar nil)))))
-        (setf (documentation '#1# 'category) nil)
-        (is (null (documentation '#1# 'category))))))
+        (let* ((elements (elements (find-protocol '#3#)))
+               (category (find 'protocol-category elements :key #'type-of)))
+          (remove-protocol-element category)
+          (is (null (documentation '#1# 'category))))))))
+
+(define-protest-test test-protocol-define-category-2
   (with-fresh-state
     (let* ((*variable* nil))
       (declare (special *variable*))
@@ -170,8 +211,10 @@
                   (eval '(execute-protocol #6#))
                   (is (string= #5# (documentation '#4# 'category)))
                   (is (eq *variable* t)))
-        (setf (documentation '#4# 'category) nil)
-        (is (null (documentation '#4# 'category)))))))
+        (let* ((elements (elements (find-protocol '#6#)))
+               (category (find 'protocol-category elements :key #'type-of)))
+          (remove-protocol-element category)
+          (is (null (documentation '#4# 'category))))))))
 
 (define-protest-test test-protocol-define-class
   (with-fresh-state
@@ -182,10 +225,11 @@
                 (eval '(execute-protocol #3#))
                 (is (find-class '#1#))
                 (is (string= #2# (documentation '#1# 'type))))
-      (setf (documentation '#1# 'type) nil)
-      (is (null (documentation '#1# 'type)))
-      (setf (find-class '#1#) nil)
-      (is (null (find-class '#1# nil))))))
+      (let* ((elements (elements (find-protocol '#3#)))
+             (class (find 'protocol-class elements :key #'type-of)))
+        (remove-protocol-element class)
+        (is (null (documentation '#1# 'type)))
+        (is (null (find-class '#1# nil)))))))
 
 (define-protest-test test-protocol-define-class-instantiate
   (with-fresh-state
@@ -195,8 +239,11 @@
                 (eval '(execute-protocol #3#))
                 (signals protocol-error
                   (make-instance (find-class '#1#))))
-      (setf (find-class '#1#) nil)
-      (is (null (find-class '#1# nil))))))
+      (let* ((elements (elements (find-protocol '#3#)))
+             (class (find 'protocol-class elements :key #'type-of)))
+        (remove-protocol-element class)
+        (is (null (documentation '#1# 'type)))
+        (is (null (find-class '#1# nil)))))))
 
 (define-protest-test test-protocol-define-condition-type
   (with-fresh-state
@@ -207,25 +254,29 @@
                 (eval '(execute-protocol #3#))
                 (is (find-class '#1#))
                 (is (string= #2# (documentation '#1# 'type))))
-      (setf (documentation '#1# 'type) nil)
-      (is (null (documentation '#1# 'type)))
-      (setf (find-class '#1#) nil)
-      (is (null (find-class '#1# nil))))))
+      (let* ((elements (elements (find-protocol '#3#)))
+             (condition-type (find 'protocol-condition-type elements
+                                   :key #'type-of)))
+        (remove-protocol-element condition-type)
+        (is (null (documentation '#1# 'type)))
+        (is (null (find-class '#1# nil)))))))
 
 (define-protest-test #2=test-protocol-define-condition-type-instantiate
-  ;; https://bugs.launchpad.net/sbcl/+bug/1761950
-  #+sbcl (format t "~&~A broken on SBCL; skipping.~&" '#2#)
-  #-sbcl (with-fresh-state
-           (unwind-protect
-                (progn (define-protocol #3=#.(gensym) ()
-                         (:condition-type #1=#.(gensym) () ()))
-                       (eval '(execute-protocol #3#))
-                       (signals protocol-error
-                         (make-condition '#1#)))
-             (setf (find-class '#1#) nil)
-             (is (null (find-class '#1# nil))))))
+  (with-fresh-state
+    (unwind-protect
+         (progn (define-protocol #3=#.(gensym) ()
+                  (:condition-type #1=#.(gensym) () ()))
+                (eval '(execute-protocol #3#))
+                (signals protocol-error
+                  (make-instance'#1#)))
+      (let* ((elements (elements (find-protocol '#3#)))
+             (condition-type (find 'protocol-condition-type elements
+                                   :key #'type-of)))
+        (remove-protocol-element condition-type)
+        (is (null (documentation '#1# 'type)))
+        (is (null (find-class '#1# nil)))))))
 
-(define-protest-test test-protocol-define-config
+(define-protest-test test-protocol-define-config-1
   (with-fresh-state
     (let* ((variable nil)
            (*config-callback*
@@ -240,8 +291,12 @@
                   (is (eq variable t))
                   (let ((config (first (elements (find-protocol '#3#)))))
                     (is (equal (canonical-name config) '(:foo :bar nil)))))
-        (setf (documentation '#1# 'config) nil)
-        (is (null (documentation '#1# 'config))))))
+        (let* ((elements (elements (find-protocol '#3#)))
+               (config (find 'protocol-config elements :key #'type-of)))
+          (remove-protocol-element config)
+          (is (null (documentation '#1# 'config))))))))
+
+(define-protest-test test-protocol-define-config-2
   (with-fresh-state
     (let* ((*variable* nil))
       (declare (special *variable*))
@@ -257,26 +312,35 @@
                   (eval '(execute-protocol #6#))
                   (is (string= #5# (documentation '#4# 'config)))
                   (is (eq *variable* t)))
-        (setf (documentation '#4# 'config) nil)
-        (is (null (documentation '#4# 'config)))))))
+        (let* ((elements (elements (find-protocol '#6#)))
+               (config (find 'protocol-config elements :key #'type-of)))
+          (remove-protocol-element config)
+          (is (null (documentation '#4# 'config))))))))
 
 (define-protest-test test-protocol-define-config-boundp
   (with-fresh-state
-    (define-protocol #2=#.(gensym) ()
-      (:config #1=(:foo :bar) t :mandatory 42))
-    (let* ((protocol (find-protocol '#2#))
-           (elements (elements protocol))
-           (element (find '#1# elements :key #'name :test #'equal)))
-      (is (protocol-element-boundp element))
-      (is (= 42 (initial-value element)))
-      (protocol-element-makunbound element)
-      (is (not (protocol-element-boundp element))))))
+    (unwind-protect
+         (progn (define-protocol #2=#.(gensym) ()
+                  (:config #1=(:foo :bar) t :mandatory 42))
+                (let* ((protocol (find-protocol '#2#))
+                       (elements (elements protocol))
+                       (element (find '#1# elements :key #'name :test #'equal)))
+                  (is (protocol-element-boundp element))
+                  (is (= 42 (initial-value element)))
+                  (protocol-element-makunbound element)
+                  (is (not (protocol-element-boundp element)))))
+      (let* ((elements (elements (find-protocol '#2#)))
+             (config (find 'protocol-config elements :key #'type-of)))
+        (remove-protocol-element config)
+        (is (null (documentation '#1# 'config)))))))
 
-(define-protest-test test-protocol-define-config-wrong-type
+(define-protest-test test-protocol-define-config-wrong-type-1
   (with-fresh-state
     (signals protocol-error
       (define-protocol #.(gensym) ()
-        (:config (:foo :bar) number :mandatory "42"))))
+        (:config (:foo :bar) number :mandatory "42")))))
+
+(define-protest-test test-protocol-define-config-wrong-type-2
   (with-fresh-state
     (signals protocol-error
       (define-protocol #.(gensym) ()
@@ -302,10 +366,11 @@ Success: 1 test, 4 checks.
                 (eval '(execute-protocol #5#))
                 (is (typep (fdefinition '#1#) 'generic-function))
                 (is (string= #4# (documentation '#1# 'function))))
-      (fmakunbound '#1#)
-      (is (not (fboundp'#1#)))
-      (setf (documentation '#1# 'function) nil)
-      (is (null (documentation '#1# 'function))))))
+      (let* ((elements (elements (find-protocol '#5#)))
+             (function (find 'protocol-function elements :key #'type-of)))
+        (remove-protocol-element function)
+        (is (not (fboundp'#1#)))
+        (is (null (documentation '#1# 'function)))))))
 
 (define-protest-test test-protocol-define-function-setf
   (with-fresh-state
@@ -323,12 +388,16 @@ Success: 1 test, 4 checks.
                 (is (typep (fdefinition '#2#) 'generic-function))
                 (is (string= #6# (documentation '#2# 'function)))
                 (let ((function (first (elements (find-protocol '#5#)))))
-                  (is (equal (name function) (print (canonical-name function))))
+                  (is (equal (name function) (canonical-name function)))
                   (is (equal (name function) '#1#))))
-      (fmakunbound '#1#)
-      (is (not (fboundp'#1#)))
-      (setf (documentation '#1# 'function) nil)
-      (is (null (documentation '#1# 'function))))))
+      (let* ((elements (elements (find-protocol '#5#)))
+             (functions (remove 'protocol-function elements
+                                :test-not #'eql :key #'type-of)))
+        (mapc #'remove-protocol-element functions)
+        (is (not (fboundp'#1#)))
+        (is (null (documentation '#1# 'function)))
+        (is (not (fboundp'#2#)))
+        (is (null (documentation '#2# 'function)))))))
 
 (define-protest-test test-protocol-define-macro
   (with-fresh-state
@@ -338,10 +407,11 @@ Success: 1 test, 4 checks.
                   #4="qwer")
                 (eval '(execute-protocol #5#))
                 (is (string= #4# (documentation '#1# 'function))))
-      (fmakunbound '#1#)
       (is (not (fboundp'#1#)))
-      (setf (documentation '#1# 'function) nil)
-      (is (null (documentation '#1# 'function))))))
+      (let* ((elements (elements (find-protocol '#5#)))
+             (macro (find 'protocol-macro elements :key #'type-of)))
+        (remove-protocol-element macro)
+        (is (null (documentation '#1# 'function)))))))
 
 (define-protest-test test-protocol-define-variable
   (with-fresh-state
@@ -352,32 +422,40 @@ Success: 1 test, 4 checks.
                 (eval '(execute-protocol #4#))
                 (is (string= (symbol-value '#1#) #2#))
                 (is (string= #3# (documentation '#1# 'variable))))
-      (makunbound '#1#)
-      (is (not (boundp '#1#)))
-      (setf (documentation '#1# 'variable) nil)
-      (is (null (documentation '#1# 'variable))))))
+      (let* ((elements (elements (find-protocol '#4#)))
+             (variable (find 'protocol-variable elements :key #'type-of)))
+        (remove-protocol-element variable)
+        (is (not (boundp '#1#)))
+        (is (null (documentation '#1# 'function)))))))
 
 (define-protest-test test-protocol-define-variable-boundp
   (with-fresh-state
-    (define-protocol #2=#.(gensym) ()
-      (:variable #1=#.(gensym) t 42))
-    (let* ((protocol (find-protocol '#2#))
-           (elements (elements protocol))
-           (element (find '#1# elements :key #'name)))
-      (is (protocol-element-boundp element))
-      (is (= 42 (initial-value element)))
-      (protocol-element-makunbound element)
-      (is (not (protocol-element-boundp element))))))
+    (unwind-protect (progn (define-protocol #2=#.(gensym) ()
+                             (:variable #1=#.(gensym) t 42))
+                           (let* ((protocol (find-protocol '#2#))
+                                  (elements (elements protocol))
+                                  (element (find '#1# elements :key #'name)))
+                             (is (protocol-element-boundp element))
+                             (is (= 42 (initial-value element)))
+                             (protocol-element-makunbound element)
+                             (is (not (protocol-element-boundp element)))))
+      (let* ((elements (elements (find-protocol '#2#)))
+             (variable (find 'protocol-variable elements :key #'type-of)))
+        (remove-protocol-element variable)))))
 
-(define-protest-test test-protocol-define-variable-wrong-type
+(define-protest-test test-protocol-define-variable-wrong-type-1
   (with-fresh-state
     (signals protocol-error
       (define-protocol #.(gensym) ()
-        (:variable #1=#.(gensym) number "42"))))
+        (:variable #1=#.(gensym) number "42")))))
+
+(define-protest-test test-protocol-define-variable-wrong-type-2
   (with-fresh-state
     (signals protocol-error
       (define-protocol #.(gensym) ()
         (:variable #2=#.(gensym) string 42)))))
+
+;;; COMPLEX PROTOCOLS
 
 (define-protest-test test-protocol-define-complex
   (with-fresh-state
@@ -396,26 +474,31 @@ Success: 1 test, 4 checks.
                 (is (fdefinition '#5#))
                 (is (string= "asdf" (symbol-value '#7#)))
                 (validate-implementations '#8#))
-      (setf (find-class '#2#) nil
-            (find-class '#3#) nil)
-      (fmakunbound '#5#)
-      (makunbound '#7#))))
+      (remove-protocol '#8#)
+      (is (null (find-protocol '#8#)))
+      (is (null (find-class '#2# nil)))
+      (is (null (find-class '#3# nil)))
+      (is (not (fboundp '#5#)))
+      (is (not (boundp '#6#))))))
 
 (define-protest-test test-protocol-compute-effective-protocol-elements
   (with-fresh-state
-    (define-protocol #1=#.(gensym) ()
-      (:variable #2=#.(gensym)))
-    (define-protocol #3=#.(gensym) (:dependencies (#1#))
-      (:variable #4=#.(gensym)))
-    (define-protocol #5=#.(gensym) (:dependencies (#1#))
-      (:variable #6=#.(gensym)))
-    (define-protocol #7=#.(gensym) (:dependencies (#3# #5#))
-      (:variable #8=#.(gensym)))
-    (let ((elements (compute-effective-protocol-elements (find-protocol '#7#))))
-      (is (find '#2# elements :key #'name))
-      (is (find '#4# elements :key #'name))
-      (is (find '#6# elements :key #'name))
-      (is (find '#8# elements :key #'name)))))
+    (unwind-protect
+         (progn (define-protocol #1=#.(gensym) ()
+                  (:variable #2=#.(gensym)))
+                (define-protocol #3=#.(gensym) (:dependencies (#1#))
+                  (:variable #4=#.(gensym)))
+                (define-protocol #5=#.(gensym) (:dependencies (#1#))
+                  (:variable #6=#.(gensym)))
+                (define-protocol #7=#.(gensym) (:dependencies (#3# #5#))
+                  (:variable #8=#.(gensym)))
+                (let ((elements (compute-effective-protocol-elements
+                                 (find-protocol '#7#))))
+                  (is (find '#2# elements :key #'name))
+                  (is (find '#4# elements :key #'name))
+                  (is (find '#6# elements :key #'name))
+                  (is (find '#8# elements :key #'name))))
+      (mapc #'remove-protocol (mapcar #'find-protocol '(#1# #3# #5# #7#))))))
 
 (define-protest-test test-protocol-validate-implementations-one-arg
   (with-fresh-state
@@ -436,11 +519,7 @@ Success: 1 test, 4 checks.
                 (validate-implementations '#1#)
                 (defclass #6=#.(gensym) (#5#) ())
                 (validate-implementations '#1#))
-      (setf (find-class '#2#) nil
-            (find-class '#4#) nil
-            (find-class '#5#) nil
-            (find-class '#6#) nil)
-      (fmakunbound '#3#))))
+      (remove-protocol '#1#))))
 
 (define-protest-test test-protocol-validate-implementations-two-arg
   (with-fresh-state
@@ -461,8 +540,4 @@ Success: 1 test, 4 checks.
                   (validate-implementations '#1#))
                 (defmethod #4# ((#2# #5#) (#3# #6#)))
                 (validate-implementations '#1#))
-      (setf (find-class '#2#) nil
-            (find-class '#3#) nil
-            (find-class '#5#) nil
-            (find-class '#6#) nil)
-      (fmakunbound '#3#))))
+      (remove-protocol '#1#))))

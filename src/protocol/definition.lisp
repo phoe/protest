@@ -16,9 +16,11 @@
 (defun (setf find-protocol) (new-value name)
   "Sets the protocol with the provided name."
   (check-type new-value (or protocol null))
-  (if new-value
-      (setf (gethash name *protocols*) new-value)
-      (remhash name *protocols*))
+  (cond (new-value
+         (setf (gethash name *protocols*) new-value))
+        (t
+         (remhash name *protocols*)
+         (setf (documentation name 'protocol) nil)))
   new-value)
 
 (defclass protocol ()
@@ -147,41 +149,48 @@ protocol and all of its dependencies, including transitive ones."
   (:documentation "Checks if all subclasses of protocol classes defined
 in the protocol have appropriate methods defined on protocol functions defined
 in the protocol. Signals an error if the check fails or if any protocol function
-is undefined.")) ;; TODO export ;; TODO test
-
-(defmethod validate-implementations ((protocol symbol))
-  (validate-implementations (find-protocol protocol)))
-
-(defmethod validate-implementations ((protocol protocol))
-  (dolist (protocol-function (remove-if-not (rcurry #'typep 'protocol-function)
-                                            (elements protocol)))
-    (let ((function-name (name protocol-function)))
-      (unless (fboundp function-name)
-        (error 'undefined-protocol-function :name function-name))
-      (let* ((function (fdefinition function-name))
-             (methods (generic-function-methods function))
-             (specializers (mapcar #'method-specializers methods))
-             (original-lambda-list (lambda-list protocol-function))
-             (lambda-list (standard-specializers-only original-lambda-list))
-             (class-names (extract-specializer-names lambda-list)))
-        (dotimes (position (length class-names))
-          (let* ((class-name (nth position class-names))
-                 (class (find-class class-name)))
-            (when (protocol-object-p class)
-              (dolist (subclass (remove-if #'protocol-object-p
-                                           (moptilities:subclasses class)))
-                (let ((candidates (mapcar (curry #'nth position)
-                                          specializers)))
-                  (unless (some (curry #'subtypep subclass) candidates)
-                    (error 'protocol-validation-error
-                           :function function :subclass subclass
-                           :position position :class class)))))))
-        (values)))))
+is undefined.")
+  (:method ((protocol symbol))
+    (validate-implementations (find-protocol protocol)))
+  (:method ((protocol protocol))
+    (dolist (protocol-function (remove-if-not (rcurry #'typep 'protocol-function)
+                                              (elements protocol)))
+      (let ((function-name (name protocol-function)))
+        (unless (fboundp function-name)
+          (error 'undefined-protocol-function :name function-name))
+        (let* ((function (fdefinition function-name))
+               (methods (generic-function-methods function))
+               (specializers (mapcar #'method-specializers methods))
+               (original-lambda-list (lambda-list protocol-function))
+               (lambda-list (standard-specializers-only original-lambda-list))
+               (class-names (extract-specializer-names lambda-list)))
+          (dotimes (position (length class-names))
+            (let* ((class-name (nth position class-names))
+                   (class (find-class class-name)))
+              (when (protocol-object-p class)
+                (dolist (subclass (remove-if #'protocol-object-p
+                                             (moptilities:subclasses class)))
+                  (let ((candidates (mapcar (curry #'nth position)
+                                            specializers)))
+                    (unless (some (curry #'subtypep subclass) candidates)
+                      (error 'protocol-validation-error
+                             :function function :subclass subclass
+                             :position position :class class)))))))
+          (values))))))
 
 (defun standard-specializers-only (lambda-list)
   (loop for elt in lambda-list
         when (and (second elt) (symbolp (second elt)))
           collect elt))
+
+(defgeneric remove-protocol (protocol)
+  (:documentation "Removes the provided protocol and all the effects of its
+elements from the Lisp image.")
+  (:method ((protocol symbol))
+    (remove-protocol (find-protocol protocol)))
+  (:method ((protocol protocol))
+    (mapc #'remove-protocol-element (elements protocol))
+    (setf (find-protocol (name protocol)) nil)))
 
 (defvar *undefined-protocol-function-report*
   "The protocol function ~S is undefined. (Has the protocol been executed?)")

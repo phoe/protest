@@ -59,3 +59,6 @@ subforms:
 
 (defmethod canonical-name ((category protocol-category))
   (canonicalize-name (name category)))
+
+(defmethod remove-protocol-element ((element protocol-category))
+  (setf (documentation (name element) 'category) nil))

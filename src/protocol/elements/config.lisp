@@ -125,3 +125,6 @@ provided type ~S." (value-type element) initial-value))
 
 (defmethod canonical-name ((config protocol-config))
   (canonicalize-name (name config)))
+
+(defmethod remove-protocol-element ((element protocol-config))
+  (setf (documentation (name element) 'config) nil))

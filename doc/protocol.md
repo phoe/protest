@@ -354,6 +354,22 @@ Syntax summary of all options and configuration elements:
     Signals an error if the check fails or if any protocol function is
     undefined.
 
+  * **Function `REMOVE-PROTOCOL`**
+
+    Syntax: `(remove-protocol PROTOCOL)`
+
+    Removes the provided protocol and all the effects of its elements from the
+    Lisp image.
+
+  * **Function `REMOVE-PROTOCOL-ELEMENT`**
+
+    Syntax: `(remove-protocol-element PROTOCOL-ELEMENT)`
+
+    Removes the effects of the provided protocol element from the Lisp image.
+
+    This function does nothing unless the protocol associated with this element
+    has been executed.
+
 ### Macros
 
   * **Macro `DEFINE-PROTOCOL`**
