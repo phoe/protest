@@ -32,6 +32,6 @@ See each protocol's code file for the description and details of that protocol.
 
   * [`PROTEST/PROTOCOL`](protocol.md)
 
-## TODO
+## To be done in the future
 
 * Export protocol files into Markdown.

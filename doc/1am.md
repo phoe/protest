@@ -10,8 +10,7 @@ the details of the failed test step.
 
 PROTEST/1AM is designed as a drop-in replacement for the original 1AM. It should
 be enough to replace `:1AM` with `:PROTEST/1AM` in your package use lists and
-write the test cases for all implemented tests. (TODO rethink this, most likely
-we want tests without test cases)
+write the test cases for all implemented tests.
 
 ## Internal Dependencies
 

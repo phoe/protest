@@ -35,5 +35,3 @@
    #:validate-implementations
    ;; MACROS
    #:define-protocol #:execute-protocol))
-
-;; TODO check that all exported symbols are documented

@@ -11,8 +11,7 @@ the user of the details of the failed test step.
 PROTEST/PARACHUTE is designed as a drop-in replacement for the original
 Parachute. It should be enough to replace `:PARACHUTE` with
 `:PROTEST/PARACHUTE` in your package use lists and write the test cases for all
-implemented tests. (TODO rethink this, most likely we want tests without test
-cases)
+implemented tests.
 
 ## Internal Dependencies
 

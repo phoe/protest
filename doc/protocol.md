@@ -498,10 +498,9 @@ The form obeys the following grammar:
   `&KEY` arguments used in `LAMBDA-LIST` along with their respective types.
 
 This element expands into `DEFGENERIC` with the exception that already existing
-generic functions are not redefined. (TODO reconsider this) The type information
-from `LAMBDA-LIST`, `RETURN-TYPE` and `KEYWORD-TYPES` will be passed to a
-`DECLAIM FTYPE` call if the protocol is defined with `:DECLAIM-TYPES-P` being
-true.
+generic functions are not redefined. The type information from `LAMBDA-LIST`,
+`RETURN-TYPE` and `KEYWORD-TYPES` will be passed to a `DECLAIM FTYPE` call if
+the protocol is defined with `:DECLAIM-TYPES-P` being true.
 
 If a documentation string is provided, it is attached to the resulting
 `DEFGENERIC` form.
