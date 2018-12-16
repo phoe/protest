@@ -122,7 +122,7 @@
   (defvar *%protest-commons* '()))
 
 (defmacro define-protest-common
-    (name description &key (subdirectory "") depends-on)
+    (name description &key (subdirectory ""))
   (let ((filename (string-downcase (string name)))
         (symbol (make-symbol (uiop:strcat (string '#:protest/common/)
                                           (string name)))))
@@ -132,9 +132,7 @@
          :author "Michał \"phoe\" Herda <phoe@disroot.org>"
          :license "LLGPL"
          :serial t
-         :depends-on
-         (#:protest/protocol
-          ,@depends-on)
+         :depends-on (#:protest/protocol)
          :components
          ((:file ,(uiop:strcat "src/common/" subdirectory filename))))
        (eval-when (:compile-toplevel :load-toplevel :execute)
