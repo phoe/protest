@@ -248,8 +248,8 @@ Syntax summary of all options and configuration elements:
 
   * **Generic Function `GENERATE-ELEMENT-USING-CLASS`**
 
-    Syntax: `(generate-element-using-class CLASS DETAILS
-    &OPTIONAL DECLAIM-TYPE-P)`
+    Syntax: `(generate-element-using-class CLASS DETAILS &OPTIONAL
+    DECLAIM-TYPE-P)`
 
     Generates the protocol element based on its class and the details of the
     element, based on their list representation.
@@ -445,7 +445,7 @@ Syntax summary of all options and configuration elements:
     * **`:DECLAIM-TYPES-P`**
 
       States if the types and ftypes of the elements should be declaimed when the
-      protocol is executed. If not supplied, it defaults to `T`.
+      protocol is executed. If not supplied, it defaults to `NIL`.
 
     For element definition, see Protocol Elements below.
 

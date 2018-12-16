@@ -60,7 +60,7 @@ operations on these types."))
 
 (defmethod initialize-instance :after
     ((protocol protocol)
-     &key name dependencies export (declaim-types-p t) documentation)
+     &key name dependencies export declaim-types-p documentation)
   (when (or (null name) (not (symbolp name)))
     (protocol-error "NAME must be a non-null symbol, not ~S." name))
   (when documentation
