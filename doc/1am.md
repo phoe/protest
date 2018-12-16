@@ -32,10 +32,12 @@ Same as 1AM, except:
 
 ## Example
 
-To run the example test, load the `PROTEST/TEST/1AM` system and evaluate
-`(protest/test/1am:self-test)`. The results should look like:
+To run the example test, load the `PROTEST/TEST` system and evaluate
+`(PROTEST/TEST/1AM::SELF-TEST)`. The results should look like:
 
 ```common-lisp
 PROTEST/TEST/1AM::SELF-TEST..
 Success: 1 test, 2 checks.
 ```
+
+The system is also tested as a part of unit tests inside the `PROTEST/TEST` test suite.
