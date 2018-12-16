@@ -593,8 +593,6 @@
     ((remove-protocol '#1#)
      (mapc #'kill-class '(#4# #5# #6#)))))
 
-;;; TODO :declaim-types-p nil everywhere to avoid SBCL warnings?
-
 ;;; VALIDATE-IMPLEMENTATIONS - TWO ARG
 
 (define-protest-test test-protocol-validate-implementations-two-arg-1

@@ -21,12 +21,6 @@ Common Lisp, featuring integration with ~~multiple~~ one testing framework.
 
 (ql:quickload :protest/1am)
 (use-package :protest/1am)
-
-;; (ql:quickload :protest/5am) ;; TODO
-;; (use-package :protest/5am) ;; TODO
-
-;; (ql:quickload :protest/prove) ;; TODO
-;; (use-package :protest/prove) ;; TODO
 ```
 
 ## Modules
