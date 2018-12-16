@@ -16,9 +16,7 @@ Currently available protocols:
   * [`KILLABLE`](../src/common/mixin/killable.lisp) -
     a protocol for objects that need to be finalized,
   * [`NAMED`](../src/common/mixin/named.lisp) -
-    a protocol for objects having a string name,
-  * [`SERIALIZABLE`](../src/common/mixin/serializable.lisp) -
-    a protocol for objects that are serializable to human-readable text.
+    a protocol for objects having a string name.
 
 All of the common protocols may be loaded by loading the `PROTEST/COMMON` ASDF
 system. Individual protocols may be loaded by loading a system named

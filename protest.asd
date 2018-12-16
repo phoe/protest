@@ -154,9 +154,6 @@
 (define-protest-common #:named
   "Named protocol from PROTEST"
   :subdirectory "mixin/")
-(define-protest-common #:serializable
-  "Serializable protocol from PROTEST"
-  :subdirectory "mixin/")
 
 (asdf:defsystem #:protest/common
   :description "Common protocols and examples of PROTEST"
