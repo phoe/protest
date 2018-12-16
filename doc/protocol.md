@@ -359,8 +359,8 @@ Syntax summary of all options and configuration elements:
       is a subtype of protocol class that is the declared protocol specializer
       of that argument. If `ERRORP` is true, a condition of type!
       `PROTOCOL-VALIDATION-ERROR` is instead signaled.
-    * `(:unbound-function FUNCTION-NAME)`: The protocol function with this name
-      is undefined. The protocol might not have been executed. If ERRORP is
+    * `(:undefined-function FUNCTION-NAME)`: The protocol function with this
+      name is undefined. The protocol might not have been executed. If ERRORP is
       true, a condition of type `UNDEFINED-PROTOCOL-FUNCTION` is instead
       signaled.
     * `(:success FUNCTION POSITION PROTOCOL-CLASS CONCRETE-CLASS SPECIALIZER)`:

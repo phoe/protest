@@ -136,6 +136,15 @@ operations on these types."))
                (dolist (new-name new-names) (push new-name stack)))
         finally (return (hash-table-keys visited))))
 
+(defgeneric remove-protocol (protocol)
+  (:documentation "Removes the provided protocol and all the effects of its
+elements from the Lisp image.")
+  (:method ((protocol symbol))
+    (remove-protocol (find-protocol protocol)))
+  (:method ((protocol protocol))
+    (mapc #'remove-protocol-element (elements protocol))
+    (setf (find-protocol (name protocol)) nil)))
+
 (defun compute-effective-protocol-elements (protocol)
   "Returns a fresh list of all protocol elements that occur inside the provided
 protocol and all of its dependencies, including transitive ones."
@@ -156,7 +165,7 @@ any protocol function is undefined. Each entry in the list follows the pattern:
   protocol class that is the declared protocol specializer of that argument.
   If ERRORP is true, a condition of type PROTOCOL-VALIDATION-ERROR is instead
   signaled.
-* (:unbound-function FUNCTION-NAME): The protocol function with this name is
+* (:undefined-function FUNCTION-NAME): The protocol function with this name is
   undefined. The protocol might not have been executed. If ERRORP is true, a
   condition of type UNDEFINED-PROTOCOL-FUNCTION is instead signaled.
 * (:success FUNCTION POSITION PROTOCOL-CLASS CONCRETE-CLASS SPECIALIZER):
@@ -164,69 +173,142 @@ any protocol function is undefined. Each entry in the list follows the pattern:
   POSITIONth position and that specializer is a proper subtype of the concrete
   class. (In other words, there is a method defined on that class.)
   This entry is only collected if the SUCCESSP argument is true.")
-  ;; TODO Better multimethod validation. Currently the arguments are validated
-  ;; one by one, so if you define a method on protocol classes C1 and C2 with
-  ;; their respective subclasses S1 and S2 and you create methods specializing
-  ;; on (S1 X) and (X S2), there is still no meaningful way to call the generic
-  ;; function on elements of type S1 and S2, which means that the protocol is
-  ;; not followed. The current algorithm does not catch these situations and
-  ;; therefore needs to be rethought.
-  (:method ((protocol symbol) &rest rest)
-    (apply #'validate-implementations (find-protocol protocol) rest))
+  (:method ((protocol null) &rest rest)
+    (declare (ignore rest))
+    (error "NIL is not a valid protocol designator."))
+  (:method ((protocol-name symbol) &rest rest)
+    (let ((protocol (find-protocol protocol-name)))
+      (if protocol
+          (apply #'validate-implementations protocol rest)
+          (error "Protocol ~S not found." protocol-name))))
   (:method ((protocol protocol) &key errorp successp)
     (uiop:while-collecting (collect)
       (dolist (protocol-function (remove 'protocol-function (elements protocol)
                                          :test-not #'eql :key #'type-of))
         (let ((function-name (name protocol-function)))
           (cond
-            ((and (not (fboundp function-name)) errorp)
-             (error 'undefined-protocol-function :name function-name))
-            ((and (not (fboundp function-name)) (not errorp))
-             (collect (list :unbound-function function-name)))
-            (t
-             (let* ((function (fdefinition function-name))
-                    (methods (generic-function-methods function))
-                    (specializers (mapcar #'method-specializers methods))
-                    (lambda-list (standard-specializers-only
-                                  (lambda-list protocol-function)))
-                    (class-names (extract-specializer-names lambda-list)))
-               (dotimes (position (length class-names))
-                 (let* ((class-name (nth position class-names))
-                        (class (find-class class-name)))
-                   (when (protocol-object-p class)
-                     (dolist (subclass (concrete-subclasses class))
-                       (let* ((candidates (mapcar (curry #'nth position)
-                                                  specializers))
-                              (specializer (find subclass candidates
-                                                 :test #'subtypep)))
-                         (cond (specializer
-                                (when successp
-                                  (collect (list :success function position
-                                                 class subclass specializer))))
-                               (errorp
-                                (error 'protocol-validation-error
-                                       :function function :subclass subclass
-                                       :position position :class class))
-                               (t (collect (list :missing-method
-                                                 function position
-                                                 class subclass)))))))))))))))))
+            ((fboundp function-name)
+             (mapcar #'collect
+                     (validate-function protocol-function errorp successp)))
+            (errorp (error 'undefined-protocol-function :name function-name))
+            (t (collect (list :undefined-function function-name)))))))))
+
+;;; VALIDATE-FUNCTION
+
+(defun validate-function (protocol-function &optional errorp successp)
+  (uiop:while-collecting (collect)
+    (let ((function (fdefinition (name protocol-function)))
+          (specializers (protocol-function-specializers protocol-function)))
+      (dotimes (n (length specializers))
+        (let ((specializer (nth n specializers)))
+          (when (and (classp specializer) (protocol-object-p specializer))
+            (dolist (subclass (concrete-subclasses specializer))
+              (let* ((new-specializers (replace-one subclass n specializers))
+                     (method (find-valid-method function new-specializers)))
+                (assert (not (equal specializers new-specializers)))
+                (cond (method
+                       (when successp
+                         (collect (list :success function n
+                                        specializer subclass
+                                        (nth n (method-specializers method))))))
+                      ((not errorp)
+                       (collect (list :missing-method
+                                      function n specializer subclass)))
+                      (t
+                       (error 'protocol-validation-error
+                              :function function :subclass subclass
+                              :position n :class specializer)))))))))))
+
+(defun find-valid-method (function specializers)
+  (flet ((fn (function &rest specializers)
+           (when-let ((method (find-method function '() specializers nil)))
+             (return-from find-valid-method method)))
+         (process (thing)
+           (cond ((not (classp thing)) (list thing))
+                 ((protocol-object-p thing) (subclasses thing :proper? nil))
+                 (t (superclasses thing :proper? nil)))))
+    (let ((product (mapcar #'process specializers)))
+      (apply #'map-product (curry #'fn function) product)
+      nil)))
 
 (defun concrete-subclasses (class)
-  (remove-if #'protocol-object-p (moptilities:subclasses class)))
+  (remove-if #'protocol-object-p (subclasses class :proper? nil)))
 
-(defun standard-specializers-only (lambda-list)
-  (loop for elt in lambda-list
-        when (and (second elt) (symbolp (second elt)))
-          collect elt))
+(defun protocol-superclasses (class)
+  (remove-if-not #'protocol-object-p (subclasses class :proper? nil)))
 
-(defgeneric remove-protocol (protocol)
-  (:documentation "Removes the provided protocol and all the effects of its
-elements from the Lisp image.")
-  (:method ((protocol symbol))
-    (remove-protocol (find-protocol protocol)))
-  (:method ((protocol protocol))
-    (mapc #'remove-protocol-element (elements protocol))
-    (setf (find-protocol (name protocol)) nil)))
+(defun replace-one (element position sequence)
+  (substitute-if element (constantly t) sequence
+                 :start position :end (1+ position)))
+
+(defun protocol-function-specializers (protocol-function)
+  (flet ((find-specializer (thing)
+           (etypecase thing
+             ((cons (eql eql) (cons t null))
+              (intern-eql-specializer (second thing)))
+             (symbol (find-class thing)))))
+    (let* ((lambda-list (lambda-list protocol-function))
+           (specializer-names (extract-specializer-names lambda-list)))
+      (mapcar #'find-specializer specializer-names))))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+;;; CONDITIONS
 
 (defvar *undefined-protocol-function-report*
   "The protocol function ~S is undefined. (Has the protocol been executed?)")
