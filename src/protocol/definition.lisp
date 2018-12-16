@@ -220,22 +220,23 @@ any protocol function is undefined. Each entry in the list follows the pattern:
                               :position n :class specializer)))))))))))
 
 (defun find-valid-method (function specializers)
-  (flet ((fn (function &rest specializers)
-           (when-let ((method (find-method function '() specializers nil)))
-             (return-from find-valid-method method)))
-         (process (thing)
-           (cond ((not (classp thing)) (list thing))
-                 ((protocol-object-p thing) (subclasses thing :proper? nil))
-                 (t (superclasses thing :proper? nil)))))
+  (flet
+      ((fn (function &rest specializers)
+         (when-let ((method (find-method function '() specializers nil)))
+           (return-from find-valid-method method)))
+       (process (thing)
+         (cond ((not (classp thing)) (list thing))
+               ((protocol-object-p thing) (mopu:subclasses thing :proper? nil))
+               (t (mopu:superclasses thing :proper? nil)))))
     (let ((product (mapcar #'process specializers)))
       (apply #'map-product (curry #'fn function) product)
       nil)))
 
 (defun concrete-subclasses (class)
-  (remove-if #'protocol-object-p (subclasses class :proper? nil)))
+  (remove-if #'protocol-object-p (mopu:subclasses class :proper? nil)))
 
 (defun protocol-superclasses (class)
-  (remove-if-not #'protocol-object-p (subclasses class :proper? nil)))
+  (remove-if-not #'protocol-object-p (mopu:subclasses class :proper? nil)))
 
 (defun replace-one (element position sequence)
   (substitute-if element (constantly t) sequence

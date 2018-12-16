@@ -1,8 +1,13 @@
-;;;; src/1am/test.lisp
+;;;; t/1am.lisp
 
-;;; TODO move into PROTEST/TEST/1AM
+(defpackage #:protest/test/1am
+  (:use #:cl
+        #:named-readtables
+        #:protest
+        #:protest/1am)
+  (:export #:self-test))
 
-(in-package #:protest/1am)
+(in-package #:protest/test/1am)
 
 (in-readtable protest/1am)
 

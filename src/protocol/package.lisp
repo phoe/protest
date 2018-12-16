@@ -3,7 +3,6 @@
 (uiop:define-package #:protest/protocol
   (:mix
    #:closer-mop
-   #:moptilities
    #:common-lisp
    #:alexandria
    #:protest/base

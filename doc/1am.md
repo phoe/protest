@@ -33,10 +33,10 @@ Same as 1AM, except:
 
 ## Example
 
-To run the example test, load the PROTEST/1AM system and evaluate
-`(protest/1am::self-test)`. The results should look like:
+To run the example test, load the `PROTEST/TEST/1AM` system and evaluate
+`(protest/test/1am:self-test)`. The results should look like:
 
 ```common-lisp
-PROTEST/1AM::SELF-TEST..
+PROTEST/TEST/1AM::SELF-TEST..
 Success: 1 test, 2 checks.
 ```

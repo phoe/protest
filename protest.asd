@@ -99,21 +99,22 @@
                #:protest/test-case)
   :components ((:file "src/1am/package")
                (:file "src/1am/formatter")
-               (:file "src/1am/macro")
-               (:file "src/1am/test")))
+               (:file "src/1am/macro")))
 
 (asdf:defsystem #:protest/test
   :description "Tests for PROTEST"
   :author "Michał \"phoe\" Herda <phoe@disroot.org>"
   :license "LLGPL"
   :serial t
-  :depends-on (#:protest)
+  :depends-on (#:protest
+               #:protest/1am)
   :components ((:file "t/test")
                (:file "t/framework")
                (:file "t/base")
                (:file "t/ftype")
                (:file "t/protocol")
-               (:file "t/test-case")))
+               (:file "t/test-case")
+               (:file "t/1am")))
 
 ;;; PROTEST common protocols
 
