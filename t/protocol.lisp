@@ -174,10 +174,6 @@
 
 ;;; ELEMENTS
 
-;; TODO cleanup after protocol execution
-;; TODO REMOVE-PROTOCOL that performs that cleanup
-;; TODO REMOVE-PROTOCOL-ELEMENT called by the above on each element
-
 (define-protest-test test-protocol-define-category-1
   (with-fresh-state
     (let* ((variable nil)
@@ -430,15 +426,16 @@ Success: 1 test, 4 checks.
 
 (define-protest-test test-protocol-define-variable-boundp
   (with-fresh-state
-    (unwind-protect (progn (define-protocol #2=#.(gensym) ()
-                             (:variable #1=#.(gensym) t 42))
-                           (let* ((protocol (find-protocol '#2#))
-                                  (elements (elements protocol))
-                                  (element (find '#1# elements :key #'name)))
-                             (is (protocol-element-boundp element))
-                             (is (= 42 (initial-value element)))
-                             (protocol-element-makunbound element)
-                             (is (not (protocol-element-boundp element)))))
+    (unwind-protect
+         (progn (define-protocol #2=#.(gensym) ()
+                  (:variable #1=#.(gensym) t 42))
+                (let* ((protocol (find-protocol '#2#))
+                       (elements (elements protocol))
+                       (element (find '#1# elements :key #'name)))
+                  (is (protocol-element-boundp element))
+                  (is (= 42 (initial-value element)))
+                  (protocol-element-makunbound element)
+                  (is (not (protocol-element-boundp element)))))
       (let* ((elements (elements (find-protocol '#2#)))
              (variable (find 'protocol-variable elements :key #'type-of)))
         (remove-protocol-element variable)))))
@@ -505,43 +502,107 @@ Success: 1 test, 4 checks.
 (define-protest-test test-protocol-validate-implementations-one-arg
   (with-fresh-state
     (unwind-protect
-         (progn (define-protocol #1=#.(gensym) ()
-                  (:class #2=#.(gensym) () ())
-                  (:function #3=#.(gensym) ((#2# #2#))))
+         (progn (define-protocol #1=#.(gensym "PROTOCOL-") ()
+                  (:class #2=#.(gensym "PROTOCOL-CLASS-") () ())
+                  (:function #3=#.(gensym "FUNCTION-") ((#2# #2#))))
                 (eval '(execute-protocol #1#))
-                (defclass #4=#.(gensym) (#2#) ())
-                (signals protocol-error
-                  (validate-implementations '#1#))
+                (is (null (validate-implementations '#1#)))
+                ;; Define subclass of #2#
+                (defclass #4=#.(gensym "CONCRETE-CLASS-1-") (#2#) ())
+                (let ((results (validate-implementations '#1#)))
+                  (is (= 1 (length results)))
+                  (is (equal (first results)
+                             (list :missing-method (fdefinition '#3#) 0
+                                   (find-class '#2#) (find-class '#4#)))))
+                ;; Define a method on that subclass
                 (defmethod #3# ((#2# #4#)))
-                (validate-implementations '#1#)
-                (defclass #5=#.(gensym) (#2#) ())
-                (signals protocol-error
-                  (validate-implementations '#1#))
+                (is (null (validate-implementations '#1#)))
+                ;; Define another subclass of #2#
+                (defclass #5=#.(gensym "CONCRETE-CLASS-2-") (#2#) ())
+                (let ((results (validate-implementations '#1#)))
+                  (is (= 1 (length results)))
+                  (let ((result (first results))
+                        (expected (list :missing-method (fdefinition '#3#) 0
+                                        (find-class '#2#) (find-class '#5#))))
+                    (is (equal result expected))))
+                ;; Define a method on that subclass
                 (defmethod #3# ((#2# #5#)))
-                (validate-implementations '#1#)
-                (defclass #6=#.(gensym) (#5#) ())
-                (validate-implementations '#1#))
+                (is (null (validate-implementations '#1#)))
+                ;; Define a subclass of that subclass
+                (defclass #6=#.(gensym "CONCRETE-CLASS-3-") (#5#) ())
+                (is (null (validate-implementations '#1#)))
+                ;; Check the list of successes
+                (let ((results (validate-implementations '#1# :successp t)))
+                  (is (= 3 (length results)))
+                  (is (member (list :success (fdefinition '#3#) 0
+                                    (find-class '#2#) (find-class '#4#)
+                                    (find-class '#4#))
+                              results :test #'equal))
+                  (is (member (list :success (fdefinition '#3#) 0
+                                    (find-class '#2#) (find-class '#5#)
+                                    (find-class '#5#))
+                              results :test #'equal))
+                  (is (member (list :success (fdefinition '#3#) 0
+                                    (find-class '#2#) (find-class '#6#)
+                                    (find-class '#5#))
+                              results :test #'equal))))
+      (dolist (class-name '(#4# #5# #6#))
+        (c2mop:remove-direct-subclass (find-class 'standard-object)
+                                      (find-class class-name))
+        (setf (find-class class-name) nil))
       (remove-protocol '#1#))))
 
 (define-protest-test test-protocol-validate-implementations-two-arg
   (with-fresh-state
     (unwind-protect
-         (progn (define-protocol #1=#.(gensym) ()
-                  (:class #2=#.(gensym) () ())
-                  (:class #3=#.(gensym) () ())
-                  (:function #4=#.(gensym) ((#2# #2#) (#3# #3#))))
+         (progn (define-protocol #1=#.(gensym "PROTOCOL-") ()
+                  (:class #2=#.(gensym "PROTOCOL-CLASS-1-") () ())
+                  (:class #3=#.(gensym "PROTOCOL-CLASS-2-") () ())
+                  (:function #4=#.(gensym "FUNCTION-") ((#2# #2#) (#3# #3#))))
                 (eval '(execute-protocol #1#))
-                (defclass #5=#.(gensym) (#2#) ())
-                (signals protocol-error
-                  (validate-implementations '#1#))
-                (defclass #6=#.(gensym) (#3#) ())
-                (signals protocol-error
-                  (validate-implementations '#1#))
+                (is (null (validate-implementations '#1#)))
+                ;; Define subclass of #2#
+                (defclass #5=#.(gensym "CONCRETE-CLASS-1-") (#2#) ())
+                (let ((results (validate-implementations '#1#)))
+                  (is (= 1 (length results)))
+                  (is (member (list :missing-method (fdefinition '#4#) 0
+                                    (find-class '#2#) (find-class '#5#))
+                              results :test #'equal)))
+                ;; Define subclass of #3#
+                (defclass #6=#.(gensym "CONCRETE-CLASS-2-") (#3#) ())
+                (let ((results (validate-implementations '#1#)))
+                  (is (= 2 (length results)))
+                  (is (member (list :missing-method (fdefinition '#4#) 0
+                                    (find-class '#2#) (find-class '#5#))
+                              results :test #'equal))
+                  (is (member (list :missing-method (fdefinition '#4#) 1
+                                    (find-class '#3#) (find-class '#6#))
+                              results :test #'equal)))
+                ;; Define method on first subclass
                 (defmethod #4# ((#2# #5#) (#3# #5#)))
-                (signals protocol-error
-                  (validate-implementations '#1#))
+                (let ((results (validate-implementations '#1#)))
+                  (is (= 1 (length results)))
+                  (is (member (list :missing-method (fdefinition '#4#) 1
+                                    (find-class '#3#) (find-class '#6#))
+                              results :test #'equal)))
+                ;; Define method on second subclass
                 (defmethod #4# ((#2# #5#) (#3# #6#)))
-                (validate-implementations '#1#))
+                (is (null (validate-implementations '#1#)))
+                ;; Check the list of successes
+                (let ((results (validate-implementations '#1# :successp t)))
+                  (is (= 2 (length results)))
+                  (is (member (list :success (fdefinition '#4#) 0
+                                    (find-class '#2#) (find-class '#5#)
+                                    (find-class '#5#))
+                              results :test #'equal))
+                  (is (member (list :success (fdefinition '#4#) 1
+                                    (find-class '#3#) (find-class '#6#)
+                                    (find-class '#6#))
+                              results :test #'equal))))
+      (dolist (class-name '(#5# #6#))
+        (c2mop:remove-direct-subclass (find-class 'standard-object)
+                                      (find-class class-name))
+        (setf (find-class class-name) nil))
       (remove-protocol '#1#))))
 
 ;; https://bugs.launchpad.net/sbcl/+bug/1808654

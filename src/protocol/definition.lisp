@@ -145,38 +145,74 @@ protocol and all of its dependencies, including transitive ones."
          (protocols (mapcar #'find-protocol symbols)))
     (mappend #'elements protocols)))
 
-(defgeneric validate-implementations (protocol)
+(defgeneric validate-implementations (protocol &key errorp successp)
   (:documentation "Checks if all subclasses of protocol classes defined
 in the protocol have appropriate methods defined on protocol functions defined
-in the protocol. Signals an error if the check fails or if any protocol function
-is undefined.")
-  (:method ((protocol symbol))
-    (validate-implementations (find-protocol protocol)))
-  (:method ((protocol protocol))
-    (dolist (protocol-function (remove-if-not (rcurry #'typep 'protocol-function)
-                                              (elements protocol)))
-      (let ((function-name (name protocol-function)))
-        (unless (fboundp function-name)
-          (error 'undefined-protocol-function :name function-name))
-        (let* ((function (fdefinition function-name))
-               (methods (generic-function-methods function))
-               (specializers (mapcar #'method-specializers methods))
-               (original-lambda-list (lambda-list protocol-function))
-               (lambda-list (standard-specializers-only original-lambda-list))
-               (class-names (extract-specializer-names lambda-list)))
-          (dotimes (position (length class-names))
-            (let* ((class-name (nth position class-names))
-                   (class (find-class class-name)))
-              (when (protocol-object-p class)
-                (dolist (subclass (remove-if #'protocol-object-p
-                                             (moptilities:subclasses class)))
-                  (let ((candidates (mapcar (curry #'nth position)
-                                            specializers)))
-                    (unless (some (curry #'subtypep subclass) candidates)
-                      (error 'protocol-validation-error
-                             :function function :subclass subclass
-                             :position position :class class)))))))
-          (values))))))
+in the protocol. Returns a list of validation errors if the check fails or if
+any protocol function is undefined. Each entry in the list follows the pattern:
+* (:missing-method FUNCTION POSITION PROTOCOL-CLASS CONCRETE-CLASS): There is no
+  method defined on the protocol function that accepts the concrete class as its
+  POSITIONth argument on the given position, but that class is a subtype of
+  protocol class that is the declared protocol specializer of that argument.
+  If ERRORP is true, a condition of type PROTOCOL-VALIDATION-ERROR is instead
+  signaled.
+* (:unbound-function FUNCTION-NAME): The protocol function with this name is
+  undefined. The protocol might not have been executed. If ERRORP is true, a
+  condition of type UNDEFINED-PROTOCOL-FUNCTION is instead signaled.
+* (:success FUNCTION POSITION PROTOCOL-CLASS CONCRETE-CLASS SPECIALIZER):
+  Denotes that the function has a method specialized on the specializer on
+  POSITIONth position and that specializer is a proper subtype of the concrete
+  class. (In other words, there is a method defined on that class.)
+  This entry is only collected if the SUCCESSP argument is true.")
+  ;; TODO Better multimethod validation. Currently the arguments are validated
+  ;; one by one, so if you define a method on protocol classes C1 and C2 with
+  ;; their respective subclasses S1 and S2 and you create methods specializing
+  ;; on (S1 X) and (X S2), there is still no meaningful way to call the generic
+  ;; function on elements of type S1 and S2, which means that the protocol is
+  ;; not followed. The current algorithm does not catch these situations and
+  ;; therefore needs to be rethought.
+  (:method ((protocol symbol) &rest rest)
+    (apply #'validate-implementations (find-protocol protocol) rest))
+  (:method ((protocol protocol) &key errorp successp)
+    (uiop:while-collecting (collect)
+      (dolist (protocol-function (remove 'protocol-function (elements protocol)
+                                         :test-not #'eql :key #'type-of))
+        (let ((function-name (name protocol-function)))
+          (cond
+            ((and (not (fboundp function-name)) errorp)
+             (error 'undefined-protocol-function :name function-name))
+            ((and (not (fboundp function-name)) (not errorp))
+             (collect (list :unbound-function function-name)))
+            (t
+             (let* ((function (fdefinition function-name))
+                    (methods (generic-function-methods function))
+                    (specializers (mapcar #'method-specializers methods))
+                    (lambda-list (standard-specializers-only
+                                  (lambda-list protocol-function)))
+                    (class-names (extract-specializer-names lambda-list)))
+               (dotimes (position (length class-names))
+                 (let* ((class-name (nth position class-names))
+                        (class (find-class class-name)))
+                   (when (protocol-object-p class)
+                     (dolist (subclass (concrete-subclasses class))
+                       (let* ((candidates (mapcar (curry #'nth position)
+                                                  specializers))
+                              (specializer (find subclass candidates
+                                                 :test #'subtypep)))
+                         (cond (specializer
+                                (when successp
+                                  (collect (list :success function position
+                                                 class subclass specializer))))
+                               (errorp
+                                (error 'protocol-validation-error
+                                       :function function :subclass subclass
+                                       :position position :class class))
+                               (t (collect (list :missing-method
+                                                 function position
+                                                 class subclass)))))))))))))))))
+
+(defun concrete-subclasses (class)
+  (remove-if #'protocol-object-p (moptilities:subclasses class)))
 
 (defun standard-specializers-only (lambda-list)
   (loop for elt in lambda-list

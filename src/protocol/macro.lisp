@@ -35,8 +35,6 @@ its elements based on FORMS."
                (generate-code protocol))
         (error "Protocol ~S was not found." name))))
 
-;; TODO check that all exported symbols are documented
-
 (defmethod remove-protocol-element ((element protocol-macro))
   (let ((name (name element)))
     (setf (documentation name 'function) nil)

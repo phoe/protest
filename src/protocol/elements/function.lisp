@@ -80,6 +80,9 @@ The form for a protocol function consists of the following subforms:
       `(progn)))
 
 (defmethod remove-protocol-element ((element protocol-function))
-  (let ((name (name element)))
+  (let* ((name (name element))
+         (function (fdefinition name))
+         (methods (generic-function-methods function)))
+    (mapc (curry #'remove-method function) methods)
     (setf (documentation name 'function) nil)
     (fmakunbound name)))

@@ -36,9 +36,6 @@ directly."
        (call-next-method))
      ',name))
 
-;; TODO test this function
-;; TODO REMOVE-PROTOCOL
-;; TODO call this function wherever required by REMOVE-PROTOCOL
 (defgeneric remove-protocol-object (object)
   (:documentation "Removes the provided protocol object from the Lisp image.")
   (:method ((class symbol))

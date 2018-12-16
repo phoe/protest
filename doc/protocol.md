@@ -349,10 +349,25 @@ Syntax summary of all options and configuration elements:
 
     Syntax: `(validate-implementations PROTOCOL)`
 
-    Checks if all subclasses of protocol classes definedi n the protocol have
+    Checks if all subclasses of protocol classes defined in the protocol have
     appropriate methods defined on protocol functions defined in the protocol.
-    Signals an error if the check fails or if any protocol function is
-    undefined.
+    Returns a list of validation errors if the check fails or if any protocol
+    function is undefined. Each entry in the list follows the pattern:
+    * `(:missing-method FUNCTION POSITION PROTOCOL-CLASS CONCRETE-CLASS)`: There
+      is no method defined on the protocol function that accepts the concrete
+      class as its `POSITION`th argument on the given position, but that class
+      is a subtype of protocol class that is the declared protocol specializer
+      of that argument. If `ERRORP` is true, a condition of type!
+      `PROTOCOL-VALIDATION-ERROR` is instead signaled.
+    * `(:unbound-function FUNCTION-NAME)`: The protocol function with this name
+      is undefined. The protocol might not have been executed. If ERRORP is
+      true, a condition of type `UNDEFINED-PROTOCOL-FUNCTION` is instead
+      signaled.
+    * `(:success FUNCTION POSITION PROTOCOL-CLASS CONCRETE-CLASS SPECIALIZER)`:
+      Denotes that the function has a method specialized on the specializer on
+      `POSITION`th position and that specializer is a proper subtype of the
+      concrete class. (In other words, there is a method defined on that class.)
+      This entry is only collected if the `SUCCESSP` argument is true.
 
   * **Function `REMOVE-PROTOCOL`**
 
