@@ -11,7 +11,6 @@ Common Lisp, featuring integration with ~~multiple~~ one testing framework.
 ## tl;dr
 
 ```common-lisp
-;; clone PROTEST into your local-projects directory, we are not in Quicklisp yet
 (ql:quickload :protest)
 (use-package :protest)
 
