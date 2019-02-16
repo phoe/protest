@@ -252,63 +252,6 @@ any protocol function is undefined. Each entry in the list follows the pattern:
            (specializer-names (extract-specializer-names lambda-list)))
       (mapcar #'find-specializer specializer-names))))
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 ;;; CONDITIONS
 
 (defvar *undefined-protocol-function-report*
