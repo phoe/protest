@@ -221,7 +221,7 @@ any protocol function is undefined. Each entry in the list follows the pattern:
 
 (defun find-valid-method (function specializers)
   (flet
-      ((fn (function &rest specializers)
+      ((find-for-specializers (&rest specializers)
          (when-let ((method (find-method function '() specializers nil)))
            (return-from find-valid-method method)))
        (process (thing)
@@ -229,7 +229,7 @@ any protocol function is undefined. Each entry in the list follows the pattern:
                ((protocol-object-p thing) (mopu:subclasses thing :proper? nil))
                (t (mopu:superclasses thing :proper? nil)))))
     (let ((product (mapcar #'process specializers)))
-      (apply #'map-product (curry #'fn function) product)
+      (apply #'map-product #'find-for-specializers product)
       nil)))
 
 (defun concrete-subclasses (class)
