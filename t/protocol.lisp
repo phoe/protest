@@ -362,6 +362,19 @@
         (is (not (fboundp'#1#)))
         (is (null (documentation '#1# 'function)))))))
 
+(define-protest-test test-protocol-define-function-type
+  (with-fresh-state
+    (unwind-protect
+         (progn (define-protocol #5=#.(gensym) ()
+                  (:function #1=#.(gensym) ((#.(gensym) boolean) #.(gensym))
+                             string)
+                  #4="qwer")
+                (eval '(execute-protocol #5#))
+                (is (null (validate-implementations (find-protocol '#5#)))))
+      (let* ((elements (elements (find-protocol '#5#)))
+             (function (find 'protocol-function elements :key #'type-of)))
+        (remove-protocol-element function)))))
+
 (define-protest-test test-protocol-define-function-setf
   (with-fresh-state
     (unwind-protect

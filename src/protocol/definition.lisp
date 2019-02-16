@@ -247,7 +247,7 @@ any protocol function is undefined. Each entry in the list follows the pattern:
            (etypecase thing
              ((cons (eql eql) (cons t null))
               (intern-eql-specializer (second thing)))
-             (symbol (find-class thing)))))
+             (symbol (or (find-class thing nil) t)))))
     (let* ((lambda-list (lambda-list protocol-function))
            (specializer-names (extract-specializer-names lambda-list)))
       (mapcar #'find-specializer specializer-names))))
