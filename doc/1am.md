@@ -23,12 +23,12 @@ Same as 1AM, except:
 
   * **Macro `DEFINE-TEST`**
 
-  Convenience macro, functionally equivalent to the macro `TEST`.
+    Convenience macro, functionally equivalent to the macro `TEST`.
 
   * **Readtable `PROTEST/1AM`**
 
-  This readtable implements the `#?` reader macro. It is required to be in this
-  readtable to use this macro to define test step implementations.
+    This readtable implements the `#?` reader macro. It is required to be in this
+    readtable to use this macro to define test step implementations.
 
 ## Example
 
