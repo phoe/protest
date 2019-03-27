@@ -10,7 +10,7 @@
 (register-test-package)
 
 (defmacro with-fresh-state (&body body)
-  `(let ((*test-cases* (make-hash-table :test #'equal)))
+  `(let ((protest/test-case::*test-cases* (make-hash-table :test #'equal)))
      ,@body
      (values)))
 
