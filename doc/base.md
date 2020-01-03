@@ -9,7 +9,9 @@ Protocol classes and protocol condition types are instances of Common Lisp
 classes and condition types, respectively, except they must not be instantiated
 directly by client code. Users of these classes must instead create subclasses
 of these protocol classes or subtypes of these protocol condition types in order
-for them to participate in the protocol.
+for them to participate in the protocol. `PROTEST/BASE` achieves this by defining
+an `:AROUND` method on `INITIALIZE-INSTANCE` specialized on that class, therefore
+client code must not do that itself in order to avoid collisions.
 
 The macros `DEFINE-PROTOCOL-CLASS` and `DEFINE-PROTOCOL-CONDITION-TYPE` can be
 used for defining protocol classes and protocol condition types, while condition
