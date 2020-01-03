@@ -24,10 +24,11 @@ directly."
 (defmacro define-protocol-object (symbol string name supers slots options)
   `(progn
      (,symbol ,name ,supers ,slots ,@options)
-     (defmethod initialize-instance :before ((object ,name) &key)
+     (defmethod initialize-instance :around ((object ,name) &key)
        (when (eq (class-of object) (find-class ',name))
          (error (make-condition 'protocol-object-instantiation
-                                :symbol ',name :type ,string))))
+                                :symbol ',name :type ,string)))
+       (call-next-method))
      (setf (gethash (find-class ',name) *protocol-objects*) t)
      (defmethod ensure-class-using-class
          ((class (eql (find-class ',name))) (name (eql ',name)) &rest args)
