@@ -1,15 +1,10 @@
 ;;;; src/base/package.lisp
 
 (uiop:define-package #:protest/base
-  (:use
-   #:common-lisp
-   #:alexandria
-   #:closer-mop)
-  (:shadowing-import-from
+  (:mix
    #:closer-mop
-   #:standard-generic-function
-   #:defmethod
-   #:defgeneric)
+   #:common-lisp
+   #:alexandria)
   (:export
    ;; FUNCTIONS
    #:protocol-object-p
