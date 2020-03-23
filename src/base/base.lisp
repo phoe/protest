@@ -45,7 +45,7 @@ directly."
     (let ((name (class-name class)))
       (setf (gethash class *protocol-objects*) nil)
       (when-let* ((function #'initialize-instance)
-                  (method (find-method function '(:before) (list class) nil)))
+                  (method (find-method function '(:around) (list class) nil)))
         (remove-method function method))
       (when-let* ((function #'ensure-class-using-class)
                   (method (find-method function '()
