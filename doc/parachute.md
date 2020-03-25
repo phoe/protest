@@ -8,6 +8,10 @@ the PROTEST/TEST-CASE test case definition facility. Its main function is
 creating a thin layer around test assertions that, in case of failure, informs
 the user of the details of the failed test step.
 
+**This is achieved by redefining some code in the Parachute package.** If 
+`PROTEST/PARACHUTE` breaks anything in the original Parachute code, this is a bug
+in `PROTEST/PARACHUTE` - please file a bug report for that.
+
 PROTEST/PARACHUTE is designed as a drop-in replacement for the original
 Parachute. It should be enough to replace `:PARACHUTE` with
 `:PROTEST/PARACHUTE` in your package use lists and write the test cases for all
