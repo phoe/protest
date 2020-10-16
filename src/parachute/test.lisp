@@ -14,7 +14,7 @@
   5 "This test case tests IS-VALUES =."
   6 "This test case tests ISNT-VALUES =."
   :last-three
-  7 "This test case is expected to FAIL."
+  7 "This test case tests signaling errors."
   8 "This test case tests OF-TYPE."
   9 "This test case tests FINISH.")
 
@@ -29,7 +29,7 @@
   #6?(isnt-values (values 1 :zero)
        (= 0)
        (equal "1"))
-  #7?(fail :failure)
+  #7?(fail (error 'error))
   #8?(of-type string "a")
   #9?(finish :finish))
 
@@ -37,32 +37,25 @@
   (parachute:test 'self-test))
 
 #|
-？ PROTEST/FOR-PARACHUTE::SELF-TEST
-#   Phase :FIRST-THREE
-1   0.000 ✔   (true (numberp 2/3))
-2   0.000 ✔   (false (numberp :keyword))
-3   0.000 ✔   (is eq (not ()) t)
-#   Phase :MIDDLE-THREE
-4   0.000 ✔   (is eq (not ()) ())
-5   0.000 ✔   (is-values (values 0 "1") (= 0) (equal "1"))
-6   0.000 ✔   (isnt-values (values 1 :zero) (= 0) (equal "1"))
-#   Phase :LAST-THREE
-7   0.000 ✘   (fail :failure error)
-8   0.000 ✔   (of-type string "a")
-9   0.000 ✔   (finish :finish)
-0.085 ✘ PROTEST/FOR-PARACHUTE::SELF-TEST
+             ？ PROTEST/FOR-PARACHUTE::SELF-TEST
+             #   Phase :FIRST-THREE
+   1   0.000 ✔   (true (numberp 2/3))
+   2   0.000 ✔   (false (numberp :keyword))
+   3   0.000 ✔   (is eq (not ()) t)
+             #   Phase :MIDDLE-THREE
+   4   0.000 ✔   (is eq (not ()) ())
+   5   0.000 ✔   (is-values (values 0 "1") (= 0) (equal "1"))
+   6   0.000 ✔   (isnt-values (values 1 :zero) (= 0) (equal "1"))
+             #   Phase :LAST-THREE
+   7   0.000 ✔   (fail (error 'error) error)
+   8   0.000 ✔   (of-type string "a")
+   9   0.000 ✔   (finish :finish)
+       0.050 ✔ PROTEST/FOR-PARACHUTE::SELF-TEST
 
 ;; Summary:
-Passed:     8
-Failed:     1
+Passed:     9
+Failed:     0
 Skipped:    0
+#<PARACHUTE:PLAIN 10, PASSED results>
 
-;; Failures:
-1/   9 tests failed in PROTEST/FOR-PARACHUTE::SELF-TEST
-In test case SELF-TEST, phase LAST-THREE, step 7:
-The test form   (capture-error :failure)
-evaluated to    ()
-when            error
-was expected to be equal under TYPEP.
-This test case is expected to FAIL.
 |#
